@@ -20,6 +20,7 @@ http.createServer(function(req,res) {
 		res.end();
 	})
 }).listen(args[3] || 1337, '0.0.0.0');
+
 console.log('Server running');
 
 var getFile = function(url,cb) {
