@@ -1,0 +1,33 @@
+
+input {
+    border-radius: 4px;
+    padding: 4px;
+    border: 1px solid #CCCCCC;
+    font-size: 16px;
+    display: block;
+}
+
+input[type="submit"] {
+    
+}
+
+.centered {
+    margin: 0px auto;
+    width: 300px;
+    text-align: center;
+}
+
+.centered * {
+    margin: 4px auto;
+}
+
+h1 {
+    text-align: center;
+    font-size: 48px;
+    font-family: raleway, sans-serif;
+    margin-bottom: 20px;
+}
+
+* {
+    font-family: raleway, sans-serif;
+}
