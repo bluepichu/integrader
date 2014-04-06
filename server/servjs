@@ -24,7 +24,7 @@ console.log('Server running');
 
 var getFile = function(url,cb) {
 	url = url.split("..")
-	url = url[url.length-1];
+	url = "public/"+url[url.length-1];
 	console.log(url);
 	fs.readFile(url, function(err, data) {
 		if (err || !data) {
