@@ -12,9 +12,18 @@ if (args[2] && ( args[2] == "-h" || args[2] == "--help") ) {
 	return
 }
 
+var pages = {
+login:"views/login.html",
+signup:"views/register.html",
+
+}
+
 http.createServer(function(req,res) {
 	if (req.method == "GET") {
 		var url = req.url.substr(1) || args[2] || "views/login.html"
+		if (pages[url]) {
+			url = pages[url]
+		}
 		var cT = getMime(url.split(".")[1])
 		console.log("Request received for: "+url);
 		res.writeHead(200, {'Content-Type': cT});
