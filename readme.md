@@ -1,4 +1,4 @@
-~~Integrader~~
+**Integrader**
 ==============
 
 TSA Open Source Software entry 2014. 
@@ -11,7 +11,7 @@ This will open it up in localhost:1337.
 
 --------------
 
-~~TODO~~
+**TODO**
 ==============
 
 | Zach | Matthew | Kyle | Siva | Danial |
