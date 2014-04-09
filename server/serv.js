@@ -14,7 +14,7 @@ if (args[2] && ( args[2] == "-h" || args[2] == "--help") ) {
 
 var pages = {
 login:"views/login.html",
-signup:"views/register.html",
+register:"views/register.html",
 
 }
 
