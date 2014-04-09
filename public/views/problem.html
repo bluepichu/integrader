@@ -1,0 +1,76 @@
+<html>
+    <head>
+        <title>Integrader &raquo; Various Practice Problems</title>
+        <link rel="stylesheet" href="/public/css/reset.css" />
+        <link rel="stylesheet" href="/public/css/style.css" />
+        <script>var __adobewebfontsappname__ = "code"</script>
+        <script>var __adobewebfontsappname__ = "code"</script>
+        <script src="http://use.edgefonts.net/droid-sans-mono:n4:all;raleway:n1,n7,n4,n5,n3,n8,n9,n2,n6:all.js"></script>
+        
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+        
+        <script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {inlineMath: [['$$','$$'], ['\\(','\\)']]}
+});
+        </script>
+        <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        
+        <script type="text/javascript">
+            var realign = function(){
+                $("ol.questions li").each(function(index){
+                    console.log("a");
+                    $($("ol.answers li")[index]).css("top", $(this).position().top);
+                })
+                $(".answer-area").height($(".question-area .questions").height());
+            }
+            
+            window.onresize = document.ready = realign;
+            
+            MathJax.Hub.Queue(["Typeset",MathJax.Hub]); 
+            MathJax.Hub.Queue(realign);
+        </script>
+    </head>
+    <body>
+        <header>
+            <div class="logo"><span class="inte">inte</span><span class="grader">grader</span></div>
+            <h1 class="assignment-title">Various Practice Problems</h1>
+        </header>
+        <div class="sidebar">
+            <ol class="sidebar-items">
+                <li class="active">Sally, Bobby, and Apples</li>
+                <li>A Coul-omb Question</li>
+                <li>Really Really Long Titled Question</li>
+                <li>Insert Name Here</li>
+            </ol>
+        </div>
+        <div class="content">
+            <div class="question-area">
+                <ol class="questions">
+                    <h2>Sally, Bobby, and Apples</h2>
+                    <p>Sally and Bobby are going on a picnic, as you can see in the diagram below.</p>
+                    <img src="http://latinasypunto.files.wordpress.com/2010/09/picnic.jpg" height=250 />
+                    <p>Bobby has 4 apples and Sally has 3 apples.</p>
+                    <li>How many apples do they have put together?</li>
+                    <p>Now suppose that Bobby gives Sally 16 of his apples.</p>
+                    <li>How many apples does Bobby have now?</li>
+                    <li>How many apples does Sally have now?</li>
+                    <li>What is the mass of the moon with respect to teslas?  (Keep in mind that \(E = mc^2\).)</li>
+                    <p>This is a really long question...<br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />This is it.</p>
+                    <li>Who even cares anymore?</li>
+                </ol>
+            </div>
+            <div class="answer-area">
+                <form class="answer-form">
+                    <ol class="answers">
+                        <li><input type="text" placeholder="Enter a number..." value="7" disabled class="correct" /> apples</li>
+                        <li><input type="text" placeholder="Enter a number..." /> apples</li>
+                        <li><input type="text" placeholder="Enter a number..." /> apples</li>
+                        <li><input type="text" placeholder="Enter a number..." /> GG</li>
+                        <li><input type="text" placeholder="Enter a number..." value="0" disabled class="incorrect" /> people</li>
+                    </ol>
+                </form>
+            </div>
+        </div>
+    </body>
+</html>
