@@ -8,7 +8,13 @@ input {
 }
 
 input[type="submit"] {
-    
+    padding: 4px 8px;
+    font-size: 20px;
+    margin-top: 8px;
+    border: 0px;
+    background: #C73845;
+    color: #FFFFFF;
+    cursor: pointer;
 }
 
 .centered {
@@ -25,7 +31,7 @@ h1 {
     text-align: center;
     font-size: 48px;
     font-family: raleway, sans-serif;
-    margin-bottom: 20px;
+    padding-bottom: 20px;
 }
 
 * {
@@ -177,6 +183,7 @@ div.logo {
     top: 20px;
     left: 20px;
     font-size: 48px;
+    font-weight: 700;
 }
 
 
@@ -216,4 +223,16 @@ h1.assignment-title {
     top: -24px;
     text-align: left;
     padding-left: 360px;
+}
+
+.login-area {
+    padding: 16px;
+    border: 1px solid #EEEEEE;
+    background: rgba(255, 255, 255, .9);
+    width: 300px;
+    border-radius: 8px;
+}
+
+form {
+    padding-bottom: 20px;
 }

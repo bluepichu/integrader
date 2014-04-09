@@ -7,16 +7,21 @@
         <script src="http://use.edgefonts.net/raleway:n1,n7,n4,n5,n3,n8,n9,n2,n6:all.js"></script>
     </head>
     <body>
-        <h1>Register</h1>
-        <form class="centered" name="register" method="post">
-            <input type="text" name="username" placeholder="Username" />
-            <input type="email" name="email" placeholder="Email" />
-            <input type="password" name="password" placeholder="Password" />
-            <div class="grouped">
-                <input type="checkbox" name="admin" id="admin" />
-                <label for="admin">Admin?</label>
-            </div>
-            <input type="submit" name="submit" value="Login" />
-        </form>
+        <header>
+            <div class="logo"><span class="inte">inte</span><span class="grader">grader</span></div>
+        </header>
+        <div class="login-area centered">
+            <h1>Register</h1>
+            <form name="register" method="post">
+                <input type="text" name="username" placeholder="Username" />
+                <input type="email" name="email" placeholder="Email" />
+                <input type="password" name="password" placeholder="Password" />
+                <div class="grouped">
+                    <input type="checkbox" name="admin" id="admin" />
+                    <label for="admin">Admin?</label>
+                </div>
+                <input type="submit" name="submit" value="Login" />
+            </form>
+        </div>
     </body>
 </html>
