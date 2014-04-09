@@ -236,3 +236,29 @@ h1.assignment-title {
 form {
     padding-bottom: 20px;
 }
+
+div.message {
+    position: absolute;
+    right: 5%;
+    top: 5%;
+    max-width: 200px;
+    border-radius: 6px;
+    border: 2px solid rgba(0, 0, 0, .95);
+    background: rgba(0, 0, 0, .9);
+    color: #FFFFFF;
+    padding: 12px;
+    text-align: center;
+    font-weight: 700;
+    -webkit-transition-duration: 300ms;
+    z-index: 2;
+    opacity: 0;
+    cursor: default;
+}
+
+.unselectable {
+    -moz-user-select: -moz-none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+}

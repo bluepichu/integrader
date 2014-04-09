@@ -19,7 +19,6 @@ MathJax.Hub.Config({
         <script type="text/javascript">
             var realign = function(){
                 $("ol.questions li").each(function(index){
-                    console.log("a");
                     $($("ol.answers li")[index]).css("top", $(this).position().top);
                 })
                 $(".answer-area").height($(".question-area .questions").height());
@@ -36,6 +35,7 @@ MathJax.Hub.Config({
             <div class="logo"><span class="inte">inte</span><span class="grader">grader</span></div>
             <h1 class="assignment-title">Various Practice Problems</h1>
         </header>
+        <div class="unselectable message">Press enter again to submit.</div>
         <div class="sidebar">
             <ol class="sidebar-items">
                 <li class="active">Sally, Bobby, and Apples</li>
@@ -72,5 +72,37 @@ MathJax.Hub.Config({
                 </form>
             </div>
         </div>
+        
+        <script>
+            var submitTimeout = null;
+            $("body").keypress(function(data){
+                if(data.keyCode == 13){
+                    if(submitTimeout){
+                        submit();
+                        $(".message").text("Answers submitted.");
+                        setTimeout(function(){
+                            $(".message").css("opacity", 0);
+                            submitTimeout = null;
+                        }, 5000);
+                        submitTimeout = null;
+                    } else {
+                        $(".message").text("Press enter again to submit all changed answers.");
+                        $(".message").css("opacity", 1);
+                        submitTimeout = setTimeout(function(){
+                            $(".message").css("opacity", 0);
+                            submitTimeout = null;
+                        }, 5000);
+                    }
+                }
+            });
+            
+            var submit = function(){
+                console.log("Submitted.");
+            }
+            
+            var loadQuestion = function(){
+                
+            }
+        </script>
     </body>
 </html>
