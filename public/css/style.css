@@ -306,3 +306,23 @@ div.locked {
     background: #222222;
     float: right;
 }
+
+ol.answers li .symbolic-input {
+    margin-bottom: 8px;
+}
+
+.symbolic-output {
+    background: #F8F8F8;
+    border: #EEEEEE;
+    padding: 4px;
+    border-radius: 4px;
+}
+
+textarea {
+    vertical-align: top;
+    width: 100%;
+    min-width: 80%;
+    max-width: 100%;
+    min-height: 24px;
+    height: 48px;
+}

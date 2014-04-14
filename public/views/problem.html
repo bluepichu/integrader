@@ -11,7 +11,8 @@
         
         <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
-  tex2jax: {inlineMath: [['$$','$$'], ['\\(','\\)']]}
+  tex2jax: {inlineMath: [['$$','$$'], ['\\(','\\)']]},
+  messageStyle: "none"
 });
         </script>
         <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
@@ -41,7 +42,7 @@ MathJax.Hub.Config({
                 <li class="active">Sally, Bobby, and Apples</li>
                 <li>A Coul-omb Question</li>
                 <li>Really Really Long Titled Question</li>
-                <li><div class="progress-area"><div class="correct" style="width: 50%"></div><div class="locked" style="width: 10%"></div><div class="incorrect" style="width: 20%"></div></div>Insert Name Here</li>
+                <li><div class="progress-area"><div class="correct" style="width: 20%"></div><div class="locked" style="width: 20%"></div><div class="incorrect" style="width: 20%"></div></div>Insert Name Here</li>
             </ol>
         </div>
         <div class="content">
@@ -65,8 +66,8 @@ MathJax.Hub.Config({
                     <ol class="answers">
                         <li><input type="text" placeholder="Enter a number..." value="7" disabled class="correct" /> apples</li>
                         <li><input type="text" placeholder="Enter a number..." /> apples</li>
-                        <li><input type="text" placeholder="Enter a number..." /> apples</li>
-                        <li><input type="text" placeholder="Enter a number..." value="0" class="incorrect" /> GG</li>
+                        <li><input type="text" placeholder="Enter a number..." value="0" class="incorrect" /> apples</li>
+                        <li><textarea class="symbolic-input" placeholder="Enter an expression..."></textarea><div class="symbolic-output"></div></li>
                         <li><input type="text" placeholder="Enter a number..." value="0" disabled class="locked" /> people</li>
                     </ol>
                 </form>
@@ -110,12 +111,16 @@ MathJax.Hub.Config({
             }
             
             $("input").keyup(function(data){
-                console.log(this.lastValue, $(this).val());
                 if($(this).val() != this.lastValue){
                     $(this).addClass("changed");
                 } else {
                     $(this).removeClass("changed");
                 }
+            });
+            
+            $(".symbolic-input").keyup(function(data){
+                $(this).parent().children(".symbolic-output").text("$$" + $(this).val() + "$$");
+                MathJax.Hub.Queue(["Typeset",MathJax.Hub,$(this).parent().children(".symbolic-output")[0]]);
             });
         </script>
     </body>
