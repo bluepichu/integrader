@@ -41,7 +41,7 @@ MathJax.Hub.Config({
                 <li class="active">Sally, Bobby, and Apples</li>
                 <li>A Coul-omb Question</li>
                 <li>Really Really Long Titled Question</li>
-                <li>Insert Name Here</li>
+                <li><div class="progress-area"><div class="correct" style="width: 50%"></div><div class="locked" style="width: 10%"></div><div class="incorrect" style="width: 20%"></div></div>Insert Name Here</li>
             </ol>
         </div>
         <div class="content">
@@ -66,8 +66,8 @@ MathJax.Hub.Config({
                         <li><input type="text" placeholder="Enter a number..." value="7" disabled class="correct" /> apples</li>
                         <li><input type="text" placeholder="Enter a number..." /> apples</li>
                         <li><input type="text" placeholder="Enter a number..." /> apples</li>
-                        <li><input type="text" placeholder="Enter a number..." /> GG</li>
-                        <li><input type="text" placeholder="Enter a number..." value="0" disabled class="incorrect" /> people</li>
+                        <li><input type="text" placeholder="Enter a number..." value="0" class="incorrect" /> GG</li>
+                        <li><input type="text" placeholder="Enter a number..." value="0" disabled class="locked" /> people</li>
                     </ol>
                 </form>
             </div>
@@ -83,7 +83,7 @@ MathJax.Hub.Config({
                         setTimeout(function(){
                             $(".message").css("opacity", 0);
                             submitTimeout = null;
-                        }, 5000);
+                        }, 1000);
                         submitTimeout = null;
                     } else {
                         $(".message").text("Press enter again to submit all changed answers.");
@@ -98,11 +98,25 @@ MathJax.Hub.Config({
             
             var submit = function(){
                 console.log("Submitted.");
+                $(".changed").each(function(){
+                    this.lastValue = $(this).val();
+                    $(this).removeClass("changed");
+                    // do something here
+                });
             }
             
             var loadQuestion = function(){
                 
             }
+            
+            $("input").keyup(function(data){
+                console.log(this.lastValue, $(this).val());
+                if($(this).val() != this.lastValue){
+                    $(this).addClass("changed");
+                } else {
+                    $(this).removeClass("changed");
+                }
+            });
         </script>
     </body>
 </html>
