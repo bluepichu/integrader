@@ -127,7 +127,8 @@ ol.answers li {
 
 ol.answers li {
     position: absolute;
-    margin-top: 0px
+    margin-top: 0px;
+    width: calc(100% - 48px);
 }
 
 ol.answers li input {
@@ -311,18 +312,52 @@ ol.answers li .symbolic-input {
     margin-bottom: 8px;
 }
 
+.symbolic-output:before {
+    width: 10px;
+    height: 10px;
+    display: block;
+    background: #44BBFF;
+    -webkit-transform: rotate(45deg); /* <<< */
+    position: absolute;
+    right: 8px;
+    top: -5px;
+    content: " ";
+}
+
 .symbolic-output {
-    background: #F8F8F8;
-    border: #EEEEEE;
+    background: #44BBFF;
     padding: 4px;
     border-radius: 4px;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    cursor: default;
+    min-height: 64px;
+    min-width: 80%;
+    position: relative;
+    top: -4px;
+    z-index: 2;
+    right: 25%;
+    visibility: hidden;
+    opacity: 0;
+    -webkit-transition-duration: 300ms; /* <<< */
 }
 
 textarea {
     vertical-align: top;
     width: 100%;
     min-width: 80%;
-    max-width: 100%;
+    max-width: 80%;
     min-height: 24px;
     height: 48px;
+    margin-left: 4px;
+    padding: 4px;
+    border-radius: 4px;
+}
+
+.latex-init {
+    display: none;
 }

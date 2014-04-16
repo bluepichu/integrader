@@ -13,7 +13,13 @@
         <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
   tex2jax: {inlineMath: [['$$','$$'], ['\\(','\\)']]},
-  messageStyle: "none"
+  messageStyle: "none",
+  menuSettings: {
+    context: "Broswer"
+  },
+  TeX: {
+    extensions: ["color.js"]
+  }
 });
         </script>
         <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
@@ -33,6 +39,9 @@ MathJax.Hub.Config({
         </script>
     </head>
     <body>
+        <div class="latex-init">
+            $$ \usepackage{color} \usepackage[names]{xcolor} $$
+        </div>
         <header>
             <div class="logo"><span class="inte">inte</span><span class="grader">grader</span></div>
             <h1 class="assignment-title">Various Practice Problems</h1>
@@ -120,8 +129,24 @@ MathJax.Hub.Config({
             });
             
             $(".symbolic-input").keyup(function(data){
-                $(this).parent().children(".symbolic-output").text(inputToLatex($(this).val()));
+                latexed = inputToLatex($(this).val(), ["a", "b", "theta"])
+                console.log(latexed.latexString);
+                $(this).parent().children(".symbolic-output").text(latexed.latexString);
+                console.log(latexed.errors);
                 MathJax.Hub.Queue(["Typeset",MathJax.Hub,$(this).parent().children(".symbolic-output")[0]]);
+            });
+            
+            $("textarea").focusin(function(data){
+                console.log("in", $(this).parent().children(".symbolic-output"));
+                $(this).parent().children(".symbolic-output").css("visibility", "visible").css("opacity", 1);
+            });
+            
+            $("textarea").focusout(function(data){
+                console.log("out", $(this).parent().children(".symbolic-output"));
+                $(this).parent().children(".symbolic-output").css("opacity", 0);
+                setTimeout(function(){
+                    $(this).parent().children(".symbolic-output").css("visibility", "hidden");
+                }, 300);
             });
         </script>
     </body>
