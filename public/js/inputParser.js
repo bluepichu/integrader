@@ -48,10 +48,10 @@ var inputToLatex = function(input, variables){
     arr2 = []
     
     for(var i = 0; i < arr.length; i++){
-        if($.trim(arr[i]) != ""){
-            if(arr[i].charAt(0) == "\u0000"){
-                arr[i] = arr[i].substring(1);
-            }
+        if(arr[i].charAt(0) == "\u0000"){
+            arr[i] = arr[i].substring(1);
+        }
+        if($.trim(arr[i]).length > 0){
             arr2.push(arr[i]);
         }
     }
@@ -137,8 +137,6 @@ var parse = function(arr){
         }
     }
     
-    console.log(arr);
-    
     for(var i = 0; i < arr.length; i++){
         if(arr[i] == "/"){
             arr2 = arr.splice(i-1, 3);
@@ -182,8 +180,6 @@ var parse = function(arr){
             arr[i] = arr[i].join(" ");
         }
     }
-    
-    //console.log(arr);
     
     return arr.join(" ");
 }
