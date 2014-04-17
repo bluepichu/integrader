@@ -131,19 +131,16 @@ MathJax.Hub.Config({
             $(".symbolic-input").keyup(function(data){
                 vars = ["a", "x_0", "theta", "\\widehat{\\imath}", "\\vec{r}"];
                 latexed = inputToLatex($(this).val(), vars)
-                console.log(latexed.latexString);
                 $(this).parent().children(".symbolic-output").text(latexed.latexString);
                 console.log(latexed.errors);
                 MathJax.Hub.Queue(["Typeset",MathJax.Hub,$(this).parent().children(".symbolic-output")[0]]);
             });
             
             $("textarea").focusin(function(data){
-                console.log("in", $(this).parent().children(".symbolic-output"));
                 $(this).parent().children(".symbolic-output").css("visibility", "visible").css("opacity", 1);
             });
             
             $("textarea").focusout(function(data){
-                console.log("out", $(this).parent().children(".symbolic-output"));
                 $(this).parent().children(".symbolic-output").css("opacity", 0);
                 setTimeout(function(){
                     $(this).parent().children(".symbolic-output").css("visibility", "hidden");

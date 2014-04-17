@@ -1,8 +1,8 @@
-operators = ["+", "-", "*", "/", " ", "^"];
+operators = ["+", "-", "*", "/", " ", "^", "_"];
 leftParens = ["(", "[", "{", "|"];
 rightParens = [")", "]", "}", "|"];
-functions = ["sin", "cos", "tan", "cot", "sec", "csc", "ln"];
-otherSeparators = ["hat", "vector"];
+functions = ["sin", "cos", "tan", "cot", "sec", "csc", "ln", "log"];
+firstSeparators = ["hat", "vector"];
 
 replacements = {
     "theta": "\\theta",
@@ -11,7 +11,8 @@ replacements = {
     "Phi": "\\Phi",
 }
 
-separators = [].concat(operators).concat(leftParens).concat(rightParens).concat(functions).concat(otherSeparators);
+var seps = [];
+var vars = [];
 
 var inputToLatex = function(input, variables){
     var arr = [input];
@@ -24,7 +25,8 @@ var inputToLatex = function(input, variables){
         return b.length - a.length;
     });
     
-    seps = [].concat(separators).concat(variables);
+    seps = [].concat(firstSeparators).concat(variables).concat(operators).concat(leftParens).concat(rightParens).concat(functions);
+    vars = variables;
     
     for(var i = 0; i < seps.length; i++){
         var arr2 = [];
@@ -44,21 +46,6 @@ var inputToLatex = function(input, variables){
         arr = arr2;
     }
     
-    //cleanup empty spots and null characters
-    
-    arr2 = []
-    
-    for(var i = 0; i < arr.length; i++){
-        if(arr[i].charAt(0) == "\u0000"){
-            arr[i] = arr[i].substring(1);
-        }
-        if($.trim(arr[i]).length > 0){
-            arr2.push(arr[i]);
-        }
-    }
-    
-    arr = arr2;
-    
     //separate out numbers
     
     for(var i = 0; i < arr.length; i++){
@@ -69,6 +56,25 @@ var inputToLatex = function(input, variables){
             }
         }
     }
+    
+    //cleanup empty spots and null characters
+    
+    arr2 = []
+    
+    for(var i = 0; i < arr.length; i++){
+        if(typeof(arr[i]) != "string"){
+            arr2.push(arr[i]);
+            continue;
+        }
+        if(arr[i].charAt(0) == "\u0000"){
+            arr[i] = arr[i].substring(1);
+        }
+        if($.trim(arr[i]).length > 0){
+            arr2.push(arr[i]);
+        }
+    }
+    
+    arr = arr2;
     
     //combine hats and vectors
     
@@ -95,7 +101,7 @@ var inputToLatex = function(input, variables){
     //markup variables
     
     for(var i = 0; i < arr.length; i++){
-        if(separators.indexOf(arr[i]) == -1 && variables.indexOf(arr[i]) == -1 && isNaN(arr[i]) ){
+        if(seps.indexOf(arr[i]) == -1 && variables.indexOf(arr[i]) == -1 && isNaN(arr[i]) && !(i > 0 && arr[i-1] == "log" && arr[i].charAt(0) == "_")){
             err.push("Unknown variable error: \"" + arr[i] + "\" is not a variable given in the problem.");
             arr[i] = "\\textcolor{red}{" + arr[i] + "}"
         }
@@ -129,19 +135,7 @@ var inputToLatex = function(input, variables){
         arr[info[1]] = "\\textcolor{red}{" + leftParens[info[0]] + "}";
     }
     
-    //group functions and arguments
-    for(var i = 0; i < arr.length; i++){
-        index = functions.indexOf(arr[i]);
-        if(index != -1){
-            arr[i] = "\\" + arr[i];
-            if(i < arr.length-1){
-                arr.splice(i, 2, arr.slice(i, i+2));
-            } else {
-                err.push("Missing argument error: \"" + arr[i] + "\" requires an argument but none is given.");
-                arr[i] = "\\textcolor{red}{" + arr[i] + "}";
-            }
-        }
-    }
+    console.log(arr);
     
     //parse
     
@@ -156,6 +150,23 @@ var inputToLatex = function(input, variables){
 var parse = function(arr){
     if(typeof(arr) == "string"){
         arr = [arr];
+    }
+    
+    for(var i = 0; i < arr.length; i++){
+        index = functions.indexOf(arr[i]);
+        if(index != -1){
+            arr[i] = "\\" + arr[i];
+            if(arr[i] == "\\log" && i < arr.length-2 && typeof(arr[i+1]) == "string" &&  arr[i+1].charAt(0) == "_"){
+                arr[i] = [arr[i], "_{", arr[i+2], "}"];
+                arr.splice(i+1, 2);
+            }
+            if(i < arr.length-1 && !(seps.indexOf(arr[i+1]) >= 0 && vars.indexOf(arr[i+1]) < 0)){
+                arr.splice(i, 2, arr.slice(i, i+2));
+            } else {
+                err.push("Missing argument error: \"" + arr[i] + "\" requires an argument but none is given.");
+                arr[i] = ["\\textcolor{red}{", arr[i], "}"];
+            }
+        }
     }
     
     for(var i = 0; i < arr.length; i++){
