@@ -208,25 +208,25 @@ span.grader {
     color: #FFFFFF;
 }
 
-form.answer-form input[type=text].locked {
+form.answer-form .locked {
     color: #444444;
     background: #AAAAAA;
     border: 1px solid #888888;
 }
 
-form.answer-form input[type=text].incorrect {
+form.answer-form .incorrect {
     color: #EE4444;
     background: #FFDDDD;
     border: 1px solid #BBA7A7;
 }
 
-form.answer-form input[type=text].correct {
+form.answer-form .correct {
     color: #44AA44;
     background: #CCEECC;
     border: 1px solid #AAB3AA;
 }
 
-form.answer-form input[type=text].changed {
+form.answer-form .changed {
     color: #AAAA44;
     background: #F8F8BC;
     border: 1px solid #BBBB77;

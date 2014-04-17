@@ -120,7 +120,7 @@ MathJax.Hub.Config({
                 
             }
             
-            $("input").keyup(function(data){
+            $("input, textarea").keyup(function(data){
                 if($(this).val() != this.lastValue){
                     $(this).addClass("changed");
                 } else {
@@ -145,6 +145,12 @@ MathJax.Hub.Config({
                 setTimeout(function(){
                     $(this).parent().children(".symbolic-output").css("visibility", "hidden");
                 }, 300);
+            });
+            
+            $("textarea").keypress(function(data){
+                if(data.keyCode == 13){
+                    data.preventDefault();
+                }
             });
         </script>
     </body>
