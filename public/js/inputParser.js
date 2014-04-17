@@ -2,6 +2,7 @@ operators = ["+", "-", "*", "/", " ", "^"];
 leftParens = ["(", "[", "{", "|"];
 rightParens = [")", "]", "}", "|"];
 functions = ["sin", "cos", "tan", "cot", "sec", "csc", "ln"];
+otherSeparators = ["hat", "vector"];
 
 replacements = {
     "theta": "\\theta",
@@ -10,7 +11,7 @@ replacements = {
     "Phi": "\\Phi",
 }
 
-separators = [].concat(operators).concat(leftParens).concat(rightParens).concat(functions);
+separators = [].concat(operators).concat(leftParens).concat(rightParens).concat(functions).concat(otherSeparators);
 
 var inputToLatex = function(input, variables){
     var arr = [input];
@@ -69,6 +70,28 @@ var inputToLatex = function(input, variables){
         }
     }
     
+    //combine hats and vectors
+    
+    for(var i = 0; i < arr.length; i++){
+        if(arr[i] == "hat" && i > 0){
+            if(arr[i-1] == "i" || arr[i-1] == "j"){
+                arr[i-1] = "\\" + arr[i-1] + "math";
+            }
+            arr[i-1] = "\\widehat{" + arr[i-1] + "}";
+            arr.splice(i, 1);
+            i--;
+        }
+        
+        if(arr[i] == "vector" && i > 0){
+            if(arr[i-1] == "i" || arr[i-1] == "j"){
+                arr[i-1] = "\\" + arr[i-1] + "math";
+            }
+            arr[i-1] = "\\vec{" + arr[i-1] + "}";
+            arr.splice(i, 1);
+            i--;
+        }
+    }
+    
     //markup variables
     
     for(var i = 0; i < arr.length; i++){
@@ -106,6 +129,20 @@ var inputToLatex = function(input, variables){
         arr[info[1]] = "\\textcolor{red}{" + leftParens[info[0]] + "}";
     }
     
+    //group functions and arguments
+    for(var i = 0; i < arr.length; i++){
+        index = functions.indexOf(arr[i]);
+        if(index != -1){
+            arr[i] = "\\" + arr[i];
+            if(i < arr.length-1){
+                arr.splice(i, 2, arr.slice(i, i+2));
+            } else {
+                err.push("Missing argument error: \"" + arr[i] + "\" requires an argument but none is given.");
+                arr[i] = "\\textcolor{red}{" + arr[i] + "}";
+            }
+        }
+    }
+    
     //parse
     
     parse(arr);
@@ -131,10 +168,6 @@ var parse = function(arr){
         if(replacements.hasOwnProperty(arr[i])){
             arr[i] = replacements[arr[i]];
         }
-        index = functions.indexOf(arr[i]);
-        if(index != -1){
-            arr[i] = "\\" + arr[i];
-        }
     }
     
     for(var i = 0; i < arr.length; i++){
@@ -146,31 +179,6 @@ var parse = function(arr){
         if(arr[i] == "^"){
             arr2 = arr.splice(i-1, 3);
             arr.splice(i-1, 0, ["{", arr2[0], "}^{", arr2[2], "}"]);
-            i--;
-        }
-        if(arr[i] == "hat" && i > 0){
-            if(arr[i-1] == "i" || arr[i-1] == "j"){
-                arr[i-1] = "\\" + arr[i-1] + "math";
-            }
-            if(arr[i-1].length == 1){
-                arr[i-1] = "\\hat{" + arr[i-1] + "}";
-            } else {
-                arr[i-1] = "\\widehat{" + arr[i-1] + "}";
-            }
-            arr.splice(i, 1);
-            i--;
-        }
-        
-        if(arr[i] == "vector" && i > 0){
-            if(arr[i-1] == "i" || arr[i-1] == "j"){
-                arr[i-1] = "\\" + arr[i-1] + "math";
-            }
-            if(arr[i-1].length == 1){
-                arr[i-1] = "\\vec{" + arr[i-1] + "}";
-            } else {
-                arr[i-1] = "\\vec{" + arr[i-1] + "}";
-            }
-            arr.splice(i, 1);
             i--;
         }
     }

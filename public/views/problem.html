@@ -129,7 +129,8 @@ MathJax.Hub.Config({
             });
             
             $(".symbolic-input").keyup(function(data){
-                latexed = inputToLatex($(this).val(), ["a", "b", "theta"])
+                vars = ["a", "x_0", "theta", "\\widehat{\\imath}", "\\vec{r}"];
+                latexed = inputToLatex($(this).val(), vars)
                 console.log(latexed.latexString);
                 $(this).parent().children(".symbolic-output").text(latexed.latexString);
                 console.log(latexed.errors);
