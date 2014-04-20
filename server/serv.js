@@ -6,7 +6,7 @@ var querystring = require('querystring');
 //var utils = require("utils")
 var persist = require("./persist.js")
 
-var siva = new User({
+var siva = new persist.User({
 	name: 'Siva Somayyajula',
 	pwd: 'sivaspassword'
 });
@@ -30,7 +30,7 @@ siva.save(function(error) {
 			console.log('Siva was authorized, but shouldn\'t have been.');
 		});
 	});
-})
+});
 
 
 var args = process.argv
