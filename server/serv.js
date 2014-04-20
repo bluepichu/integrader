@@ -3,7 +3,35 @@
 var http = require("http")
 var fs = require("fs")
 var querystring = require('querystring');
-var utils = require("utils")
+//var utils = require("utils")
+var persist = require("./persist.js")
+
+var siva = new persist.User({
+	name: 'Siva Somayyajula',
+	pwd: 'sivaspassword'
+});
+
+siva.save(function(error) {
+	if (error)
+		throw error;
+	User.findOne({
+		name: 'Siva Somayyajula'
+	}, function(error, user) {
+		if (error)
+			throw error;
+		user.authorize('sivaspassword', function(error, success) {
+			if (error)
+				throw error;
+			console.log('Siva was authorized');
+		});
+		user.authorize('faaaaaaake', function(error, success) {
+			if (error)
+				throw error;
+			console.log('Siva was authorized, but shouldn\'t have been.');
+		});
+	});
+});
+
 
 var args = process.argv
 
