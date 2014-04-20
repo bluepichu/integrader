@@ -208,25 +208,25 @@ span.grader {
     color: #FFFFFF;
 }
 
-form.answer-form .locked {
+ol.answers .locked {
     color: #444444;
     background: #AAAAAA;
     border: 1px solid #888888;
 }
 
-form.answer-form .incorrect {
+ol.answers .incorrect {
     color: #EE4444;
     background: #FFDDDD;
     border: 1px solid #BBA7A7;
 }
 
-form.answer-form .correct {
+ol.answers .correct {
     color: #44AA44;
     background: #CCEECC;
     border: 1px solid #AAB3AA;
 }
 
-form.answer-form .changed {
+ol.answers .changed {
     color: #AAAA44;
     background: #F8F8BC;
     border: 1px solid #BBBB77;
@@ -282,15 +282,19 @@ div.progress-area {
     top: 0px;
     left: 0px;
     width: 100%;
-    height: 100%;
+    margin-top: 42px;
+    height: 6px;
     border: 0px;
-    opacity: .5;
+    opacity: 8;
+    background: rgba(0, 0, 0, .1);
 }
 
 div.correct,
 div.incorrect,
 div.locked {
     height: 100%;
+    width: 0%;
+    -webkit-transition-duration: 1000ms; /* <<< */
 }
 
 div.correct {
@@ -356,8 +360,19 @@ textarea {
     margin-left: 4px;
     padding: 4px;
     border-radius: 4px;
+    font-size: 15px;
+}
+
+select {
+    font-size: 15px;
+    border-radius: 4px;
 }
 
 .latex-init {
     display: none;
+}
+
+select option:first-child {
+    display: none;
+    color: #888888;
 }

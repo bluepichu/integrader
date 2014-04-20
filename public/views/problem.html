@@ -23,20 +23,6 @@ MathJax.Hub.Config({
 });
         </script>
         <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-        
-        <script type="text/javascript">
-            var realign = function(){
-                $("ol.questions li").each(function(index){
-                    $($("ol.answers li")[index]).css("top", $(this).position().top);
-                })
-                $(".answer-area").height($(".question-area .questions").height());
-            }
-            
-            window.onresize = document.ready = realign;
-            
-            MathJax.Hub.Queue(["Typeset",MathJax.Hub]); 
-            MathJax.Hub.Queue(realign);
-        </script>
     </head>
     <body>
         <div class="latex-init">
@@ -44,44 +30,15 @@ MathJax.Hub.Config({
         </div>
         <header>
             <div class="logo"><span class="inte">inte</span><span class="grader">grader</span></div>
-            <h1 class="assignment-title">Various Practice Problems</h1>
+            <h1 class="assignment-title"></h1>
         </header>
         <div class="unselectable message">Press enter again to submit.</div>
         <div class="sidebar">
-            <ol class="sidebar-items">
-                <li class="active">Sally, Bobby, and Apples</li>
-                <li>A Coul-omb Question</li>
-                <li>Really Really Long Titled Question</li>
-                <li><div class="progress-area"><div class="correct" style="width: 20%"></div><div class="locked" style="width: 20%"></div><div class="incorrect" style="width: 20%"></div></div>Insert Name Here</li>
-            </ol>
+            <ol class="sidebar-items"></ol>
         </div>
         <div class="content">
-            <div class="question-area">
-                <ol class="questions">
-                    <h2>Sally, Bobby, and Apples</h2>
-                    <p>Sally and Bobby are going on a picnic, as you can see in the diagram below.</p>
-                    <img src="http://latinasypunto.files.wordpress.com/2010/09/picnic.jpg" height=250 />
-                    <p>Bobby has 4 apples and Sally has 3 apples.</p>
-                    <li>How many apples do they have put together?</li>
-                    <p>Now suppose that Bobby gives Sally 16 of his apples.</p>
-                    <li>How many apples does Bobby have now?</li>
-                    <li>How many apples does Sally have now?</li>
-                    <li>What is the mass of the moon with respect to teslas?  (Keep in mind that \(E = mc^2\).)</li>
-                    <p>This is a really long question...<br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />This is it.</p>
-                    <li>Who even cares anymore?</li>
-                </ol>
-            </div>
-            <div class="answer-area">
-                <form class="answer-form">
-                    <ol class="answers">
-                        <li><input type="text" placeholder="Enter a number..." value="7" disabled class="correct" /> apples</li>
-                        <li><input type="text" placeholder="Enter a number..." /> apples</li>
-                        <li><input type="text" placeholder="Enter a number..." value="0" class="incorrect" /> apples</li>
-                        <li><textarea class="symbolic-input" placeholder="Enter an expression..."></textarea><div class="symbolic-output"></div></li>
-                        <li><input type="text" placeholder="Enter a number..." value="0" disabled class="locked" /> people</li>
-                    </ol>
-                </form>
-            </div>
+            <div class="question-area"></div>
+            <div class="answer-area"></div>
         </div>
         
         <script>
@@ -112,46 +69,208 @@ MathJax.Hub.Config({
                 $(".changed").each(function(){
                     this.lastValue = $(this).val();
                     $(this).removeClass("changed");
-                    // do something here
+                    
+                    //change what's after this
+                    $(this).removeClass("correct incorrect locked");
+                    $(this).addClass("correct");
+                    $(this).prop("disabled", "true");
+                    
+                    updateProgress();
                 });
             }
             
-            var loadQuestion = function(){
-                
+            var containers = []
+            var loadSet = function(problems){
+                $("h1.assignment-title").text(problems.setTitle);
+                for(p = 0; p < problems.questions.length; p++){
+                    item = $('<li><div class="progress-area"><div class="correct"></div><div class="locked"></div><div class="incorrect"></div></div>' + name + '</li>');
+                    $("ol.sidebar-items").append(item);
+                    item[0].number = p;
+                    containers.push(loadQuestion(problems.questions[p]));
+                }
             }
             
-            $("input, textarea").keyup(function(data){
+            var loadQuestion = function(problem){
+                questions = $('<ol class="questions"></ol>');
+                answers = $('<ol class="answers"></ol">');
+                
+                questions.append('<h2 class="question-title">' + problem.questionTitle + '</h2>');
+                
+                questions.append(problem.content);
+                for(i = 0; i < problem.parts.length; i++){
+                    switch(problem.parts[i].type){
+                        case "input":
+                            el = '<input type="text" placeholder="Enter a number..." />';
+                            break;
+                        case "select":
+                            el = '<select><option value="0" disabled selected>Choose an answer...</option>';
+                            for(j = 0; j < problem.parts[i].options.length; j++){
+                                el += '<option value=' + j + "'>" + problem.parts[i].options[j] + "</option>";
+                            }
+                            el += "</select>";
+                            break;
+                        case "symbolic":
+                            el = '<textarea class="symbolic-input" placeholder="Enter an expression..."></textarea><div class="symbolic-output"></div>';
+                            el = $(el);
+                            el[0].vars = problem.parts[i].variables;
+                            break;
+                    }
+                    answers.append($("<li></li>").append(el));
+                }
+                return [questions, answers];
+            }
+            
+            var currentQuestion = -1;
+            var switchQuestion = function(number){
+                if(number == currentQuestion){
+                    return;
+                }
+                
+                $("ol.sidebar-items li").removeClass("active");
+                $($("ol.sidebar-items li")[number]).addClass("active");
+                
+                if(currentQuestion != -1){
+                    containers[currentQuestion][0] = $("ol.questions").detach();
+                    containers[currentQuestion][1] = $("ol.answers").detach();
+                }
+                $("div.question-area").append(containers[number][0]);
+                $("div.answer-area").append(containers[number][1]);
+                
+                currentQuestion = number;
+                
+                init();
+            }
+            
+            var checkForChange = function(data){
                 if($(this).val() != this.lastValue){
                     $(this).addClass("changed");
                 } else {
                     $(this).removeClass("changed");
                 }
-            });
+            }
             
-            $(".symbolic-input").keyup(function(data){
-                vars = ["a", "x_0", "theta", "\\widehat{\\imath}", "\\vec{r}"];
-                latexed = inputToLatex($(this).val(), vars)
-                $(this).parent().children(".symbolic-output").text(latexed.latexString);
-                console.log(latexed.errors);
-                MathJax.Hub.Queue(["Typeset",MathJax.Hub,$(this).parent().children(".symbolic-output")[0]]);
-            });
+            var init = function(data){
+                $("input, textarea, select").keyup(checkForChange).change(checkForChange);
+                
+                $(".symbolic-input").keyup(function(data){
+                    latexed = inputToLatex($(this).val(), this.vars)
+                    $(this).parent().children(".symbolic-output").text(latexed.latexString);
+                    console.log(latexed.errors);
+                    MathJax.Hub.Queue(["Typeset",MathJax.Hub,$(this).parent().children(".symbolic-output")[0]]);
+                });
+                
+                $("textarea").focusin(function(data){
+                    $(this).parent().children(".symbolic-output").css("visibility", "visible").css("opacity", 1);
+                });
+                
+                $("textarea").focusout(function(data){
+                    $(this).parent().children(".symbolic-output").css("opacity", 0);
+                    setTimeout(function(){
+                        $(this).parent().children(".symbolic-output").css("visibility", "hidden");
+                    }, 300);
+                });
+                
+                $("*").keypress(function(data){
+                    if(data.keyCode == 13){
+                        data.preventDefault();
+                    }
+                });
+                
+                $("ol.sidebar-items li").click(function(data){
+                    switchQuestion(this.number);
+                });
+                
+                MathJax.Hub.Rerender(); 
+                MathJax.Hub.Queue(realign);
+            }
             
-            $("textarea").focusin(function(data){
-                $(this).parent().children(".symbolic-output").css("visibility", "visible").css("opacity", 1);
-            });
+            var realign = function(){
+                $("ol.questions li").each(function(index){
+                    $($("ol.answers li")[index]).css("top", $(this).position().top);
+                })
+                $(".answer-area").height($(".question-area .questions").height());
+            }
             
-            $("textarea").focusout(function(data){
-                $(this).parent().children(".symbolic-output").css("opacity", 0);
-                setTimeout(function(){
-                    $(this).parent().children(".symbolic-output").css("visibility", "hidden");
-                }, 300);
-            });
+            var updateProgress = function(){
+                correct = 0;
+                incorrect = 0;
+                locked = 0;
+                $("ol.answers li>*").each(function(num, elem){
+                    if($(elem).hasClass("correct")){
+                        correct++;
+                    }
+                    if($(elem).hasClass("incorrect")){
+                        correct++;
+                    }
+                    if($(elem).hasClass("locked")){
+                        correct++;
+                    }
+                });
+                $("ol.sidebar-items li.active div.progress-area div.correct").css("width", correct*100/$("ol.answers li").length + "%");
+                $("ol.sidebar-items li.active div.progress-area div.incorrect").css("width", incorrect*100/$("ol.answers li").length + "%");
+                $("ol.sidebar-items li.active div.progress-area div.locked").css("width", locked*100/$("ol.answers li").length + "%");
+            }
             
-            $("textarea").keypress(function(data){
-                if(data.keyCode == 13){
-                    data.preventDefault();
-                }
-            });
+            window.onresize = realign;
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            var problems = {
+                setTitle: "Various Practice Problems",
+                questions: [
+                    {
+                        questionTitle: "Sally, Bobby, and Apples",
+                        content: '<p>Sally and Bobby are going on a picnic, as you can see in the diagram below.</p><img src="http://latinasypunto.files.wordpress.com/2010/09/picnic.jpg" height=250 /><p>Bobby has 4 apples and Sally has 3 apples.</p><li>How many apples do they have put together?</li><p>Now suppose that Bobby gives Sally 16 of his apples.</p><li>How many apples does Bobby have now?</li><li>How many apples does Sally have now?</li><li>What is the mass of the moon with respect to teslas?  (Keep in mind that \\(E=mc^2\\).)</li><p>This is a really long question...<br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />This is it.</p><li>Who even cares anymore?</li>',
+                        parts: [
+                            {
+                                type: "input"
+                            },
+                            {
+                                type: "select",
+                                options: [
+                                    "16 kg",
+                                    "wut?",
+                                    "African or European?"
+                                ]
+                            },
+                            {
+                                type: "input"
+                            },
+                            {
+                                type: "symbolic",
+                                variables: [
+                                    "a", "x_0", "theta"
+                                ]
+                            },
+                            {
+                                type: "input"
+                            }
+                        ]
+                    },
+                    {
+                        questionTitle: "Blank Question",
+                        content: "",
+                        parts: []
+                    }
+                ]
+            }
+            
+            document.ready = function(){
+                loadSet(problems);
+                switchQuestion(0);
+            }
         </script>
     </body>
 </html>

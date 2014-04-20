@@ -120,10 +120,18 @@ var inputToLatex = function(input, variables){
                     arr.splice(parenStack[parenStack.length-1][1], 2, arr.splice(parenStack[parenStack.length-1][1]+1, i-1-parenStack[parenStack.length-1][1]));
                     info = parenStack.pop();
                     i = info[1];
-                    arr[i] = ["\\left" + leftParens[index]].concat(arr[i]).concat(["\\right" + rightParens[index]]);
+                    if(leftParens[index] != "{"){
+                        arr[i] = ["\\left" + leftParens[index]].concat(arr[i]).concat(["\\right" + rightParens[index]]);
+                    } else {
+                        arr[i] = ["\\left\\{"].concat(arr[i]).concat(["\\right\\}"]);
+                    }
                 } else {
                     err.push("Mismatched paren error: \"" + arr[i] + "\" has no matching left paren.");
-                    arr[i] = "\\textcolor{red}{" + rightParens[index] + "}";
+                    if(rightParens[index] != "}"){
+                        arr[i] = "\\textcolor{red}{" + rightParens[index] + "}";
+                    } else {
+                        arr[i] = "\\textcolor{red}{\\}}";
+                    }
                 }
             }
         }
@@ -132,7 +140,11 @@ var inputToLatex = function(input, variables){
     while(parenStack.length > 0){
         info = parenStack.pop();
         err.push("Mismatched paren error: \"" + leftParens[info[0]] + "\" has no matching right paren.");
-        arr[info[1]] = "\\textcolor{red}{" + leftParens[info[0]] + "}";
+        if(leftParens[info[0]] != "{"){
+            arr[info[1]] = "\\textcolor{red}{" + leftParens[info[0]] + "}";
+        } else {
+            arr[info[1]] = "\\textcolor{red}{\\{}";
+        }
     }
     
     console.log(arr);
