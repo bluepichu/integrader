@@ -174,11 +174,11 @@ ol.answers li input {
 }
 
 .sidebar-items li:hover {
-    background: rgba(255, 255, 255, .3);
+    background: rgba(255, 255, 255, .5);
 }
 
 .sidebar-items li.active {
-    background: rgba(255, 255, 255, .2);
+    background: rgba(255, 255, 255, .6);
 }
 div.logo {
     position: relative;
