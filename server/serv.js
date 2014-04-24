@@ -43,7 +43,7 @@ persist.User.findOne({
 var args = process.argv
 
 if (args[2] && ( args[2] == "-h" || args[2] == "--help") ) {
-	console.log("Usage servjs [index file] [port]")
+	console.log("Usage servjs [port] [index file]")
 	return
 }
 
@@ -56,12 +56,12 @@ var pages = {
 
 http.createServer(function(req,res) {
 	if (req.method == "GET") {
-		var url = req.url.substr(1) || args[2] || "views/login.html"
+		var url = req.url.substr(1) || args[3] || "views/login.html"
 		if (pages[url]) {
 			url = pages[url]
 		}
 		var cT = getMime(url.split(".")[1])
-		console.log("Request received for: "+url);
+		//console.log("Request received for: "+url);
 		res.writeHead(200, {'Content-Type': cT});
 		getFile(url, function(data) {
 			res.write(data);
@@ -114,7 +114,7 @@ http.createServer(function(req,res) {
 			}
 		});
 	}
-}).listen(args[3] || 1337, '0.0.0.0');
+}).listen(args[2] || 1337, '0.0.0.0');
 
 console.log('Server running');
 
