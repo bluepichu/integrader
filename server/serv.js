@@ -50,6 +50,7 @@ if (args[2] && ( args[2] == "-h" || args[2] == "--help") ) {
 var pages = {
 	login:"views/login.html",
 	register:"views/register.html",
+	problem:"views/problem.html",
 	
 }
 
@@ -87,7 +88,7 @@ http.createServer(function(req,res) {
 						res.write("no go");
 						res.end();
 					} else {
-						getFile("views/splash.html", function(data) {
+						getFile("views/problem.html", function(data) {
 							res.write(data);
 							res.write("<br>Auth Token: "+authToken);
 							res.end();
@@ -100,7 +101,7 @@ http.createServer(function(req,res) {
 						res.write("nope<br>"+err);
 						res.end();
 					} else {
-						getFile("views/splash.html", function(data) {
+						getFile("views/problem.html", function(data) {
 							res.write(data);
 							res.write("<br>Auth Token: "+authToken);
 							res.end();
