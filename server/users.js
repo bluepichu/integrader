@@ -57,6 +57,7 @@ var getUserData = function(username,authToken,cb) {
 	db.users.find({"data.username":username,"private.authToken":{$in:[authToken]}},function(err, dob) {
 		if (dob.length == 0) {
 			cb(202,"");
+			return
 		}
 		user = {
 			data: {
@@ -79,7 +80,7 @@ var authUser = function(username,pass,ipaddress, cb) {
 	console.log ("Looking for "+username);
 	db.users.find({"data.username":username},function(err,dob) {
 		if (dob.length == 0) {
-			cb(202); 
+			cb(201); 
 			return
 		}
 		bc.compare(pass, dob[0].data.password ,function(err, res) {
@@ -94,12 +95,12 @@ var authUser = function(username,pass,ipaddress, cb) {
 					}
 				})
 			} else {
-				cb(201,"");
+				cb(202,"");
 			}
 		})
 	})
 }
-
+/**
 var tmp = "zwad3"+Math.floor(Math.random()*1000)
 createUser("zach","zach"+Math.floor(Math.random()*1000)+"@zach.zach",tmp,"woohash","10.10.10.10",function(err,tok) {
 	if (err) {
@@ -113,7 +114,7 @@ createUser("zach","zach"+Math.floor(Math.random()*1000)+"@zach.zach",tmp,"woohas
 		getUserData(tmp,tok,console.log);
 	})
 })
-
+**/
 
 
 module.exports = {

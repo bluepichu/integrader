@@ -1,0 +1,11 @@
+export.codes = {
+	101: "Username Taken",
+	102: "Email Taken",
+	109: "Unidentified Error",
+	
+	201: "Invalid Username",
+	202: "Invalid Password",
+	203: "Session Expired",
+
+}
+
