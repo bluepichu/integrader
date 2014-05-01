@@ -22,7 +22,7 @@ var createUser = function(name,email,username,pass,ipaddress,cb) {
 						"email": email,
 						"name":name
 					},
-					"courses":[1],
+					"courses":[1,2],
 					"private": {
 						"authToken":[authToken]
 					}
@@ -35,16 +35,29 @@ var createUser = function(name,email,username,pass,ipaddress,cb) {
 		})
 	})
 }
-/**
 var genTestCourse = function() {
-	var ret = {}
-	ret.name = "Test Course";
-	ret.UID = 1
-	ret.questions = []
-	ret.questions.push({name:"What is the <b>Name</b> of your person",type:"{{input-text}}"})
-	ret.questions.push({name:"When did you see this picture <img src='https://www.google.com/images/srpr/logo11w.png'></img>",type:"{{input-numeric}}"})
+	var ret = {
+		name:"Test Course 1",
+		UID: 1,
+		assignments: [{
+			due: "10/12/14",
+			title: "E and M",
+			description: "An introduction to Electricity and Magnetism",
+			questions: [["What is magnetic current through a <b>Spherical</b> bar","numeric"], ["What is the square root of flux?","symbolic"]]
+		}]
+	}
 	db.courses.save(ret);
-	return ret;
+	var ret = {
+		name:"APUSH",
+		UID: 2,
+		assignments: [{
+			due: "14/12/10",
+			title: "1960's",
+			description: "US History through the 1960s",
+			questions: [["Who invented the lightbulb","numeric"],["What is history to you","freeform"]]
+		}]
+	}
+	db.courses.save(ret);
 }
 
 db.courses.find({"UID":1},function(err, dob) {
@@ -52,7 +65,6 @@ db.courses.find({"UID":1},function(err, dob) {
 		genTestCourse();
 	}
 })
-**/
 
 
 var isValid = function(username, authToken, cb) {
