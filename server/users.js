@@ -22,7 +22,7 @@ var createUser = function(name,email,username,pass,ipaddress,cb) {
 						"email": email,
 						"name":name
 					},
-					"courses":{},
+					"courses":[1,2],
 					"private": {
 						"authToken":[authToken]
 					}
@@ -30,8 +30,57 @@ var createUser = function(name,email,username,pass,ipaddress,cb) {
 				console.log(user);
 				db.users.save(user);
 				cb(null,authToken);
+				console.log("Specified authToken "+authToken);
 			})
 		})
+	})
+}
+var genTestCourse = function() {
+	var ret = {
+		name:"Test Course 1",
+		UID: 1,
+		assignments: [{
+			due: "10/12/14",
+			title: "E and M",
+			description: "An introduction to Electricity and Magnetism",
+			questions: [["What is magnetic current through a <b>Spherical</b> bar","numeric"], ["What is the square root of flux?","symbolic"]]
+		}]
+	}
+	db.courses.save(ret);
+	var ret = {
+		name:"APUSH",
+		UID: 2,
+		assignments: [{
+			due: "14/12/10",
+			title: "1960's",
+			description: "US History through the 1960s",
+			questions: [["Who invented the lightbulb","numeric"],["What is history to you","freeform"]]
+		}]
+	}
+	db.courses.save(ret);
+}
+
+db.courses.find({"UID":1},function(err, dob) {
+	if (dob.length == 0) {
+		genTestCourse();
+	}
+})
+
+
+var isValid = function(username, authToken, cb) {
+	db.users.find({"data.username":username, "private.authToken": authToken}, function(err, dob) {
+		if (err || dob.length == 0) {
+			cb(false)
+			return
+		}
+		cb(true)
+	})
+}
+
+var getCourses = function(uids,cb) {
+	db.courses.find({"UID":{$in:uids}},function(err, dob) {
+		console.log(dob)
+		cb(dob);
 	})
 }
 
@@ -54,7 +103,7 @@ var updateUser = function(username, authToken, data, cb) {
 	}
 }
 var getUserData = function(username,authToken,cb) {
-	db.users.find({"data.username":username,"private.authToken":{$in:[authToken]}},function(err, dob) {
+	db.users.find({"data.username":username,"private.authToken":authToken},function(err, dob) {
 		if (dob.length == 0) {
 			cb(202,"");
 			return
@@ -65,6 +114,7 @@ var getUserData = function(username,authToken,cb) {
 				username: dob[0].data.username,
 				email: dob[0].data.email,
 			},
+			courses: dob[0].courses,
 		}
 		
 		if (cb) {
@@ -123,6 +173,8 @@ module.exports = {
 	"updateUser": updateUser,
 	"endSession": endSession,
 	"createUser": createUser,
+	"isValid": isValid,
+	"getCourses": getCourses,
 
 }
 
