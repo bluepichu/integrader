@@ -14,12 +14,13 @@ if (args[2] && ( args[2] == "-h" || args[2] == "--help") ) {
 var pages = {
 	login:"views/login.html",
 	register:"views/register.html",
-	problem:"views/problem.html",
+	problem:"views/assignment.html",
+	assignment:"views/assignments.html",
 	
 }
 
 var rest = [
-	"views/problem.html",
+	"views/assignment.html",
 	"courses"
 ]
 
