@@ -3,7 +3,7 @@
 var http = require("http")
 var fs = require("fs")
 var querystring = require('querystring');
-var users = require("./users");
+//var users = require("./users"); //commented for frontend testing
 //var utils = require("utils")
 /**
 var persist = require("./persist.js")
@@ -55,7 +55,7 @@ var pages = {
 }
 
 http.createServer(function(req,res) {
-	var cookies = parseCookie(req.headers.cookie);
+	//var cookies = parseCookie(req.headers.cookie); //commented for frontend testing
 	if (req.method == "GET") {
 		var url = req.url.substr(1) || args[3] || "views/login.html"
 		if (pages[url]) {
