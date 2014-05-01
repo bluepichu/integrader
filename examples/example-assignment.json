@@ -1,66 +1,66 @@
-var problems = {
-                title: "Various Practice Problems",
-                questions: [
-                    {
-                        title: "Sally, Bobby, and Apples",
-                        content: [
-                            "Sally and Bobby are going on a picnic, as you can see in the diagram below.",
-                            "<img src='http://latinasypunto.files.wordpress.com/2010/09/picnic.jpg' height=250 />",
-                            "Bobby has 4 apples and Sally has 3 apples.",
-                            {
-                                text: "How many apples do they have put together?  (Check all that apply.)",
-                                type: "check",
-                                options: [
-                                    "7",
-                                    "6",
-                                    "Kyle",
-                                    "-2",
-                                    "What's an apple?"
-                                ]
-                            },
-                            "Now suppose that Bobby gives Sally 16 of his apples.",
-                            {
-                                text: "How many apples does Bobby have now?",
-                                type: "select",
-                                options: [
-                                    "16 kg",
-                                    "wut?",
-                                    "African or European?"
-                                ]
-                            },
-                            {
-                                text: "How many apples does Sally have now?",
-                                type: "input"
-                            },
-                            {
-                                text: "What is the mass of the moon with respect to teslas?  (Use the following variables as necessary: \\(a, x_0, theta, \\vec{r}\\).)",
-                                type: "symbolic",
-                                variables: ["a", "x_0", "theta", "apple", "\\vec{r}", "\\hat{i}"]
-                            },
-                            {
-                                text: "This is the last question.",
-                                type: "check",
-                                options: [
-                                    "yes"
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        title: "Solenoids (Tipler 6 28.P.079)",
-                        content: [
-                            "A long solenoid has \\(n\\) turns per unit length and carries a current that varies with time according to \\(I = I_0 sin \\omega t\\). The solenoid has a circular cross section of radius \\(R\\). Find the induced electric field, at points near the plane equidistant from the ends of the solenoid, as a function of both the time \\(t\\) and the perpendicular distance \\(r\\) from the axis of the solenoid for the following. (Use the following as necessary: \\(n, r, R, t, \\mu_0, I_0, \\omega\\).)",
-                            {
-                                text: "\\(r < R\\)",
-                                type: "symbolic",
-                                variables: ["n", "r", "R", "t", "\\mu_0", "I_0", "\\omega"]
-                            },
-                            {
-                                text: "\\(r > R\\)",
-                                type: "symbolic",
-                                variables: ["n", "r", "R", "t", "\\mu_0", "I_0", "\\omega"]
-                            }
-                        ]
-                    }
-                ]
-            }
+{
+    title: "Various Practice Problems",
+    questions: [
+        {
+            title: "Sally, Bobby, and Apples",
+            content: [
+                "Sally and Bobby are going on a picnic, as you can see in the diagram below.",
+                "<img src='http://latinasypunto.files.wordpress.com/2010/09/picnic.jpg' height=250 />",
+                "Bobby has 4 apples and Sally has 3 apples.",
+                {
+                    text: "How many apples do they have put together?  (Check all that apply.)",
+                    type: "check",
+                    options: [
+                        "7",
+                        "6",
+                        "Kyle",
+                        "-2",
+                        "What's an apple?"
+                    ]
+                },
+                "Now suppose that Bobby gives Sally 16 of his apples.",
+                {
+                    text: "How many apples does Bobby have now?",
+                    type: "select",
+                    options: [
+                        "16 kg",
+                        "wut?",
+                        "African or European?"
+                    ]
+                },
+                {
+                    text: "How many apples does Sally have now?",
+                    type: "input"
+                },
+                {
+                    text: "What is the mass of the moon with respect to teslas?  (Use the following variables as necessary: \\(a, x_0, theta, \\vec{r}\\).)",
+                    type: "symbolic",
+                    variables: ["a", "x_0", "theta", "apple", "\\vec{r}", "\\hat{i}"]
+                },
+                {
+                    text: "This is the last question.",
+                    type: "check",
+                    options: [
+                        "yes"
+                    ]
+                }
+            ]
+        },
+        {
+            title: "Solenoids (Tipler 6 28.P.079)",
+            content: [
+                "A long solenoid has \\(n\\) turns per unit length and carries a current that varies with time according to \\(I = I_0 sin \\omega t\\). The solenoid has a circular cross section of radius \\(R\\). Find the induced electric field, at points near the plane equidistant from the ends of the solenoid, as a function of both the time \\(t\\) and the perpendicular distance \\(r\\) from the axis of the solenoid for the following. (Use the following as necessary: \\(n, r, R, t, \\mu_0, I_0, \\omega\\).)",
+                {
+                    text: "\\(r < R\\)",
+                    type: "symbolic",
+                    variables: ["n", "r", "R", "t", "\\mu_0", "I_0", "\\omega"]
+                },
+                {
+                    text: "\\(r > R\\)",
+                    type: "symbolic",
+                    variables: ["n", "r", "R", "t", "\\mu_0", "I_0", "\\omega"]
+                }
+            ]
+        }
+    ]
+}
