@@ -65,6 +65,13 @@ var isValid = function(username, authToken, cb) {
 	})
 }
 
+var getCourses = function(uids,cb) {
+	db.courses.find({"UID":{$in:uids}},function(err, dob) {
+		console.log(dob)
+		cb(dob);
+	})
+}
+
 var endSession = function(username, authToken) {
 	db.users.update({"data.username":username}, {"$pull":{"private.authToken":authToken}})
 }
@@ -84,7 +91,7 @@ var updateUser = function(username, authToken, data, cb) {
 	}
 }
 var getUserData = function(username,authToken,cb) {
-	db.users.find({"data.username":username,"private.authToken":{$in:[authToken]}},function(err, dob) {
+	db.users.find({"data.username":username,"private.authToken":authToken},function(err, dob) {
 		if (dob.length == 0) {
 			cb(202,"");
 			return
@@ -155,6 +162,7 @@ module.exports = {
 	"endSession": endSession,
 	"createUser": createUser,
 	"isValid": isValid,
+	"getCourses": getCourses,
 
 }
 

@@ -19,7 +19,8 @@ var pages = {
 }
 
 var rest = [
-	"views/problem.html"
+	"views/problem.html",
+	"courses"
 ]
 
 http.createServer(function(req,res) {
@@ -36,10 +37,25 @@ http.createServer(function(req,res) {
 				console.log("Request received for restricted page: "+url+" with a "+valid+" validity");
 				if (valid) {
 					res.writeHead(200, {'Content-Type': cT});
-					getFile(url, {}, function(data) {
-						res.write(data);
-						res.end();
-					})
+					if (url == "courses") {
+						users.getUserData(cookies.username, cookies.auth, function(err,data) {
+							if (data) {
+								//res.write(JSON.stringify(data.courses))
+								users.getCourses(data.courses, function(dob) {
+									res.write(JSON.stringify(dob));
+									res.end();
+
+								})
+							} else {
+								res.end();
+							}
+						})
+					} else {
+						getFile(url, {}, function(data) {
+							res.write(data);
+							res.end();
+						})
+					}
 				} else {
 					res.writeHead(302, "Redirect", {"Location":"/login"});
 					res.end();
@@ -76,7 +92,9 @@ http.createServer(function(req,res) {
 							res.end();
 						})
 					} else {
-						res.writeHead(302, "Redirect", {"Location":"/problem", "Set-Cookie":"auth="+authToken,"Set-Cookie":"username="+dec.username});
+						var opt = [["Location","/problem"], ["Set-Cookie","auth="+authToken], ["Set-Cookie","username="+dec.username]]
+						console.log(opt);
+						res.writeHead(302, "Redirect", opt );
 						res.end();
 					}
 				})
@@ -90,7 +108,8 @@ http.createServer(function(req,res) {
 							res.end();
 						})
 					} else {
-						res.writeHead(302, "Redirect", {"Location":"/problem", "Set-Cookie":"auth="+authToken, "Set-Cookie":"username="+dec.username});
+						var opt = [["Location","/problem"], ["Set-Cookie","auth="+authToken], ["Set-Cookie","username="+dec.username]]
+						res.writeHead(302, "Redirect",opt)
 						res.end();
 					}
 				})
