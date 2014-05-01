@@ -4,42 +4,6 @@ var http = require("http")
 var fs = require("fs")
 var querystring = require('querystring');
 var users = require("./users");
-//var utils = require("utils")
-/**
-var persist = require("./persist.js")
-
-var siva = new persist.User({
-	name: 'Siva Somayyajula',
-	pwd: 'sivaspassword'
-});
-
-siva.save(function(error) {
-	if (error) {
-		console.log(error);
-	}
-})
-persist.User.findOne({
-	name: 'Siva Somayyajula'
-}, function(error, user) {
-	if (error) {
-		throw error;
-	}
-	console.log(user);
-	user.authorize('sivaspassword', function(error, success) {
-		if (error) {
-			throw error;
-		}
-		console.log('Siva was authorized');
-	});
-	user.authorize('faaaaaaake', function(error, success) {
-		if (error) {
-			throw error;
-		}
-		console.log('Siva was authorized, but shouldn\'t have been.');
-	});
-});
-**/
-
 var args = process.argv
 
 if (args[2] && ( args[2] == "-h" || args[2] == "--help") ) {
@@ -54,20 +18,42 @@ var pages = {
 	
 }
 
+var rest = [
+	"views/problem.html"
+]
+
 http.createServer(function(req,res) {
 	var cookies = parseCookie(req.headers.cookie);
 	if (req.method == "GET") {
+		 
 		var url = req.url.substr(1) || args[3] || "views/login.html"
 		if (pages[url]) {
 			url = pages[url]
 		}
 		var cT = getMime(url.split(".")[1])
-		console.log("Request received for: "+url);
-		res.writeHead(200, {'Content-Type': cT});
-		getFile(url, {}, function(data) {
-			res.write(data);
-			res.end();
-		})
+		if (rest.indexOf(url) >= 0) {
+			users.isValid(cookies.username, cookies.auth, function(valid) {
+				console.log("Request received for restricted page: "+url+" with a "+valid+" validity");
+				if (valid) {
+					res.writeHead(200, {'Content-Type': cT});
+					getFile(url, {}, function(data) {
+						res.write(data);
+						res.end();
+					})
+				} else {
+					res.writeHead(302, "Redirect", {"Location":"/login"});
+					res.end();
+				}
+
+			})
+		} else {
+			console.log("Request received for unrestricted page: "+url);
+			res.writeHead(200, {'Content-Type': cT});
+			getFile(url, {}, function(data) {
+				res.write(data);
+				res.end();
+			})
+		}
 	} else if (req.method == "POST") {
 		fullBody = "";
 		req.on('data', function(chunk) {
@@ -76,6 +62,7 @@ http.createServer(function(req,res) {
 		});
 		
 		req.on('end', function() {
+			console.log("Post data received "+fullBody);
 			
 			
 			var dec = querystring.parse(fullBody);
@@ -89,17 +76,13 @@ http.createServer(function(req,res) {
 							res.end();
 						})
 					} else {
-						/**getFile("views/problem.html", function(data) {
-							res.write(data);
-							res.write("<br>Auth Token: "+authToken);
-							res.end();
-						})**/
-						res.writeHead(302, "Redirect", {"Location":"/problem", "Set-Cookie":"auth="+authToken});
+						res.writeHead(302, "Redirect", {"Location":"/problem", "Set-Cookie":"auth="+authToken,"Set-Cookie":"username="+dec.username});
 						res.end();
 					}
 				})
 			} else if (req.url === "/register") {
 				users.createUser(dec.name,dec.email,dec.username,dec.password,"0.1.2.3" ,function(err, authToken) {
+					console.log("Given authToken: "+authToken);
 					if (err) {
 						res.writeHead(200, "OK", {"Content-Type": "text/html"});
 						getFile("views/register.html", {error: err}, function(data) {
@@ -107,13 +90,7 @@ http.createServer(function(req,res) {
 							res.end();
 						})
 					} else {
-						/**getFile("views/problem.html", function(data) {
-							res.write(data);
-							res.write("<br>Auth Token: "+authToken);
-							res.end();
-						})
-						**/
-						res.writeHead(302, "Redirect", {"Location":"/problem", "Set-Cookie":"auth="+authToken});
+						res.writeHead(302, "Redirect", {"Location":"/problem", "Set-Cookie":"auth="+authToken, "Set-Cookie":"username="+dec.username});
 						res.end();
 					}
 				})
@@ -128,7 +105,6 @@ http.createServer(function(req,res) {
 console.log('Server running');
 
 var getFile = function(url,rep, cb) {
-	console.log(url);
 	url = url.split("..")
 	url = "../public/"+url[url.length-1];
 	fs.readFile(url, function(err, data) {
@@ -141,12 +117,18 @@ var getFile = function(url,rep, cb) {
 }
 
 var parseCookie = function(cookieString) {
+	if (!cookieString) {
+		return {}
+	}
 	var spl = cookieString.split(";");
 	var ret = {}
 	for (var i in spl) {
 		var sple = spl[i].split("=");
 		var key = sple[0];
 		var value = spl[i].split(key+"=")[1];
+		if (key[0] == " ") {
+			key = key.substr(1)
+		}
 		ret[key] = value;
 	}
 	return ret;

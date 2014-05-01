@@ -22,7 +22,7 @@ var createUser = function(name,email,username,pass,ipaddress,cb) {
 						"email": email,
 						"name":name
 					},
-					"courses":{},
+					"courses":[1],
 					"private": {
 						"authToken":[authToken]
 					}
@@ -30,8 +30,38 @@ var createUser = function(name,email,username,pass,ipaddress,cb) {
 				console.log(user);
 				db.users.save(user);
 				cb(null,authToken);
+				console.log("Specified authToken "+authToken);
 			})
 		})
+	})
+}
+/**
+var genTestCourse = function() {
+	var ret = {}
+	ret.name = "Test Course";
+	ret.UID = 1
+	ret.questions = []
+	ret.questions.push({name:"What is the <b>Name</b> of your person",type:"{{input-text}}"})
+	ret.questions.push({name:"When did you see this picture <img src='https://www.google.com/images/srpr/logo11w.png'></img>",type:"{{input-numeric}}"})
+	db.courses.save(ret);
+	return ret;
+}
+
+db.courses.find({"UID":1},function(err, dob) {
+	if (dob.length == 0) {
+		genTestCourse();
+	}
+})
+**/
+
+
+var isValid = function(username, authToken, cb) {
+	db.users.find({"data.username":username, "private.authToken": authToken}, function(err, dob) {
+		if (err || dob.length == 0) {
+			cb(false)
+			return
+		}
+		cb(true)
 	})
 }
 
@@ -65,6 +95,7 @@ var getUserData = function(username,authToken,cb) {
 				username: dob[0].data.username,
 				email: dob[0].data.email,
 			},
+			courses: dob[0].courses,
 		}
 		
 		if (cb) {
@@ -123,6 +154,7 @@ module.exports = {
 	"updateUser": updateUser,
 	"endSession": endSession,
 	"createUser": createUser,
+	"isValid": isValid,
 
 }
 
