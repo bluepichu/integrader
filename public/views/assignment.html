@@ -85,7 +85,7 @@ MathJax.Hub.Config({
             var loadSet = function(problems){
                 $("h1.assignment-title").text(problems.title);
                 for(p = 0; p < problems.questions.length; p++){
-                    item = $('<li><div class="progress-area"><div class="correct"></div><div class="locked"></div><div class="incorrect"></div></div>' + problems.questions[p].questionTitle + '</li>');
+                    item = $('<li><div class="progress-area"><div class="correct"></div><div class="locked"></div><div class="incorrect"></div></div>' + problems.questions[p].title + '</li>');
                     $("ol.sidebar-items").append(item);
                     item[0].number = p;
                     containers.push(loadQuestion(problems.questions[p]));
