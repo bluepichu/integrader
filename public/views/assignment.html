@@ -81,7 +81,7 @@ MathJax.Hub.Config({
                     part = $(this).id;
                     answer = $(this).val();
                     req.send(JSON.stringify({question: question, part: part, answer: answer}));
-                    output = a.response === "true";
+                    output = req.response === "true";
                     
                     // Set the new colors
                     if(output){
@@ -118,9 +118,9 @@ MathJax.Hub.Config({
                 pcount = 0;
                 
                 for(i = 0; i < problem.content.length; i++){
-                    if(typeof(problem.content[i]) == "string"){
+                    if(typeof(problem.content[i]) == "string"){ // Text paragraph
                         questions.append("<p>" + problem.content[i] + "</p>");
-                    } else {
+                    } else { // Actual question
                         questions.append("<li>" + problem.content[i].text + "</li>");
                         switch(problem.content[i].type){
                             case "input":
@@ -154,15 +154,18 @@ MathJax.Hub.Config({
                 return [questions, answers];
             }
             
+            // Question switching logic
             var currentQuestion = -1;
             var switchQuestion = function(number){
                 if(number == currentQuestion){
                     return;
                 }
                 
+                // Switch sidebar asthetics
                 $("ol.sidebar-items li").removeClass("active");
                 $($("ol.sidebar-items li")[number]).addClass("active");
                 
+                // Swap out question number
                 if(currentQuestion != -1){
                     containers[currentQuestion][0] = $("ol.questions").detach();
                     containers[currentQuestion][1] = $("ol.answers").detach();
@@ -172,9 +175,10 @@ MathJax.Hub.Config({
                 
                 currentQuestion = number;
                 
-                init();
+                init(); // Reinit
             }
             
+            // Checks to see if the value of an input has changed
             var checkForChange = function(data){
                 console.log($(this).val() + "/ /" + this.lastValue);
                 if($(this).val() != this.lastValue){
@@ -184,6 +188,7 @@ MathJax.Hub.Config({
                 }
             }
             
+            // Initialize
             var init = function(data){
                 $("input, textarea, select").keyup(checkForChange).change(checkForChange);
                 $("select[type='checkbox']").click(checkForChange);
@@ -220,6 +225,7 @@ MathJax.Hub.Config({
                 MathJax.Hub.Queue(realign);
             }
             
+            // Align question and answer spots
             var realign = function(){
                 var min = 0;
                 $("ol.questions li").each(function(index){
@@ -234,6 +240,7 @@ MathJax.Hub.Config({
                 $(".answer-area").height($(".question-area .questions").height());
             }
             
+            // Update progress sliders
             var updateProgress = function(){
                 correct = 0;
                 incorrect = 0;
@@ -254,6 +261,7 @@ MathJax.Hub.Config({
                 $("ol.sidebar-items li.active div.progress-area div.locked").css("width", locked*100/$("ol.answers li").length + "%");
             }
             
+            // Gets URL query variable
             getQueryVariable = function(variable){
                 var query = window.location.search.substring(1);
                 var vars = query.split("&");
@@ -266,6 +274,7 @@ MathJax.Hub.Config({
             
             window.onresize = realign;
             
+            // Initialize
             document.ready = function(){
                 var req = new XMLHttpRequest();
                 req.open("GET","/courses",false);
