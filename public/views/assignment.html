@@ -96,7 +96,7 @@ MathJax.Hub.Config({
                 questions = $('<ol class="questions"></ol>');
                 answers = $('<ol class="answers"></ol">');
                 
-                questions.append('<h2 class="question-title">' + problem.questionTitle + '</h2>');
+                questions.append('<h2 class="question-title">' + problem.title + '</h2>');
                 
                 for(i = 0; i < problem.content.length; i++){
                     if(typeof(problem.content[i]) == "string"){
@@ -195,7 +195,7 @@ MathJax.Hub.Config({
                     switchQuestion(this.number);
                 });
                 
-                MathJax.Hub.Rerender(); 
+                MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
                 MathJax.Hub.Queue(realign);
             }
             
