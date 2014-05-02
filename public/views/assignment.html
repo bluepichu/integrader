@@ -103,7 +103,7 @@ MathJax.Hub.Config({
                     item = $('<li><div class="progress-area"><div class="correct"></div><div class="locked"></div><div class="incorrect"></div></div>' + problems.questions[p].title + '</li>');
                     $("ol.sidebar-items").append(item);
                     item[0].number = p;
-                    el = loadQuestion(problems.questions[p], p);
+                    el = $(loadQuestion(problems.questions[p], p));
                     containers.push(el);
                     elem.attr("id", p);
                 }
