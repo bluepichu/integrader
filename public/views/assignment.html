@@ -104,7 +104,7 @@ MathJax.Hub.Config({
                     $("ol.sidebar-items").append(item);
                     item[0].number = p;
                     el = loadQuestion(problems.questions[p]);
-                    elem = $("<div id='" + p + "'></div>").append($(el));
+                    elem = $("<div id='" + p + "'></div>").append(el);
                     containers.push(elem);
                     elem.attr("id", p);
                 }
