@@ -11,6 +11,7 @@
         <script src="/js/inputParser.js"></script>
         
         <script type="text/x-mathjax-config">
+        // MathJax Config
 MathJax.Hub.Config({
   tex2jax: {inlineMath: [['$$','$$'], ['\\(','\\)']]},
   messageStyle: "none",
@@ -42,9 +43,10 @@ MathJax.Hub.Config({
         </div>
         
         <script>
+            // Submit logic - press enter twice to submit
             var submitTimeout = null;
             $("body").keypress(function(data){
-                if(data.keyCode == 13){
+                if(data.keyCode == 13){ // Enter key
                     if(submitTimeout){
                         submit();
                         $(".message").text("Answers submitted.");
@@ -64,39 +66,56 @@ MathJax.Hub.Config({
                 }
             });
             
+            // Code to actually run on submit
             var submit = function(){
-                /* INSERT CODE HERE TO DO AN AJAX POST, WITH A CALLBACK TO RETURN GRADING RESULTS */
-                
                 console.log("Submitted.");
-                $(".changed").each(function(){
+                $(".changed").each(function(){ // Run on all changed answers
                     this.lastValue = $(this).val();
                     $(this).removeClass("changed");
                     
-                    /* THIS CODE NEEDS TO BE REMOVED */
-                    $(this).removeClass("correct incorrect locked");
-                    $(this).addClass("correct");
-                    $(this).prop("disabled", "true");
+                    // Run the request
+                    req = new XMLHttpRequest();
+                    req.open("POST","/answers",false)
+                    req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                    question = $(this).parent().parent().parent().id;
+                    part = $(this).id;
+                    answer = $(this).val();
+                    req.send(JSON.stringify({question: question, part: part, answer: answer}));
+                    output = a.response === "true";
+                    
+                    // Set the new colors
+                    if(output){
+                        $("#" + question + " #" + part).addClass("correct");
+                    } else {
+                        $("#" + question + " #" + part).addClass("incorrect");
+                    }
                     
                     updateProgress();
                 });
             }
             
+            // Loading logic
+            
             var containers = [];
-            var loadSet = function(problems){
+            var loadSet = function(problems){ // Load the entire set
                 $("h1.assignment-title").text(problems.title);
                 for(p = 0; p < problems.questions.length; p++){
                     item = $('<li><div class="progress-area"><div class="correct"></div><div class="locked"></div><div class="incorrect"></div></div>' + problems.questions[p].title + '</li>');
                     $("ol.sidebar-items").append(item);
                     item[0].number = p;
-                    containers.push(loadQuestion(problems.questions[p]));
+                    elem = $(loadQuestion(problems.questions[p]));
+                    containers.push(elem);
+                    elem.attr("id", p);
                 }
             }
             
-            var loadQuestion = function(problem){
+            var loadQuestion = function(problem){ // Load a single question
                 questions = $('<ol class="questions"></ol>');
                 answers = $('<ol class="answers"></ol">');
                 
                 questions.append('<h2 class="question-title">' + problem.title + '</h2>');
+                
+                pcount = 0;
                 
                 for(i = 0; i < problem.content.length; i++){
                     if(typeof(problem.content[i]) == "string"){
@@ -128,6 +147,8 @@ MathJax.Hub.Config({
                         }
                         elm = $("<li></li>").append(el);
                         answers.append(elm);
+                        elm.attr("id", pcount);
+                        pcount++;
                     }
                 }
                 return [questions, answers];
