@@ -29,6 +29,7 @@ http.createServer(function(req,res) {
 	if (req.method == "GET") {
 		 
 		var url = req.url.substr(1) || args[3] || "views/login.html"
+		url = url.split("?")[0];
 		if (pages[url]) {
 			url = pages[url]
 		}
