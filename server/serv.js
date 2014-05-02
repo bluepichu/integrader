@@ -115,6 +115,11 @@ http.createServer(function(req,res) {
 						res.end();
 					}
 				})
+			} else if (req.url == "/answers" ) {
+				console.log("Received this junk "+dec);
+				res.writeHead(200, "OK", {"Content-Type":"text/html"});
+				res.write("true");
+				res.end();
 			} else {
 				res.write("WTF?");
 				res.end;
