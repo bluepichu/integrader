@@ -98,33 +98,37 @@ MathJax.Hub.Config({
                 
                 questions.append('<h2 class="question-title">' + problem.questionTitle + '</h2>');
                 
-                questions.append(problem.content);
-                for(i = 0; i < problem.parts.length; i++){
-                    switch(problem.parts[i].type){
-                        case "input":
-                            el = '<input type="text" placeholder="Enter a number..." />';
-                            break;
-                        case "select":
-                            el = '<select><option value="0" disabled selected>Choose an answer...</option>';
-                            for(j = 0; j < problem.parts[i].options.length; j++){
-                                el += '<option value="' + j + '">' + problem.parts[i].options[j] + "</option>";
-                            }
-                            el += "</select>";
-                            break;
-                        case "check":
-                            el = '';
-                            for(j = 0; j < problem.parts[i].options.length; j++){
-                                el += '<input type="checkbox" id="' + i + "-" + j + '" value="' + j + '" /><label for="' + i + "-" + j + '">' + problem.parts[i].options[j] + "</label><br />";
-                            }
-                            break;
-                        case "symbolic":
-                            el = '<textarea class="symbolic-input" placeholder="Enter an expression..."></textarea><div class="symbolic-output"></div>';
-                            el = $(el);
-                            el[0].vars = problem.parts[i].variables;
-                            break;
+                for(i = 0; i < problem.content.length; i++){
+                    if(typeof(problem.comtent[i]) == "string"){
+                        questions.append("<p>" + problem.content[i] + "</p>");
+                    } else {
+                        questions.append("<li>" + problem.content[i].text + "</li>");
+                        switch(problem.content[i].type){
+                            case "input":
+                                el = '<input type="text" placeholder="Enter a number..." />';
+                                break;
+                            case "select":
+                                el = '<select><option value="0" disabled selected>Choose an answer...</option>';
+                                for(j = 0; j < problem.content[i].options.length; j++){
+                                    el += '<option value="' + j + '">' + problem.content[i].options[j] + "</option>";
+                                }
+                                el += "</select>";
+                                break;
+                            case "check":
+                                el = '';
+                                for(j = 0; j < problem.content[i].options.length; j++){
+                                    el += '<input type="checkbox" id="' + i + "-" + j + '" value="' + j + '" /><label for="' + i + "-" + j + '">' + problem.content[i].options[j] + "</label><br />";
+                                }
+                                break;
+                            case "symbolic":
+                                el = '<textarea class="symbolic-input" placeholder="Enter an expression..."></textarea><div class="symbolic-output"></div>';
+                                el = $(el);
+                                el[0].vars = problem.content[i].variables;
+                                break;
+                        }
+                        elm = $("<li></li>").append(el);
+                        answers.append(elm);
                     }
-                    elm = $("<li></li>").append(el);
-                    answers.append(elm);
                 }
                 return [questions, answers];
             }
@@ -229,42 +233,6 @@ MathJax.Hub.Config({
                 $("ol.sidebar-items li.active div.progress-area div.locked").css("width", locked*100/$("ol.answers li").length + "%");
             }
             
-            window.onresize = realign;
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            var req = new XMLHttpRequest();
-            req.open("GET","/courses",false);
-            req.send();
-            
-            courseList = JSON.parse(req.response);
-            
-            courseId = getQueryVariable("course");
-            assignmentId = getQueryVariable("assignment");
-            
-            var problems = {};
-            
-            for(i = 0; i < courseList.length; i++){
-                if(courseList[i]._id == courseId){
-                    for(j = 0; j < courseList[i].assignments.length; j++){
-                        if(courseList[i].assignments[j].id == assignmentId){
-                            problems = courseList[i].assignments[j];
-                            break;
-                        }
-                    }
-                    break;
-                }
-            }
-            
             getQueryVariable = function(variable){
                 var query = window.location.search.substring(1);
                 var vars = query.split("&");
@@ -275,8 +243,32 @@ MathJax.Hub.Config({
                 return(false);
             }
             
+            window.onresize = realign;
+            
             document.ready = function(){
-                loadSet(problems); /* CHANGE THIS TO LOADING AN EXTERNAL FILE */
+                var req = new XMLHttpRequest();
+                req.open("GET","/courses",false);
+                req.send();
+                
+                courseList = JSON.parse(req.response);
+                
+                courseId = getQueryVariable("course");
+                assignmentId = getQueryVariable("assignment");
+                
+                var problems = {};
+                
+                for(i = 0; i < courseList.length; i++){
+                    if(courseList[i]._id == courseId){
+                        for(j = 0; j < courseList[i].assignments.length; j++){
+                            if(courseList[i].assignments[j].id == assignmentId){
+                                problems = courseList[i].assignments[j];
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                }
+                loadSet(problems);
                 switchQuestion(0);
             }
         </script>
