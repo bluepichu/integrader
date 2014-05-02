@@ -75,18 +75,24 @@ http.createServer(function(req,res) {
 							}
 						})
 					} else {
+
+						//In most cases, it can just get the file
 						getFile(url, {}, function(data) {
 							res.write(data);
 							res.end();
 						})
 					}
 				} else {
+
+					//If the user is not validly logged in, redirect them to the login page
 					res.writeHead(302, "Redirect", {"Location":"/login"});
 					res.end();
 				}
 
 			})
 		} else {
+			
+			//If there are no restrictions on the page, show it to the user
 			console.log("Request received for unrestricted page: "+url);
 			res.writeHead(200, {'Content-Type': cT});
 			getFile(url, {}, function(data) {
@@ -94,10 +100,12 @@ http.createServer(function(req,res) {
 				res.end();
 			})
 		}
+
+	//Handles all the POST requests, coming from both XHR's and form POST's
 	} else if (req.method == "POST") {
 		fullBody = "";
 		req.on('data', function(chunk) {
-			// append the current chunk of data to the fullBody variable
+			//Append the current chunk of data to the fullBody variable
 			fullBody += chunk.toString();
 		});
 		
@@ -105,16 +113,24 @@ http.createServer(function(req,res) {
 			console.log("Post data received "+fullBody);
 			
 			
+			//If the data is an HTTP query string, decode it
 			var dec = querystring.parse(fullBody);
 			
+			//Handles login posts
 			if (req.url === "/login") {
+
+				//Authenticates the user using our database module
 				users.authUser(dec.username,dec.password,"0.1.2.3",function(err, authToken) {
+
+					//If they are not authenticated, send them back to login, alerting them of the error
 					if (err) {
 						res.writeHead(200, "OK", {'Content-Type': 'text/html'});
 						getFile("views/login.html", {error: err}, function(data) {
 							res.write(data);
 							res.end();
 						})
+
+					//Otherwise redirect them to the problem page, and issue them an authentication token
 					} else {
 						var opt = [["Location","/problem"], ["Set-Cookie","auth="+authToken], ["Set-Cookie","username="+dec.username]]
 						console.log(opt);
@@ -122,7 +138,11 @@ http.createServer(function(req,res) {
 						res.end();
 					}
 				})
+
+			//Handles all registration requests
 			} else if (req.url === "/register") {
+
+				//Creates a user using our database module. Behaves similarly to login
 				users.createUser(dec.name,dec.email,dec.username,dec.password,"0.1.2.3" ,function(err, authToken) {
 					console.log("Given authToken: "+authToken);
 					if (err) {
@@ -137,22 +157,30 @@ http.createServer(function(req,res) {
 						res.end();
 					}
 				})
+
+			//Handles requests for submitting answer. Checks the correct answer against the submitted one
 			} else if (req.url == "/answers" ) {
 				console.log("Received this junk");
 				console.log(JSON.parse(fullBody));
 				res.writeHead(200, "OK", {"Content-Type":"text/html"});
 				res.write("true");
 				res.end();
+
+			//Sending useless data. Ignore it
 			} else {
 				res.write("WTF?");
 				res.end;
 			}
 		});
 	}
+
+//Listen on the port specified, or default to 1337. Accepts connections from all IPs
 }).listen(args[2] || 1337, '0.0.0.0');
 
 console.log('Server running');
 
+
+//Helper method to read files
 var getFile = function(url,rep, cb) {
 	url = url.split("..")
 	url = "../public/"+url[url.length-1];
@@ -165,6 +193,7 @@ var getFile = function(url,rep, cb) {
 	})
 }
 
+//Helper method to parse cookie strings
 var parseCookie = function(cookieString) {
 	if (!cookieString) {
 		return {}
@@ -183,7 +212,7 @@ var parseCookie = function(cookieString) {
 	return ret;
 }
 						
-
+//Helper method to detirmine mime types
 var getMime = function(str) {
 	if (!str) {
 		return "text/plain";
@@ -217,6 +246,7 @@ var getMime = function(str) {
 	}
 }
 
+//Helper method to pass the read files with any useful data
 var fillIn = function(file,rep) {
 	file = file.toString();
 	for (var i in rep) {

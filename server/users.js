@@ -2,6 +2,7 @@ var db = require("mongojs").connect("localhost:27017/integ",["users","courses","
 var x = require("./XOR/XOR")
 var bc = require("bcrypt")
 
+//Creates a user and grants him an authentication token
 var createUser = function(name,email,username,pass,ipaddress,cb) {
 	db.users.find({"data.username":username},function(err, dob) {
 		if (dob.length != 0) {
@@ -35,6 +36,8 @@ var createUser = function(name,email,username,pass,ipaddress,cb) {
 		})
 	})
 }
+
+//Bogus method for creating an example course. Used for debugging
 var genTestCourse = function() {
 	var a = {
 		title: "Feesiks",
@@ -58,7 +61,8 @@ var genTestCourse = function() {
 					"Kyle",
 					"-2",
 					"What's an apple?"
-					]
+					],
+					answer: "0",
 				},
 				"Now suppose that Bobby gives Sally 16 of his apples.",
 				{
@@ -68,11 +72,13 @@ var genTestCourse = function() {
 					"16 kg",
 					"wut?",
 					"African or European?"
-					]
+					],
+					answer: "1",
 				},
 				{
 					text: "How many apples does Sally have now?",
-					type: "input"
+					type: "input",
+					answer: "19",
 				},
 				{
 					text: "What is the mass of the moon with respect to teslas?  (Use the following variables as necessary: \\(a, x_0, theta, \\vec{r}\\).)",
@@ -84,7 +90,8 @@ var genTestCourse = function() {
 					type: "check",
 					options: [
 					"yes"
-					]
+					],
+					answer: "0",
 				}
 				]
 			},
@@ -110,13 +117,14 @@ var genTestCourse = function() {
 	db.courses.save(a);
 }
 
+//Makes sure it doesn't add the test course multiple times
 db.courses.find({"UID":1},function(err, dob) {
 	if (dob.length == 0) {
 		genTestCourse();
 	}
 })
 
-
+//Checks to see if a username/authToken pair is valid
 var isValid = function(username, authToken, cb) {
 	db.users.find({"data.username":username, "private.authToken": authToken}, function(err, dob) {
 		if (err || dob.length == 0) {
@@ -127,6 +135,7 @@ var isValid = function(username, authToken, cb) {
 	})
 }
 
+//gets all courses associated with a course UID
 var getCourses = function(uids,cb) {
 	db.courses.find({"UID":{$in:uids}},function(err, dob) {
 		console.log(dob)
@@ -134,9 +143,12 @@ var getCourses = function(uids,cb) {
 	})
 }
 
+//Revokes an authentication token
 var endSession = function(username, authToken) {
 	db.users.update({"data.username":username}, {"$pull":{"private.authToken":authToken}})
 }
+
+//Updates user data
 var updateUser = function(username, authToken, data, cb) {
 	var obj = ["username","email","name"];
 	for (i in data) {
@@ -152,6 +164,8 @@ var updateUser = function(username, authToken, data, cb) {
 		cb(null, authToken);
 	}
 }
+
+//Returns user data
 var getUserData = function(username,authToken,cb) {
 	db.users.find({"data.username":username,"private.authToken":authToken},function(err, dob) {
 		if (dob.length == 0) {
@@ -176,6 +190,7 @@ var getUserData = function(username,authToken,cb) {
 	})
 }
 
+//Checks a username with the password hash and if it is valid, grants an authentication token
 var authUser = function(username,pass,ipaddress, cb) {
 	console.log ("Looking for "+username);
 	db.users.find({"data.username":username},function(err,dob) {
@@ -200,23 +215,8 @@ var authUser = function(username,pass,ipaddress, cb) {
 		})
 	})
 }
-/**
-var tmp = "zwad3"+Math.floor(Math.random()*1000)
-createUser("zach","zach"+Math.floor(Math.random()*1000)+"@zach.zach",tmp,"woohash","10.10.10.10",function(err,tok) {
-	if (err) {
-		console.error(err);	
-	}
-	console.log(tok);
-	updateUser(tmp,tok,{"email":"me.woo@yo.ninja"},function(err) {
-		if (err) {
-			console.error(err);
-		}
-		getUserData(tmp,tok,console.log);
-	})
-})
-**/
 
-
+//Specifies the functions to be exported as a node module
 module.exports = {
 	"getUserData": getUserData,
 	"authUser": authUser,
