@@ -77,8 +77,8 @@ MathJax.Hub.Config({
                     req = new XMLHttpRequest();
                     req.open("POST","/answers",false)
                     req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-                    question = $(this).parent().parent().parent().id;
-                    part = $(this).id;
+                    question = $(this).parent().parent().parent().attr("id");
+                    part = $(this).parent()attr("id");
                     answer = $(this).val();
                     req.send(JSON.stringify({question: question, part: part, answer: answer}));
                     output = req.response === "true";
@@ -103,7 +103,8 @@ MathJax.Hub.Config({
                     item = $('<li><div class="progress-area"><div class="correct"></div><div class="locked"></div><div class="incorrect"></div></div>' + problems.questions[p].title + '</li>');
                     $("ol.sidebar-items").append(item);
                     item[0].number = p;
-                    elem = $(loadQuestion(problems.questions[p]));
+                    el = loadQuestion(problems.questions[p]);
+                    elem = $("<div id='" + p + "'>" + el[0] + el[1] + "</div>");
                     containers.push(elem);
                     elem.attr("id", p);
                 }
@@ -145,9 +146,8 @@ MathJax.Hub.Config({
                                 el[0].vars = problem.content[i].variables;
                                 break;
                         }
-                        elm = $("<li></li>").append(el);
+                        elm = $("<li id='" + pcount + "'></li>").append(el);
                         answers.append(elm);
-                        elm.attr("id", pcount);
                         pcount++;
                     }
                 }
