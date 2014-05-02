@@ -78,7 +78,7 @@ MathJax.Hub.Config({
                     req.open("POST","/answers",false)
                     req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
                     question = $(this).parent().parent().parent().attr("id");
-                    part = $(this).parent()attr("id");
+                    part = $(this).parent().attr("id");
                     answer = $(this).val();
                     req.send(JSON.stringify({question: question, part: part, answer: answer}));
                     output = req.response === "true";
@@ -104,7 +104,7 @@ MathJax.Hub.Config({
                     $("ol.sidebar-items").append(item);
                     item[0].number = p;
                     el = loadQuestion(problems.questions[p]);
-                    elem = $("<div id='" + p + "'>" + el[0] + el[1] + "</div>");
+                    elem = $("<div id='" + p + "'></div>").append($(el));
                     containers.push(elem);
                     elem.attr("id", p);
                 }
