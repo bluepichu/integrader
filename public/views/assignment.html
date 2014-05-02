@@ -258,9 +258,9 @@ MathJax.Hub.Config({
                 var problems = {};
                 
                 for(i = 0; i < courseList.length; i++){
-                    if(courseList[i]._id == courseId){
+                    if(courseList[i].UID == courseId){
                         for(j = 0; j < courseList[i].assignments.length; j++){
-                            if(courseList[i].assignments[j].id == assignmentId){
+                            if(courseList[i].assignments[j].UID == assignmentId){
                                 problems = courseList[i].assignments[j];
                                 break;
                             }
