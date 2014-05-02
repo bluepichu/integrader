@@ -1,16 +1,22 @@
 #!/usr/local/bin/node
 
+//The code is build ontop of node's generic HTTP stack. No express or similar libraries
+
 var http = require("http")
 var fs = require("fs")
 var querystring = require('querystring');
+
+//Users represents the interface with a Mongo no-sql database
 var users = require("./users");
 var args = process.argv
 
+//Command-Line Options
 if (args[2] && ( args[2] == "-h" || args[2] == "--help") ) {
 	console.log("Usage servjs [port] [index file]")
 	return
 }
 
+//Aliases for webpages. I.E. instead of http://localhost/views/login.html, you can do http://localhost/login
 var pages = {
 	login:"views/login.html",
 	register:"views/register.html",
@@ -19,30 +25,46 @@ var pages = {
 	
 }
 
+//URL's that require a login to access. This is just for user-experience, the actual security is done when the user goes to access something
 var rest = [
 	"views/assignment.html",
 	"courses"
 ]
 
+//This function creates the server and handles data from req[uests] and pipes them into the res[ponse].
 http.createServer(function(req,res) {
 	var cookies = parseCookie(req.headers.cookie);
+
+	//Handles all GET requests
 	if (req.method == "GET") {
 		 
+		//Chooses the URL. First priority is the url they request, second priority is the url passed as a command line argument, and the third priority is the login page
 		var url = req.url.substr(1) || args[3] || "views/login.html"
+
+		//Ignores URL options - Those are for the client
 		url = url.split("?")[0];
 		if (pages[url]) {
 			url = pages[url]
 		}
+
+		//Finds the mime type of the page being sought
 		var cT = getMime(url.split(".")[1])
+
+		//Case for a restricted URL
 		if (rest.indexOf(url) >= 0) {
+
+			//Checks the validity of the authentication, based on a username and an authentication token issued on login or register
 			users.isValid(cookies.username, cookies.auth, function(valid) {
 				console.log("Request received for restricted page: "+url+" with a "+valid+" validity");
 				if (valid) {
+
+					//This is a special case of a GET request, because it is being accessed from an XMLHttpRequest, and needs to send data, not a file.
 					res.writeHead(200, {'Content-Type': cT});
 					if (url == "courses") {
+
+						//Gets the data, again checks the authentication of the user
 						users.getUserData(cookies.username, cookies.auth, function(err,data) {
 							if (data) {
-								//res.write(JSON.stringify(data.courses))
 								users.getCourses(data.courses, function(dob) {
 									res.write(JSON.stringify(dob));
 									res.end();
@@ -116,7 +138,8 @@ http.createServer(function(req,res) {
 					}
 				})
 			} else if (req.url == "/answers" ) {
-				console.log("Received this junk "+dec);
+				console.log("Received this junk");
+				console.log(JSON.parse(fullBody));
 				res.writeHead(200, "OK", {"Content-Type":"text/html"});
 				res.write("true");
 				res.end();
