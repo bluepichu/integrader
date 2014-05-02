@@ -138,7 +138,8 @@ http.createServer(function(req,res) {
 					}
 				})
 			} else if (req.url == "/answers" ) {
-				console.log("Received this junk "+dec);
+				console.log("Received this junk");
+				console.log(JSON.parse(fullBody));
 				res.writeHead(200, "OK", {"Content-Type":"text/html"});
 				res.write("true");
 				res.end();
