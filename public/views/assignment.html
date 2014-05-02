@@ -83,7 +83,7 @@ MathJax.Hub.Config({
             
             var containers = [];
             var loadSet = function(problems){
-                $("h1.assignment-title").text(problems.setTitle);
+                $("h1.assignment-title").text(problems.title);
                 for(p = 0; p < problems.questions.length; p++){
                     item = $('<li><div class="progress-area"><div class="correct"></div><div class="locked"></div><div class="incorrect"></div></div>' + problems.questions[p].questionTitle + '</li>');
                     $("ol.sidebar-items").append(item);
@@ -99,7 +99,7 @@ MathJax.Hub.Config({
                 questions.append('<h2 class="question-title">' + problem.questionTitle + '</h2>');
                 
                 for(i = 0; i < problem.content.length; i++){
-                    if(typeof(problem.comtent[i]) == "string"){
+                    if(typeof(problem.content[i]) == "string"){
                         questions.append("<p>" + problem.content[i] + "</p>");
                     } else {
                         questions.append("<li>" + problem.content[i].text + "</li>");
