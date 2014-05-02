@@ -85,9 +85,9 @@ MathJax.Hub.Config({
                     
                     // Set the new colors
                     if(output){
-                        $("#" + question + " #" + part).addClass("correct");
+                        $("#" + question + " #" + part).children().addClass("correct");
                     } else {
-                        $("#" + question + " #" + part).addClass("incorrect");
+                        $("#" + question + " #" + part).children().addClass("incorrect");
                     }
                     
                     updateProgress();
