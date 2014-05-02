@@ -85,9 +85,9 @@ MathJax.Hub.Config({
                     
                     // Set the new colors
                     if(output){
-                        $("#" + question + " #" + part).children().addClass("correct");
+                        $("#" + question + " #" + part).children("input, textarea, select").addClass("correct").attr("disabled", true);
                     } else {
-                        $("#" + question + " #" + part).children().addClass("incorrect");
+                        $("#" + question + " #" + part).children("input, textarea, select").addClass("incorrect");
                     }
                     
                     updateProgress();
