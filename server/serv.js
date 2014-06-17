@@ -225,7 +225,7 @@ var getFile = function(url,rep, cb) {
 			cb("404")
 			return
 		}
-		cb(fillIn(data,rep));
+		cb(data);
 	})
 }
 
