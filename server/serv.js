@@ -173,7 +173,7 @@ var getMime = function(str) {
 		case "jpeg":
 		case "jpg":
 			return "image/jpeg"
-			case "png":
+        case "png":
 		case "bmp":
 		case "ico":
 			return "image/png"
