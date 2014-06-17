@@ -9,6 +9,8 @@ replacements = {
     "phi": "\\phi",
     "Theta": "\\Theta",
     "Phi": "\\Phi",
+    "mu": "\\mu",
+    "Mu": "\\Mu",
 }
 
 var seps = [];
@@ -45,7 +47,18 @@ var inputToLatex = function(input, variables){
         }
         arr = arr2;
     }
-    
+
+	for(var i = 0; i < arr.length; i++){
+		for(var k in replacements){
+			console.log("     " + "." + arr[i].substring(0, k.length + 1) + ".", "." + k + ".")
+			if(arr[i].substring(0, k.length + 1) == k){
+				console.log("yes");
+				arr[i] = replacements[k] + arr[i].substring(k.length);
+				break;
+			}
+		}
+	}
+
     //separate out numbers
     
     for(var i = 0; i < arr.length; i++){

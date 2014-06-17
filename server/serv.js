@@ -6,6 +6,9 @@ var http = require("http")
 var fs = require("fs")
 var querystring = require('querystring');
 
+//sg is our symbolic grader module
+var sg = require("./symGrader");
+
 //Users represents the interface with a Mongo no-sql database
 var users = require("./users");
 var args = process.argv
@@ -65,6 +68,7 @@ http.createServer(function(req,res) {
 						//Gets the data, again checks the authentication of the user
 						users.getUserData(cookies.username, cookies.auth, function(err,data) {
 							if (data) {
+								console.log(">>>>>>>>> "+data.courses);
 								users.getCourses(data.courses, function(dob) {
 									res.write(JSON.stringify(dob));
 									res.end();
@@ -132,7 +136,7 @@ http.createServer(function(req,res) {
 
 					//Otherwise redirect them to the problem page, and issue them an authentication token
 					} else {
-						var opt = [["Location","/problem"], ["Set-Cookie","auth="+authToken], ["Set-Cookie","username="+dec.username]]
+						var opt = [["Location","/assignment"], ["Set-Cookie","auth="+authToken], ["Set-Cookie","username="+dec.username]]
 						console.log(opt);
 						res.writeHead(302, "Redirect", opt );
 						res.end();
@@ -152,7 +156,7 @@ http.createServer(function(req,res) {
 							res.end();
 						})
 					} else {
-						var opt = [["Location","/problem"], ["Set-Cookie","auth="+authToken], ["Set-Cookie","username="+dec.username]]
+						var opt = [["Location","/assignment"], ["Set-Cookie","auth="+authToken], ["Set-Cookie","username="+dec.username]]
 						res.writeHead(302, "Redirect",opt)
 						res.end();
 					}
@@ -161,14 +165,46 @@ http.createServer(function(req,res) {
 			//Handles requests for submitting answer. Checks the correct answer against the submitted one
 			} else if (req.url == "/answers" ) {
 				console.log("Received this junk");
-				console.log(JSON.parse(fullBody));
-				res.writeHead(200, "OK", {"Content-Type":"text/html"});
-				res.write("true");
-				res.end();
+				users.getCourses([1], function(data) {
+					var post = JSON.parse(fullBody);
+					var qs = (data[0].assignments[0].questions[post.question].content)
+					var iter = 0;
+					var ended = false;
+					for (var i = 0; i < qs.length; i++) {
+						if (typeof qs[i] == "object") {
+							if (iter == parseInt(post.part)) {
+								if (qs[i].answer) {
+									if (qs[i].type == "symbolic") {
+										var ans = sg.test(post.answer, qs[i].answer, qs[i].variables, qs[i].range, 3, [], 0)
+										res.writeHead(200, "OK", {"Content-Type":"text/html"});
+										res.write((ans).toString());
+										res.end();
+										ended = true;
+										
+									} else { 
+										res.writeHead(200, "OK", {"Content-Type":"text/html"});
+										res.write((qs[i].answer == post.answer).toString());
+										res.end();
+										ended = true;
+									}
+								}
+								console.log(qs[i]);
+								console.log(post);
+							}
+							iter++;
+						}
+					}
+					if (!ended) {
+						res.writeHead(200, "OK", {"Content-Type":"text/html"});
+						res.write("false");
+						res.end();
+					}
+
+				})
 
 			//Sending useless data. Ignore it
 			} else {
-				res.write("WTF?");
+				res.write("Invalid Post Data");
 				res.end;
 			}
 		});
