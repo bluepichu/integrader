@@ -1,0 +1,137 @@
+<html>
+    <head>
+        <link rel=stylesheet href="/css/style.css" />
+        <script src="/js/jquery.min.js"></script>
+        <script src="/js/handlebars.js"></script>
+        
+        <title>Assignment</title>
+        
+        <script id="template" type="text/x-handlebars-template">
+            <header>
+                <div class="button logo"></div>
+                <div class="button-area">
+                    <div class="button button-settings"></div>
+                    <div class="button button-home"></div>
+                </div>
+            </header>
+            <div class="main-area">
+                <div class="sidebar">
+                    <h2 class="sidebar-header">{{title}}</h2>
+                    <ol class="questions">
+                        {{#each questions}}
+                        {{incrementPosition}}
+                        <li class="clickable question-select" id="{{position}}"><div class="progress progress-{{progress}}" id="prog{{position}}"></div>{{title}}</li>
+                        {{/each}}
+                    </ol>
+                </div>
+                {{resetPosition}}
+                <div class="content-main">
+                    {{#each questions}}
+                    {{incrementPosition}}
+                    <form class="question-container" id="q{{position}}">
+                        <h2>{{title}}</h2>
+                        
+                        {{#each parts}}
+                        {{content}}
+                        {{/each}}
+                    </form>
+                    {{/each}}
+                </div>
+            </div>
+        </script>
+        
+        <script type="text/javascript">
+            // TEMPORARY
+            
+            var data = {
+                title: "Waves - The Final Frontier",
+                questions: [
+                    {
+                        title: "The Only Question",
+                        progress: "02",
+                        parts: [
+                            {content: "This is the only part"}
+                        ]
+                    },
+                    {
+                        title: "No It's Not",
+                        progress: "05",
+                        parts: [
+                            {content: "Haha sucka"}
+                        ]
+                    }
+                ]
+            };
+        </script>
+        
+        <script type="text/javascript">            
+            var currentQuestion = "001";
+            
+            var loadQueue = [];
+            var delay = null;
+            
+            var changeQuestion = function(question){
+                if(currentQuestion == question){
+                    return;
+                }
+                
+                loadQueue.push([$(".question-container#q" + currentQuestion), "fadeOut"]);
+                loadQueue.push([$(".question-container#q" + question), "fadeIn"]);
+                
+                processEventQueue();
+                
+                currentQuestion = question;
+            }
+            
+            var processEventQueue = function(){
+                if(delay == null && loadQueue.length > 0){
+                    var func = loadQueue.shift();
+                    func[0][func[1]](300);
+                    func[0].blur();
+                    delay = setTimeout(function(){
+                        delay = null;
+                        processEventQueue();
+                    }, 300);
+                }
+            }
+            
+            var pad = function(n, width, z) {
+                z = z || '0';
+                n = n + '';
+                return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
+            }
+            
+            $(document).ready(function(){
+                var positionCounter = 0;
+                
+                Handlebars.registerHelper('position', function() {
+                    return pad(positionCounter, 3);
+                });
+                
+                Handlebars.registerHelper('incrementPosition', function() {
+                    positionCounter++;
+                    return "";
+                });
+                
+                Handlebars.registerHelper('resetPosition', function() {
+                    positionCounter = 0;
+                    return "";
+                });
+                
+                var out = $("body");
+                var src = $("#template").html();
+                
+                var template = Handlebars.compile(src);
+                var html = template(data);
+                
+                out.html(html);
+                
+                $(".question-select").click(function(e){
+                    changeQuestion($(this).attr("id"));
+                });
+            });
+            
+        </script>
+    </head>
+    <body></body>
+</html>
