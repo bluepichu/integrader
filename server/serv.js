@@ -23,15 +23,14 @@ if (args[2] && ( args[2] == "-h" || args[2] == "--help") ) {
 var pages = {
 	login:"views/login.html",
 	register:"views/register.html",
-	problem:"views/assignment.html",
-	assignment:"views/assignments.html",
-	
+	assignment:"views/assignment.html",
+    index:"views/index.html"
 }
 
 //URL's that require a login to access. This is just for user-experience, the actual security is done when the user goes to access something
 var rest = [
-	"views/assignment.html",
-	"courses"
+	//"views/assignment.html",
+	//"courses"
 ]
 
 //This function creates the server and handles data from req[uests] and pipes them into the res[ponse].
@@ -42,7 +41,7 @@ http.createServer(function(req,res) {
 	if (req.method == "GET") {
 		 
 		//Chooses the URL. First priority is the url they request, second priority is the url passed as a command line argument, and the third priority is the login page
-		var url = req.url.substr(1) || args[3] || "views/login.html"
+		var url = req.url.substr(1) || args[3] || "views/index.html"
 
 		//Ignores URL options - Those are for the client
 		url = url.split("?")[0];
@@ -223,9 +222,10 @@ var getFile = function(url,rep, cb) {
 	fs.readFile(url, function(err, data) {
 		if (err || !data) {
 			cb("404")
+			console.log("Error on "+url);
 			return
 		}
-		cb(fillIn(data,rep));
+		cb(data);
 	})
 }
 

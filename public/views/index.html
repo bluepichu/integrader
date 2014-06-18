@@ -8,66 +8,50 @@
         
         <script id="template" type="text/x-handlebars-template">
             <header>
-                <div class="button logo"></div>
+                <a href="/"><div class="button logo"></div></a>
                 <div class="button-area">
                     <div class="button button-settings"></div>
-                    <div class="button button-home"></div>
+                    <a href="/"><div class="button button-home"></div></a>
                 </div>
             </header>
             <div class="main-area">
                 <div class="sidebar">
                     <h2 class="sidebar-header">Upcoming Assignments</h2>
                     <ul class="upcoming">
+                        {{#each dates}}
                         <li>
-                            <span class="title highlight">Today</span><span class="subtitle">June 15</span>
+                            {{{formatDate date}}}
+                            {{#each assignments}}
                             <ul>
-                                <a href="/ap-physics-c/waves-the-final-frontier" class="no-link"><li class="clickable"><div class="progress micro progress-00"></div><span class="title">Waves: The Final Frontier</span><span class="subtitle">AP Physics C</span></li></a>
+                                <a href="{{path}}" class="no-link">
+                                    <li class="clickable">
+                                        <div class="progress micro progress-{{progress}}"></div>
+                                        <span class="title">{{title}}</span>
+                                        <span class="subtitle">{{course}}</span>
+                                    </li>
+                                </a>
                             </ul>
+                            {{/each}}
                         </li>
-                        <li>
-                            <span class="title">Tomorrow</span><span class="subtitle">June 16</span>
-                            <ul>
-                                <li class="clickable"><div class="progress micro progress-01"></div><span class="title">Waves: The Finaler Frontier</span><span class="subtitle">AP Physics C</span></li>
-                                <li class="clickable"><div class="progress micro progress-02"></div><span class="title">What Even Is This Course?</span><span class="subtitle">AP US History</span></li>
-                            </ul>
-                        </li>
-                        <li>
-                            <span class="title">Tuesday</span><span class="subtitle">June 17</span>
-                            <ul>
-                                <li class="clickable"><div class="progress micro progress-08"></div><span class="title">Waves: The Finalest Frontier</span><span class="subtitle">AP Physics C</span></li>
-                                <li class="clickable"><div class="progress micro progress-01"></div><span class="title">What Was This Class Even?</span><span class="subtitle">AP US History</span></li>
-                            </ul>
-                        </li>
-                        <li>
-                            <span class="title">June 26</span>
-                            <ul>
-                                <li class="clickable"><div class="progress micro progress-00"></div><span class="title">Course Survey</span><span class="subtitle">Linear Algebra</span></li>
-                            </ul>
-                        </li>
+                        {{/each}}
                     </ul>
                 </div>
                 <div class="content-main">
                     <h2>Courses</h2>
-                    
+                    {{#if courses.length}}
+                    {{#each courses}}
                     <div class="course-listing">
-                        <h3 class="course-title">AP Physics C</h3>
-                        <h4 class="teacher">Scholla, Stephen M</h4><br />
-                        <a href="/ap-physics-c" class="highlight"><span class="upcoming-count highlight">3 Upcoming Assignments &raquo;</span></a>
-                        <span class="upcoming-next">Next due today</span>
+                        <h3 class="course-title">{{title}}</h3>
+                        <h4 class="teacher">{{instructor}}</h4><br />
+                        <a href="/ap-physics-c" class="highlight">
+                            <span class="upcoming-count highlight">{{upcoming}} Upcoming Assignments &raquo;</span>
+                        </a>
+                        <span class="upcoming-next">Next due today (needs fixing)</span>
                     </div>
-                    
-                    <div class="course-listing">
-                        <h3 class="course-title">AP US History</h3>
-                        <h4 class="teacher">Sheptyck, Elizabeth A</h4><br />
-                        <a href="/ap-us-history" class="highlight"><span class="upcoming-count highlight">2 Upcoming Assignments &raquo;</span></a>
-                        <span class="upcoming-next">Next due tomorrow</span>
-                    </div>
-                    
-                    <div class="course-listing">
-                        <h3 class="course-title">Linear Algebra</h3>
-                        <h4 class="teacher">Spoden, Myra S</h4><br />
-                        <span class="upcoming-count">No Upcoming Assignments</span>
-                    </div>
+                    {{/each}}
+                    {{else}}
+                    <p>No courses to display.</p>
+                    {{/if}}
                 </div>
             </div>
         </script>
@@ -75,7 +59,83 @@
         <script type="text/javascript">
             // TEMPORARY
             
-            var data = {};
+            var data = {
+                dates: [
+                    {
+                        date: "2014-06-17",
+                        assignments: [
+                            {
+                                path: "/",
+                                progress: "00",
+                                title: "Waves: The Final Frontier",
+                                course: "AP Physics C"
+                            }
+                        ]
+                    },
+                    {
+                        date: "2014-06-18",
+                        assignments: [
+                            {
+                                path: "/",
+                                progress: "01",
+                                title: "Waves: The Finaler Frontier",
+                                course: "AP Physics C"
+                            },
+                            {
+                                path: "/",
+                                progress: "02",
+                                title: "What is this class?",
+                                course: "AP US History"
+                            }
+                        ]
+                    },
+                    {
+                        date: "2014-06-19",
+                        assignments: [
+                            {
+                                path: "/",
+                                progress: "05",
+                                title: "Waves: The Finalest Frontier",
+                                course: "AP Physics C"
+                            },
+                            {
+                                path: "/",
+                                progress: "08",
+                                title: "No, seriously, what is this class?",
+                                course: "AP US History"
+                            }
+                        ]
+                    },
+                    {
+                        date: "2014-06-30",
+                        assignments: [
+                            {
+                                path: "/",
+                                progress: "11",
+                                title: "Course Survey",
+                                course: "Linear Algebra"
+                            }
+                        ]
+                    }
+                ],
+                courses: [
+                    {
+                        title: "AP Physics C",
+                        instructor: "Scholla, Stephen M",
+                        upcoming: 3
+                    },
+                    {
+                        title: "AP US History",
+                        instructor: "Sheptyck, Elizabeth A",
+                        upcoming: 2
+                    },
+                    {
+                        title: "Linear Algebra",
+                        instructor: "Spoden, Myra S",
+                        upcoming: 1
+                    }
+                ]
+            };
         </script>
         
         <script type="text/javascript">
@@ -96,17 +156,42 @@
                     return "";
                 });
                 
+                var dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+                var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec"];
+                
                 Handlebars.registerHelper("formatDate", function(date){
                     date = new Date(date)
-                    today = new Date()
-                    tomorrow = new Date(today.getTime() + 24*60*60*1000);
+                    date.setHours(24, 0, 0, 0);
+                    day = new Date()
+                    day.setHours(0, 0, 0, 0);
                     
-                    date.setHours(0, 0, 0, 0);
-                    today.setHours(0, 0, 0, 0);
-                    tomorrow.setHours(0, 0, 0, 0);
+                    name = ""
                     
-                    if(date == today){
-                        return "<span class='title highlight'>Today</span><span class='subtitle'>" + months[date.getMonth()] + " " + date.getDate + "</span>";
+                    for(i = 0; i < 7; i++){
+                        if(day.getTime() == date.getTime()){
+                            switch(i){
+                                case 0:
+                                    name = "Today";
+                                    break;
+                                case 1:
+                                    name = "Tomorrow";
+                                    break;
+                                default:
+                                    name = dayNames[day.getDay()];
+                                    break;
+                            }
+                            break;
+                        }
+                        day = new Date(day.getTime() + 24*60*60*1000);
+                    }
+                    
+                    if(name != ""){
+                        if(name == "Today"){
+                            return "<span class='title highlight'>Today</span><span class='subtitle'>" + monthNames[date.getMonth()] + " " + date.getDate() + "</span>";
+                        }
+                        return "<span class='title'>" + name + "</span><span class='subtitle'>" + monthNames[date.getMonth()] + " " + date.getDate() + "</span>";
+                    } else {
+                        return "<span class='title'>" + monthNames[date.getMonth()] + " " + date.getDate() + "</span>";
                     }
                 });
                 
