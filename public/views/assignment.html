@@ -3,6 +3,8 @@
         <link rel=stylesheet href="/css/style.css" />
         <script src="/js/jquery.min.js"></script>
         <script src="/js/handlebars.js"></script>
+        <script src="/js/inputParser.js"></script>
+        <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
         
         <title>Assignment</title>
         
@@ -31,9 +33,63 @@
                     <form class="question-container" id="q{{position}}">
                         <h2>{{title}}</h2>
                         
+                        {{pushPosition}}
+                        
                         {{#each parts}}
-                        {{content}}
+                        
+                            {{incrementPosition}}
+                               
+                            {{#ifCond type "==" "content"}}
+                                <p>{{content}}</p>
+                            {{else}}
+                                <div class="answer-area">
+                            {{/ifCond}}
+ 
+                            {{#ifCond type "==" "radio"}}
+                                {{pushPosition}}
+                                {{#each choices}}
+                                    {{incrementPosition}}
+                                 <input type="radio" name="{{swapPosition}}p{{position}}{{swapPosition}}" value="{{position}}" /><label for="{{position}}">{{this}}</label><br />
+                                {{/each}}
+                                {{popPosition}}
+                            {{/ifCond}}
+                                    
+                            {{#ifCond type "==" "checkbox"}}
+                                {{pushPosition}}
+                                {{#each choices}}
+                                    {{incrementPosition}}
+                                 <input type="checkbox" name="{{swapPosition}}p{{position}}{{swapPosition}}" value="{{position}}" /><label for="{{position}}">{{this}}</label><br />
+                                {{/each}}
+                                {{popPosition}}
+                            {{/ifCond}}
+                                    
+                            {{#ifCond type "==" "numerical"}}
+                                <input type="text" class="numerical" id="p{{position}}" /><span class="units">{{units}}</span>
+                            {{/ifCond}}
+                                    
+                            {{#ifCond type "==" "symbolic"}}
+                                <input type="text" class="symbolic" id="p{{position}}" />  
+                                <div class="symbolic-render-area" id="render{{position}}"></div>
+                            {{/ifCond}}
+                            
+                            {{#ifCond type "==" "dropdown"}}
+                                <select id="p{{position}}">
+                                {{pushPosition}}
+                                {{#each choices}}
+                                    {{incrementPosition}}
+                                 <option value="{{position}}">{{this}}</option>
+                                {{/each}}
+                                {{popPosition}}
+                                </select>
+                            {{/ifCond}}
+
+                            {{#ifCond type "!=" "content"}}
+                                </div>
+                            {{/ifCond}}
                         {{/each}}
+                        
+                        
+                        {{popPosition}}
                     </form>
                     {{/each}}
                 </div>
@@ -47,17 +103,68 @@
                 title: "Waves - The Final Frontier",
                 questions: [
                     {
+                        title: "Test Question",
+                        progress: "00",
+                        parts: [
+                            {
+                                type: "content",
+                                content: "This is content-type."
+                            },
+                            {
+                                type: "radio",
+                                choices: [
+                                    "This",
+                                    "is",
+                                    "radio",
+                                    "type."
+                                ]
+                            },
+                            {
+                                type: "checkbox",
+                                choices: [
+                                    "This",
+                                    "is",
+                                    "checkbox",
+                                    "type."
+                                ]
+                            },
+                            {
+                                type: "numerical",
+                                units: "numerical type questions"
+                            },
+                            {
+                                type: "symbolic",
+                                variables: ["a", "b", "theta"]
+                            },
+                            {
+                                type: "dropdown",
+                                choices: [
+                                    "This",
+                                    "is",
+                                    "dropdown",
+                                    "type."
+                                ]
+                            }
+                        ]
+                    },
+                    {
                         title: "The Only Question",
                         progress: "02",
                         parts: [
-                            {content: "This is the only part"}
+                            {
+                                type: "content",
+                                content: "This is the only part"
+                            }
                         ]
                     },
                     {
                         title: "No It's Not",
                         progress: "05",
                         parts: [
-                            {content: "Haha sucka"}
+                            {
+                                type: "content",
+                                content: "Haha sucka"
+                            }
                         ]
                     }
                 ]
@@ -103,19 +210,73 @@
             
             $(document).ready(function(){
                 var positionCounter = 0;
+                var positionStack = []
                 
-                Handlebars.registerHelper('position', function() {
+                Handlebars.registerHelper("position", function(){
                     return pad(positionCounter, 3);
                 });
                 
-                Handlebars.registerHelper('incrementPosition', function() {
+                Handlebars.registerHelper("incrementPosition", function(){
                     positionCounter++;
                     return "";
                 });
                 
-                Handlebars.registerHelper('resetPosition', function() {
+                Handlebars.registerHelper("resetPosition", function(){
                     positionCounter = 0;
                     return "";
+                });
+                
+                Handlebars.registerHelper("pushPosition", function(){
+                    positionStack.push(positionCounter);
+                    positionCounter = 0;
+                    return "";
+                });
+                
+                Handlebars.registerHelper("popPosition", function(){
+                    positionCounter = positionStack.pop();
+                    return "";
+                });
+                
+                Handlebars.registerHelper("swapPosition", function(){
+                    temp = positionStack.pop();
+                    positionStack.push(positionCounter);
+                    positionCounter = temp;
+                    return "";
+                });
+                
+                Handlebars.registerHelper("eq", function(a, b){
+                    console.log("called on", a, b);
+                    return a == b;
+                });
+                
+                Handlebars.registerHelper("log", function(){
+                    console.log("!!!");
+                    return "";
+                });
+                
+                Handlebars.registerHelper('ifCond', function (v1, operator, v2, options){
+                    switch (operator){
+                        case '==':
+                            return (v1 == v2) ? options.fn(this) : options.inverse(this);
+                        case '!=':
+                            return (v1 != v2) ? options.fn(this) : options.inverse(this);
+                        case '===':
+                            return (v1 === v2) ? options.fn(this) : options.inverse(this);
+                        case '<':
+                            return (v1 < v2) ? options.fn(this) : options.inverse(this);
+                        case '<=':
+                            return (v1 <= v2) ? options.fn(this) : options.inverse(this);
+                        case '>':
+                            return (v1 > v2) ? options.fn(this) : options.inverse(this);
+                        case '>=':
+                            return (v1 >= v2) ? options.fn(this) : options.inverse(this);
+                        case '&&':
+                            return (v1 && v2) ? options.fn(this) : options.inverse(this);
+                        case '||':
+                            return (v1 || v2) ? options.fn(this) : options.inverse(this);
+                        default:
+                            return options.inverse(this);
+                    }
                 });
                 
                 var out = $("body");
@@ -128,6 +289,16 @@
                 
                 $(".question-select").click(function(e){
                     changeQuestion($(this).attr("id"));
+                });
+                
+                MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+                
+                $(".symbolic").bind("change keydown keyup", function(e){
+                    console.log("yes");
+                    renderId = "render" + $(this).attr("id").substring(1);
+                    rendered = inputToLatex($(this).val(), ["a"]);
+                    $("#" + renderId).html("\\[" + rendered.latexString + "\\]");
+                    MathJax.Hub.Queue(["Typeset", MathJax.Hub, renderId]);
                 });
             });
             

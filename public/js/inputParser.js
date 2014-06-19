@@ -167,7 +167,7 @@ var inputToLatex = function(input, variables){
     parse(arr);
     
     return {
-        latexString: "$$" + arr.join(" ") + "$$",
+        latexString: arr.join(" "),
         errors: err
     };
 }

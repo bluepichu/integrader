@@ -32,6 +32,7 @@ body {
     background: #F2F2F2;
     margin: 0px 0px 0px calc(50% - 450px);
     width: calc(50% + 450px);
+    overflow-x: hidden;
 }
 
 .main-area {
@@ -354,6 +355,7 @@ div.course-listing a:link {
 
 div.answer-area {
     padding: 16px;
+    margin: 16px 0px;
     background: #F6F6F6;
     font-size: 14px;
 }
@@ -365,8 +367,12 @@ input[type="checkbox"] {
     margin-right: 4px;
 }
 
-input[type="text"] {
+input[type="text"].numerical {
     width: 120px;
+}
+
+input[type="text"].symbolic {
+    width: 360px;
 }
 
 input,
@@ -383,6 +389,14 @@ textarea {
 
 .question-container:not(:first-child) {
     display: none;
+}
+
+.units {
+    padding: 0px 8px;
+}
+
+.symbolic-render-area {
+    padding: 16px 0px 8px;
 }
 
 /*     FONTS     */
