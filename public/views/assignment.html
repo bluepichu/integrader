@@ -12,12 +12,18 @@
             <header>
                 <a href="/"><div class="button logo"></div></a>
                 <div class="button-area">
+                    {{#if user}}
+                    <span class="greeting">Hello, <span class="username">{{user}}</span></span>
+                    {{else}}
+                    <span class="greeting">Not logged in &middot; <a href="/login">Login</a></span>
+                    {{/if}}
                     <div class="button button-settings"></div>
                     <a href="/"><div class="button button-home"></div></a>
                 </div>
             </header>
             <div class="main-area">
                 <div class="sidebar">
+                    {{#if user}}
                     <h2 class="sidebar-header">{{title}}</h2>
                     <ol class="questions">
                         {{#each questions}}
@@ -25,9 +31,11 @@
                         <li class="clickable question-select" id="{{position}}"><div class="progress progress-{{progress}}" id="prog{{position}}"></div>{{title}}</li>
                         {{/each}}
                     </ol>
+                    {{/if}}
                 </div>
                 {{resetPosition}}
                 <div class="content-main">
+                    {{#if user}}
                     {{#each questions}}
                     {{incrementPosition}}
                     <form class="question-container" id="q{{position}}">
@@ -92,6 +100,9 @@
                         {{popPosition}}
                     </form>
                     {{/each}}
+                    {{else}}
+                    <p><a href="/login">Login</a> to complete assignments.</p>
+                    {{/if}}
                 </div>
             </div>
         </script>
@@ -100,6 +111,7 @@
             // TEMPORARY
             
             var data = {
+                //user: "Matthew",
                 title: "Waves - The Final Frontier",
                 questions: [
                     {

@@ -75,6 +75,10 @@ h2 {
     text-decoration-color: #DD4B39 !important;
 }
 
+a:not(.no-link) {
+    color: #0000EE;
+}
+
 a:link {
     text-decoration: none;
 }
