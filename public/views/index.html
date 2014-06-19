@@ -10,12 +10,18 @@
             <header>
                 <a href="/"><div class="button logo"></div></a>
                 <div class="button-area">
+                    {{#if user}}
+                    <span class="greeting">Hello, <span class="username">{{user}}</span></span>
+                    {{else}}
+                    <span class="greeting">Not logged in &middot; <a href="/login">Login</a></span>
+                    {{/if}}
                     <div class="button button-settings"></div>
                     <a href="/"><div class="button button-home"></div></a>
                 </div>
             </header>
             <div class="main-area">
                 <div class="sidebar">
+                    {{#if user}}
                     <h2 class="sidebar-header">Upcoming Assignments</h2>
                     <ul class="upcoming">
                         {{#each dates}}
@@ -35,22 +41,29 @@
                         </li>
                         {{/each}}
                     </ul>
+                    {{else}}
+                    <p><a href="/login">Login</a> to view upcoming assignments.</p>
+                    {{/if}}
                 </div>
                 <div class="content-main">
-                    <h2>Courses</h2>
-                    {{#if courses.length}}
-                    {{#each courses}}
-                    <div class="course-listing">
-                        <h3 class="course-title">{{title}}</h3>
-                        <h4 class="teacher">{{instructor}}</h4><br />
-                        <a href="/ap-physics-c" class="highlight">
-                            <span class="upcoming-count highlight">{{upcoming}} Upcoming Assignments &raquo;</span>
-                        </a>
-                        <span class="upcoming-next">Next due today (needs fixing)</span>
-                    </div>
-                    {{/each}}
+                    {{#if user}}
+                        <h2>Courses</h2>
+                        {{#if courses.length}}
+                        {{#each courses}}
+                        <div class="course-listing">
+                            <h3 class="course-title">{{title}}</h3>
+                            <h4 class="teacher">{{instructor}}</h4><br />
+                            <a href="/ap-physics-c" class="highlight">
+                                <span class="upcoming-count highlight">{{upcoming}} Upcoming Assignments &raquo;</span>
+                            </a>
+                            <span class="upcoming-next">Next due today (needs fixing)</span>
+                        </div>
+                        {{/each}}
+                        {{else}}
+                        <p>No courses to display.</p>
+                        {{/if}}
                     {{else}}
-                    <p>No courses to display.</p>
+                        <p>Insert something here.</p>
                     {{/if}}
                 </div>
             </div>
