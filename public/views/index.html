@@ -32,7 +32,7 @@
                                 <a href="{{path}}" class="no-link">
                                     <li class="clickable">
                                         <div class="progress micro progress-{{progress}}"></div>
-                                        <span class="title">{{title}}</span>
+                                        <span class="title {{#ifCond progress '==' 12}}completed{{/ifCond}}">{{title}}</span>
                                         <span class="subtitle">{{course}}</span>
                                     </li>
                                 </a>
@@ -76,20 +76,21 @@
             // TEMPORARY
             
             var data = {
+                user: "Matthew",
                 dates: [
                     {
-                        date: "2014-06-17",
+                        date: "2014-06-20",
                         assignments: [
                             {
                                 path: "/",
-                                progress: "00",
+                                progress: "12",
                                 title: "Waves: The Final Frontier",
                                 course: "AP Physics C"
                             }
                         ]
                     },
                     {
-                        date: "2014-06-18",
+                        date: "2014-06-21",
                         assignments: [
                             {
                                 path: "/",
@@ -106,7 +107,7 @@
                         ]
                     },
                     {
-                        date: "2014-06-19",
+                        date: "2014-06-22",
                         assignments: [
                             {
                                 path: "/",
@@ -210,6 +211,31 @@
                         return "<span class='title'>" + monthNames[date.getMonth()] + " " + date.getDate() + "</span>";
                     }
                 });
+
+                Handlebars.registerHelper('ifCond', function (v1, operator, v2, options){
+                        switch (operator){
+                            case '==':
+                                return (v1 == v2) ? options.fn(this) : options.inverse(this);
+                            case '!=':
+                                return (v1 != v2) ? options.fn(this) : options.inverse(this);
+                            case '===':
+                                return (v1 === v2) ? options.fn(this) : options.inverse(this);
+                            case '<':
+                                return (v1 < v2) ? options.fn(this) : options.inverse(this);
+                            case '<=':
+                                return (v1 <= v2) ? options.fn(this) : options.inverse(this);
+                            case '>':
+                                return (v1 > v2) ? options.fn(this) : options.inverse(this);
+                            case '>=':
+                                return (v1 >= v2) ? options.fn(this) : options.inverse(this);
+                            case '&&':
+                                return (v1 && v2) ? options.fn(this) : options.inverse(this);
+                            case '||':
+                                return (v1 || v2) ? options.fn(this) : options.inverse(this);
+                            default:
+                                return options.inverse(this);
+                        }
+                    });
                 
                 var out = $("body");
                 var src = $("#template").html();

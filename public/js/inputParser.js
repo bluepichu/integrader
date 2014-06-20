@@ -50,7 +50,7 @@ var inputToLatex = function(input, variables){
 
 	for(var i = 0; i < arr.length; i++){
 		for(var k in replacements){
-			console.log("     " + "." + arr[i].substring(0, k.length + 1) + ".", "." + k + ".")
+			//console.log("     " + "." + arr[i].substring(0, k.length + 1) + ".", "." + k + ".")
 			if(arr[i].substring(0, k.length + 1) == k){
 				console.log("yes");
 				arr[i] = replacements[k] + arr[i].substring(k.length);
@@ -115,8 +115,8 @@ var inputToLatex = function(input, variables){
     
     for(var i = 0; i < arr.length; i++){
         if(seps.indexOf(arr[i]) == -1 && variables.indexOf(arr[i]) == -1 && isNaN(arr[i]) && !(i > 0 && arr[i-1] == "log" && arr[i].charAt(0) == "_")){
-            err.push("Unknown variable error: \"" + arr[i] + "\" is not a variable given in the problem.");
-            arr[i] = "\\textcolor{red}{" + arr[i] + "}"
+            err.push("Unknown variable error: \\(" + arr[i] + "\\) is not a variable given in the problem.");
+            arr[i] = "\\textcolor{err}{" + arr[i] + "}"
         }
     }
     
@@ -139,11 +139,11 @@ var inputToLatex = function(input, variables){
                         arr[i] = ["\\left\\{"].concat(arr[i]).concat(["\\right\\}"]);
                     }
                 } else {
-                    err.push("Mismatched paren error: \"" + arr[i] + "\" has no matching left paren.");
+                    err.push("Mismatched paren error: \\(" + arr[i] + "\\) has no matching left paren.");
                     if(rightParens[index] != "}"){
-                        arr[i] = "\\textcolor{red}{" + rightParens[index] + "}";
+                        arr[i] = "\\textcolor{err}{" + rightParens[index] + "}";
                     } else {
-                        arr[i] = "\\textcolor{red}{\\}}";
+                        arr[i] = "\\textcolor{err}{\\}}";
                     }
                 }
             }
@@ -152,11 +152,11 @@ var inputToLatex = function(input, variables){
     
     while(parenStack.length > 0){
         info = parenStack.pop();
-        err.push("Mismatched paren error: \"" + leftParens[info[0]] + "\" has no matching right paren.");
+        err.push("Mismatched paren error: \\(" + leftParens[info[0]] + "\\) has no matching right paren.");
         if(leftParens[info[0]] != "{"){
-            arr[info[1]] = "\\textcolor{red}{" + leftParens[info[0]] + "}";
+            arr[info[1]] = "\\textcolor{err}{" + leftParens[info[0]] + "}";
         } else {
-            arr[info[1]] = "\\textcolor{red}{\\{}";
+            arr[info[1]] = "\\textcolor{err}{\\{}";
         }
     }
     
@@ -189,7 +189,7 @@ var parse = function(arr){
                 arr.splice(i, 2, arr.slice(i, i+2));
             } else {
                 err.push("Missing argument error: \"" + arr[i] + "\" requires an argument but none is given.");
-                arr[i] = ["\\textcolor{red}{", arr[i], "}"];
+                arr[i] = ["\\textcolor{err}{", arr[i], "}"];
             }
         }
     }

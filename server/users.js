@@ -97,7 +97,8 @@ var genTestCourse = function() {
                     },
                     {
                         type: "image",
-				        url: "<img src='https://dl.dropboxusercontent.com/u/3889893/sample2.gif' width=300 />"
+				        url: "https://dl.dropboxusercontent.com/u/3889893/sample2.gif"
+                    },
 					{
                         type: "content",
 						content: "Find the induced EMF in the circuit.",
