@@ -30,7 +30,8 @@ var pages = {
 //URL's that require a login to access. This is just for user-experience, the actual security is done when the user goes to access something
 var rest = [
 	//"views/assignment.html",
-	//"courses"
+	"courses",
+    "userinfo"
 ]
 
 //This function creates the server and handles data from req[uests] and pipes them into the res[ponse].
@@ -77,7 +78,17 @@ http.createServer(function(req,res) {
 								res.end();
 							}
 						})
-					} else {
+					} else if(url == "userinfo"){
+                        users.getUserData(cookies.username, cookies.auth, function(err,data) {
+							if (data) {
+								console.log(">>>>>>>>> "+data.courses);
+								res.write(JSON.stringify(data));
+                                res.end();
+							} else {
+								res.end();
+							}
+						})
+                    } else {
 
 						//In most cases, it can just get the file
 						getFile(url, {}, function(data) {

@@ -44,6 +44,7 @@ var createUser = function(name,email,username,pass,ipaddress,cb) {
 var genTestCourse = function() {
 	var a = {
 		title: "Feesiks",
+        instructor: "Sholla, Stephen R",
 		UID : 1,	
 		assignments: [{
 			title: "Various Practice Problems",
@@ -51,19 +52,33 @@ var genTestCourse = function() {
 			questions: [
 			{
 				title: "Railgun (Tipler6 28.P.041)",
-				content: [
-					"In the figure below, the rod has a mass \\(m\\) and a resistance \\(R\\).  The rails are horizontal, frictionless, and have negligible resistances.  The distance between the rails is \\(l\\).  An ideal battery that has an emf \\(E\\) is connected between points \\(a\\) and \\(b\\) so that the current in the rod is downward.  The rod is released at \\(t = 0\\).",
-					"<img src='https://dl.dropboxusercontent.com/u/3889893/sample1.gif' width=300 />",
+                progress: "00",
+				parts: [
+                    {
+                        type: "content",
+                        content: "In the figure below, the rod has a mass \\(m\\) and a resistance \\(R\\).  The rails are horizontal, frictionless, and have negligible resistances.  The distance between the rails is \\(l\\).  An ideal battery that has an emf \\(E\\) is connected between points \\(a\\) and \\(b\\) so that the current in the rod is downward.  The rod is released at \\(t = 0\\)."
+                    },
+                    {
+                        type: "image",
+                        url: "https://dl.dropboxusercontent.com/u/3889893/sample1.gif",
+                        width: 300
+                    },
+                    {
+                        type: "content",
+                        content: "Derive an expression for the force on the rod as a function of the speed.  (Use the following as necessary: \\(B, R, v, l, E\\).)",
+                    },
 					{
-						text: "Derive an expression for the force on the rod as a function of the speed.  (Use the following as necessary: \\(B, R, v, l, E\\).)",
 						type: "symbolic",
 						variables: ["B", "R", "v", "l", "E"],
 						range: [[1,2],[1,2],[1,2],[1,2],[1,2]],
 						steps: 3,
 						answer: "l*B/R*(E-B*l*v)"
 					},
+                    {
+                        type: "content",
+                        content: "Find an expression for the terminal speed of the rod.  (Use the following as necessary: \\(B, l, E\\).)"
+                    },
 					{
-						text: "Find an expression for the terminal speed of the rod.  (Use the following as necessary: \\(B, l, E\\).)",
 						type: "symbolic",
 						variables: ["B", "l", "E"],
 						range: [[1,2],[1,2],[1,2]],
@@ -74,22 +89,39 @@ var genTestCourse = function() {
 			},
 			{
 				title: "Eddy Currents (Tipler6 26.P.038)",
+                progress: "00",
 				content: [
-					"In the figure below, let \\(B = .8 \\mathrm{T}\\), \\(v = 11.0 \\mathrm{m/s}\\), \\(l = 22 \\mathrm{cm}\\), and \\(R = 2 \\mathrm{\\Omega}\\).",
-					"<img src='https://dl.dropboxusercontent.com/u/3889893/sample2.gif' width=300 />",
+                    {
+                        type: "content",
+                        content: "In the figure below, let \\(B = .8 \\mathrm{T}\\), \\(v = 11.0 \\mathrm{m/s}\\), \\(l = 22 \\mathrm{cm}\\), and \\(R = 2 \\mathrm{\\Omega}\\)."
+                    },
+                    {
+                        type: "image",
+				        url: "<img src='https://dl.dropboxusercontent.com/u/3889893/sample2.gif' width=300 />"
 					{
-						text: "Find the induced EMF in the circuit.",
-						type: "input",
-						answer: "2"
+                        type: "content",
+						content: "Find the induced EMF in the circuit.",
 					},
+                    {
+                        type: "numerical",
+                        units: "V",
+                        answer: "2"
+                    },
 					{
-						text: "Find the current in the circuit.",
-						type: "input",
+                        type: "content",
+						content: "Find the current in the circuit."
+                    },
+                    {
+						type: "numerical",
+                        units: "A",
 						answer: "1",
 					},
 					{
-						text: "In what direction is the current flowing?",
-						type: "select",
+                        type: "content",
+						text: "In what direction is the current flowing?"
+                    },
+                    {
+						type: "radio",
 						options: [
 							"clockwise",
 							"counterclockwise"

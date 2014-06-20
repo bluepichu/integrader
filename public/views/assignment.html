@@ -50,10 +50,15 @@
                             {{#ifCond type "==" "content"}}
                                 <p>{{content}}</p>
                             {{else}}
-                                <div class="answer-area">
-                            {{/ifCond}}
- 
-                            {{#ifCond type "==" "radio"}}
+                                {{#ifCond type "==" "video"}}
+                                    <iframe width="560" height="315" src="//www.youtube.com/embed/{{url}}" frameborder="0" allowfullscreen></iframe>
+                                {{else}}
+                                    {{#ifCond type "==" "image"}}
+                                        <img src="{{url}}" {{#if width}}width="{{width}}"{{/if}}/>
+                                    {{else}}
+                                        <div class="answer-area">
+                                            
+                                            {{#ifCond type "==" "radio"}}
                                 {{pushPosition}}
                                 {{#each choices}}
                                     {{incrementPosition}}
@@ -76,6 +81,9 @@
                             {{/ifCond}}
                                     
                             {{#ifCond type "==" "symbolic"}}
+                                <div class="variable-list">
+                                    {{{listVariables variables}}}
+                                </div>
                                 <input type="text" class="symbolic" id="p{{position}}" />  
                                 <div class="symbolic-render-area" id="render{{position}}"></div>
                             {{/ifCond}}
@@ -90,10 +98,11 @@
                                 {{popPosition}}
                                 </select>
                             {{/ifCond}}
-
-                            {{#ifCond type "!=" "content"}}
                                 </div>
+                                    {{/ifCond}}
+                                {{/ifCond}}
                             {{/ifCond}}
+ 
                         {{/each}}
                         
                         
@@ -105,13 +114,16 @@
                     {{/if}}
                 </div>
             </div>
+            <div class="hidden">
+                \(\require{color}\)
+            </div>
         </script>
         
         <script type="text/javascript">
             // TEMPORARY
-            
+            /*
             var data = {
-                //user: "Matthew",
+                user: "Matthew",
                 title: "Waves - The Final Frontier",
                 questions: [
                     {
@@ -156,6 +168,18 @@
                                     "dropdown",
                                     "type."
                                 ]
+                            },
+                            {
+                                type: "content",
+                                content: "The following is a cute image of a kitten for testing purposes ONLY.  Any futher acknoledgement of the kitten's cuteness should be strictly avoided."
+                            },
+                            {
+                                type: "image",
+                                url: "http://takeinsocialmedia.com/wp-content/uploads/2014/02/cute-kitten-images-photos-0223204033.jpg"
+                            },
+                            {
+                                type: "video",
+                                url: "1-IKTtw335k"
                             }
                         ]
                     },
@@ -181,6 +205,97 @@
                     }
                 ]
             };
+            */
+            
+            var data = {
+            user: "Matthew",
+			title: "Various Practice Problems",
+			UID : 1,
+			questions: [
+			{
+				title: "Railgun (Tipler6 28.P.041)",
+                progress: "00",
+				parts: [
+                    {
+                        type: "content",
+                        content: "In the figure below, the rod has a mass \\(m\\) and a resistance \\(R\\).  The rails are horizontal, frictionless, and have negligible resistances.  The distance between the rails is \\(l\\).  An ideal battery that has an emf \\(E\\) is connected between points \\(a\\) and \\(b\\) so that the current in the rod is downward.  The rod is released at \\(t = 0\\)."
+                    },
+                    {
+                        type: "image",
+                        url: "https://dl.dropboxusercontent.com/u/3889893/sample1.gif",
+                        width: 300
+                    },
+                    {
+                        type: "content",
+                        content: "Derive an expression for the force on the rod as a function of the speed.",
+                    },
+					{
+						type: "symbolic",
+						variables: ["B", "R", "v", "l", "E"],
+						range: [[1,2],[1,2],[1,2],[1,2],[1,2]],
+						steps: 3,
+						answer: "l*B/R*(E-B*l*v)"
+					},
+                    {
+                        type: "content",
+                        content: "Find an expression for the terminal speed of the rod."
+                    },
+					{
+						type: "symbolic",
+						variables: ["B", "l", "E"],
+						range: [[1,2],[1,2],[1,2]],
+						steps: 3,
+						answer: "E/(b*l)"
+					}
+				]
+			},
+			{
+				title: "Eddy Currents (Tipler6 26.P.038)",
+                progress: "00",
+				parts: [
+                    {
+                        type: "content",
+                        content: "In the figure below, let \\(B = .8 \\mathrm{T}\\), \\(v = 11.0 \\mathrm{m/s}\\), \\(l = 22 \\mathrm{cm}\\), and \\(R = 2 \\mathrm{\\Omega}\\)."
+                    },
+                    {
+                        type: "image",
+				        url: "https://dl.dropboxusercontent.com/u/3889893/sample2.gif",
+                        width: 300
+                    },
+					{
+                        type: "content",
+						content: "Find the induced EMF in the circuit.",
+					},
+                    {
+                        type: "numerical",
+                        units: "V",
+                        answer: "2"
+                    },
+					{
+                        type: "content",
+						content: "Find the current in the circuit."
+                    },
+                    {
+						type: "numerical",
+                        units: "A",
+						answer: "1",
+					},
+					{
+                        type: "content",
+						content: "In what direction is the current flowing?"
+                    },
+                    {
+						type: "radio",
+						choices: [
+							"clockwise",
+							"counterclockwise"
+						],
+						answer: "1"
+					}
+				]
+			}
+			]
+		}
         </script>
         
         <script type="text/javascript">            
@@ -221,97 +336,133 @@
             }
             
             $(document).ready(function(){
-                var positionCounter = 0;
-                var positionStack = []
+                //var req = new XMLHttpRequest();
+                //req.onload = function(){
+                    //console.log(this.responseText);
+                    //return;
+                    var positionCounter = 0;
+                    var positionStack = []
+
+                    Handlebars.registerHelper("position", function(){
+                        return pad(positionCounter, 3);
+                    });
+
+                    Handlebars.registerHelper("incrementPosition", function(){
+                        positionCounter++;
+                        return "";
+                    });
+
+                    Handlebars.registerHelper("resetPosition", function(){
+                        positionCounter = 0;
+                        return "";
+                    });
+
+                    Handlebars.registerHelper("pushPosition", function(){
+                        positionStack.push(positionCounter);
+                        positionCounter = 0;
+                        return "";
+                    });
+
+                    Handlebars.registerHelper("popPosition", function(){
+                        positionCounter = positionStack.pop();
+                        return "";
+                    });
+
+                    Handlebars.registerHelper("swapPosition", function(){
+                        temp = positionStack.pop();
+                        positionStack.push(positionCounter);
+                        positionCounter = temp;
+                        return "";
+                    });
+
+                    Handlebars.registerHelper("eq", function(a, b){
+                        console.log("called on", a, b);
+                        return a == b;
+                    });
+
+                    Handlebars.registerHelper("log", function(){
+                        console.log("!!!");
+                        return "";
+                    });
+
+                    Handlebars.registerHelper('ifCond', function (v1, operator, v2, options){
+                        switch (operator){
+                            case '==':
+                                return (v1 == v2) ? options.fn(this) : options.inverse(this);
+                            case '!=':
+                                return (v1 != v2) ? options.fn(this) : options.inverse(this);
+                            case '===':
+                                return (v1 === v2) ? options.fn(this) : options.inverse(this);
+                            case '<':
+                                return (v1 < v2) ? options.fn(this) : options.inverse(this);
+                            case '<=':
+                                return (v1 <= v2) ? options.fn(this) : options.inverse(this);
+                            case '>':
+                                return (v1 > v2) ? options.fn(this) : options.inverse(this);
+                            case '>=':
+                                return (v1 >= v2) ? options.fn(this) : options.inverse(this);
+                            case '&&':
+                                return (v1 && v2) ? options.fn(this) : options.inverse(this);
+                            case '||':
+                                return (v1 || v2) ? options.fn(this) : options.inverse(this);
+                            default:
+                                return options.inverse(this);
+                        }
+                    });
                 
-                Handlebars.registerHelper("position", function(){
-                    return pad(positionCounter, 3);
-                });
+                    Handlebars.registerHelper("listVariables", function(variables){
+                        if(variables.length == 0){
+                            return "<div class='hidden' id='variable-storage'></div>";
+                        }
+                        ret = "Use the following variables as necessary: ";
+                        hidden = "<div class='hidden' id='variable-storage'>";
+                        for(i = 0; i < variables.length; i++){
+                            ret += "\\(" + variables[i] + "\\)";
+                            hidden += "<span class='variable'>" + variables[i] + "</span>";
+                            if(i < variables.length-1){
+                                ret += ", ";
+                            }
+                        }
+                        return ret + hidden + "</div>";
+                    });
+
+                    var out = $("body");
+                    var src = $("#template").html();
+
+                    var template = Handlebars.compile(src);
+                    var html = template(data);
+
+                    out.html(html);
+
+                    $(".question-select").click(function(e){
+                        changeQuestion($(this).attr("id"));
+                    });
+
+                    MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+
+                    $(".symbolic").bind("change keydown keyup", function(e){
+                        console.log("yes");
+                        renderId = "render" + $(this).attr("id").substring(1);
+                        
+                        if(this.variables === undefined){
+                            var varList = [];
+                            variables = $(this).parent().children(".variable-list").children("#variable-storage").children(".variable").each(function(n, el){
+                                varList.push($(el).text());
+                            });
+
+                            this.variables = varList;
+                        }
+                        
+                        console.log("VARLIST", this.variables);
+                        
+                        rendered = inputToLatex($(this).val(), this.variables);
+                        $("#" + renderId).html("\\[" + rendered.latexString + "\\]");
+                        MathJax.Hub.Queue(["Typeset", MathJax.Hub, renderId]);
+                    });
+               // }
                 
-                Handlebars.registerHelper("incrementPosition", function(){
-                    positionCounter++;
-                    return "";
-                });
-                
-                Handlebars.registerHelper("resetPosition", function(){
-                    positionCounter = 0;
-                    return "";
-                });
-                
-                Handlebars.registerHelper("pushPosition", function(){
-                    positionStack.push(positionCounter);
-                    positionCounter = 0;
-                    return "";
-                });
-                
-                Handlebars.registerHelper("popPosition", function(){
-                    positionCounter = positionStack.pop();
-                    return "";
-                });
-                
-                Handlebars.registerHelper("swapPosition", function(){
-                    temp = positionStack.pop();
-                    positionStack.push(positionCounter);
-                    positionCounter = temp;
-                    return "";
-                });
-                
-                Handlebars.registerHelper("eq", function(a, b){
-                    console.log("called on", a, b);
-                    return a == b;
-                });
-                
-                Handlebars.registerHelper("log", function(){
-                    console.log("!!!");
-                    return "";
-                });
-                
-                Handlebars.registerHelper('ifCond', function (v1, operator, v2, options){
-                    switch (operator){
-                        case '==':
-                            return (v1 == v2) ? options.fn(this) : options.inverse(this);
-                        case '!=':
-                            return (v1 != v2) ? options.fn(this) : options.inverse(this);
-                        case '===':
-                            return (v1 === v2) ? options.fn(this) : options.inverse(this);
-                        case '<':
-                            return (v1 < v2) ? options.fn(this) : options.inverse(this);
-                        case '<=':
-                            return (v1 <= v2) ? options.fn(this) : options.inverse(this);
-                        case '>':
-                            return (v1 > v2) ? options.fn(this) : options.inverse(this);
-                        case '>=':
-                            return (v1 >= v2) ? options.fn(this) : options.inverse(this);
-                        case '&&':
-                            return (v1 && v2) ? options.fn(this) : options.inverse(this);
-                        case '||':
-                            return (v1 || v2) ? options.fn(this) : options.inverse(this);
-                        default:
-                            return options.inverse(this);
-                    }
-                });
-                
-                var out = $("body");
-                var src = $("#template").html();
-                
-                var template = Handlebars.compile(src);
-                var html = template(data);
-                
-                out.html(html);
-                
-                $(".question-select").click(function(e){
-                    changeQuestion($(this).attr("id"));
-                });
-                
-                MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
-                
-                $(".symbolic").bind("change keydown keyup", function(e){
-                    console.log("yes");
-                    renderId = "render" + $(this).attr("id").substring(1);
-                    rendered = inputToLatex($(this).val(), ["a"]);
-                    $("#" + renderId).html("\\[" + rendered.latexString + "\\]");
-                    MathJax.Hub.Queue(["Typeset", MathJax.Hub, renderId]);
-                });
+                //req.open("get", "/courses", true);
+                //req.send();
             });
             
         </script>

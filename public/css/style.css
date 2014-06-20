@@ -196,6 +196,25 @@ span.subtitle {
     background: #FCFCFC;
 }
 
+img {
+    max-width: 100%;
+    padding: 8px;
+    margin: 0px auto;
+    display: block;
+}
+
+p {
+    text-align: justify;
+}
+
+iframe {
+    margin: 8px auto;
+}
+
+.hidden {
+    display: none;
+}
+
 /*      HEADER     */
 
 header {
@@ -407,6 +426,10 @@ textarea {
 
 .symbolic-render-area {
     padding: 16px 0px 8px;
+}
+
+.variable-list {
+    padding-bottom: 8px;
 }
 
 /* REGISTER */
