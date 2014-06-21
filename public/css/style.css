@@ -460,13 +460,14 @@ input[type="submit"] {
     margin: 16px 0px 16px 152px;
 }
 
-.register input[type="text"] {
+.register input[type="text"],
+.register input[type="password"] {
     width: 200px;
     margin: 4px;
 }
 
 .register input[type="text"].name {
-    width: 98px;
+    width: 96px;
 }
 
 /*     FONTS     */
