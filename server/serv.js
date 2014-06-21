@@ -34,6 +34,12 @@ var rest = [
     "userinfo"
 ]
 
+//URLs that the client accesses for data.
+var dataPages = [
+    "courses",
+    "userinfo"
+]
+
 //This function creates the server and handles data from req[uests] and pipes them into the res[ponse].
 http.createServer(function(req,res) {
 	var cookies = parseCookie(req.headers.cookie);
@@ -97,9 +103,12 @@ http.createServer(function(req,res) {
 						})
 					}
 				} else {
-
+                    if(dataPages.indexOf(url) >= 0){
+                        res.write("{}");
+                        res.end();
+                    }
 					//If the user is not validly logged in, redirect them to the login page
-					res.writeHead(302, "Redirect", {"Location":"/login"});
+					res.writeHead(302, "Redirect", {"Location":"/index"});
 					res.end();
 				}
 
