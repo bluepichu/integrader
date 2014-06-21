@@ -14,6 +14,10 @@ var part = new Schema({
 		type: String,
 		enum: ['RADIO', 'CHECKBOX', 'NUMERICAL', 'SYMBOLIC', 'DROPDOWN', 'CONTENT', 'VIDEO', 'IMAGE']
 	},
+    content: String,
+    url: String,
+    choices: [String],
+    variables: [String],
 	points: { type: Number, default: 0 },
 	scoring: [Number]
 });
@@ -22,6 +26,7 @@ var Part = mongoose.model('Part', part);
 exports.Part = Part;
 
 var question = new Schema({
+    name: String,
 	parts: [Part]
 });
 
@@ -33,7 +38,10 @@ var assignment = new Schema({
 		type: String,
 		required: true
 	},
-	due: Date,
+	due: {
+        type: Date,
+        required: true
+    },
 	questions: [Question]
 });
 

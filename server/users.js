@@ -1,10 +1,9 @@
-var db = require("mongojs").connect("localhost:27017/integ",["users","courses","testdb"])
-var x = require("./XOR/XOR")
-//var bc = require("bcrypt")
+var db = require("mongojs").connect("localhost:27017/integ",["users","courses","assignments","testdb"]);
+var x = require("./XOR/XOR");
 var cr = require("crypto");
 
 //Creates a user and grants him an authentication token
-var createUser = function(name,email,username,pass,ipaddress,cb) {
+var createUser = function(firstName, lastName, email, username, pass, type, cb) {
 	db.users.find({"data.username":username},function(err, dob) {
 		if (dob.length != 0) {
 			cb(101,"");
@@ -15,134 +14,57 @@ var createUser = function(name,email,username,pass,ipaddress,cb) {
 				cb(102, "");
 				return;
 			}
-			var authToken = x.toB64(x.XOR(username+Math.floor(Math.random()*1000000)+x.toB64(username),ipaddress));
-			//var passHash = bc.hash(pass,4,function(err,hash) {
+			var authToken = x.toB64(x.XOR(username+Math.floor(Math.random()*1000000)+x.toB64(username),"0.1.2.3"));
 			var passHash = cr.createHash("sha256","ascii");
 			passHash.update(pass);
 			user = {
-				"data": {
-					"username": username,
-					"password": passHash.digest("base64"),
-					"email": email,
-					"name":name
-				},
-				"courses":[1,2],
-				"private": {
-					"authToken":[authToken]
-				}
+				"username": username,
+				"password": passHash.digest("base64"),
+				"email": email,
+				"name": {
+                    first: firstName,
+                    last: lastName
+                },
+				"courses":[1],
+                "type": type.toUpperCase()
 			}
 			console.log(user);
 			db.users.save(user);
 			cb(null,authToken);
 			console.log("Specified authToken "+authToken);
-			//})
 		})
 	})
 }
 
-//Bogus method for creating an example course. Used for debugging
-var genTestCourse = function() {
-	var a = {
-		title: "Feesiks",
-        instructor: "Sholla, Stephen R",
-		UID : 1,	
-		assignments: [{
-			title: "Various Practice Problems",
-			UID : 1,
-			questions: [
-			{
-				title: "Railgun (Tipler6 28.P.041)",
-                progress: "00",
-				parts: [
+/*
+var addTestData = function(){
+    createUser("Student", "McLearnerson", "st@ud.ent", "student", "student", "student", function(){});
+    createUser("Instructor", "McTeacherson", "in@struct.or", "instructor", "instructor", "instructor", function(){});
+    
+    db.courses.save({
+        name: "Physics (Test)",
+        instructor: 1, //this should be some other value I think
+        assignments: [0], //this should be some other value I think
+        announcements: []
+    });
+    
+    db.assignments.save({
+        name: "Test Assignment",
+        due: "21-06-2014",
+        questions: [
+            {
+                name: "A Question",
+                parts: [
                     {
-                        type: "content",
-                        content: "In the figure below, the rod has a mass \\(m\\) and a resistance \\(R\\).  The rails are horizontal, frictionless, and have negligible resistances.  The distance between the rails is \\(l\\).  An ideal battery that has an emf \\(E\\) is connected between points \\(a\\) and \\(b\\) so that the current in the rod is downward.  The rod is released at \\(t = 0\\)."
-                    },
-                    {
-                        type: "image",
-                        url: "https://dl.dropboxusercontent.com/u/3889893/sample1.gif",
-                        width: 300
-                    },
-                    {
-                        type: "content",
-                        content: "Derive an expression for the force on the rod as a function of the speed.  (Use the following as necessary: \\(B, R, v, l, E\\).)",
-                    },
-					{
-						type: "symbolic",
-						variables: ["B", "R", "v", "l", "E"],
-						range: [[1,2],[1,2],[1,2],[1,2],[1,2]],
-						steps: 3,
-						answer: "l*B/R*(E-B*l*v)"
-					},
-                    {
-                        type: "content",
-                        content: "Find an expression for the terminal speed of the rod.  (Use the following as necessary: \\(B, l, E\\).)"
-                    },
-					{
-						type: "symbolic",
-						variables: ["B", "l", "E"],
-						range: [[1,2],[1,2],[1,2]],
-						steps: 3,
-						answer: "E/(b*l)"
-					}
-				]
-			},
-			{
-				title: "Eddy Currents (Tipler6 26.P.038)",
-                progress: "00",
-				content: [
-                    {
-                        type: "content",
-                        content: "In the figure below, let \\(B = .8 \\mathrm{T}\\), \\(v = 11.0 \\mathrm{m/s}\\), \\(l = 22 \\mathrm{cm}\\), and \\(R = 2 \\mathrm{\\Omega}\\)."
-                    },
-                    {
-                        type: "image",
-				        url: "<img src='https://dl.dropboxusercontent.com/u/3889893/sample2.gif' width=300 />"
-                    },
-					{
-                        type: "content",
-						content: "Find the induced EMF in the circuit.",
-					},
-                    {
-                        type: "numerical",
-                        units: "V",
-                        answer: "2"
-                    },
-					{
-                        type: "content",
-						content: "Find the current in the circuit."
-                    },
-                    {
-						type: "numerical",
-                        units: "A",
-						answer: "1",
-					},
-					{
-                        type: "content",
-						text: "In what direction is the current flowing?"
-                    },
-                    {
-						type: "radio",
-						options: [
-							"clockwise",
-							"counterclockwise"
-						],
-						answer: "1"
-					}
-				]
-			}
-			]
-		}]
-	}
-	db.courses.save(a);
+                        type: "CONTENT",
+                        contet: "This is a test.  A what?  A test."
+                    }
+                ]
+            }
+        ]
+    });
 }
-
-//Makes sure it doesn't add the test course multiple times
-db.courses.find({"UID":1},function(err, dob) {
-	if (dob.length == 0) {
-		genTestCourse();
-	}
-})
+*/
 
 //Checks to see if a username/authToken pair is valid
 var isValid = function(username, authToken, cb) {
@@ -157,7 +79,7 @@ var isValid = function(username, authToken, cb) {
 
 //gets all courses associated with a course UID
 var getCourses = function(uids,cb) {
-	db.courses.find({"UID":{$in:uids}},function(err, dob) {
+	db.courses.find({"_id":{$in:uids}},function(err, dob) {
 		console.log(dob)
 		cb(dob);
 	})
@@ -211,40 +133,37 @@ var getUserData = function(username,authToken,cb) {
 }
 
 //Checks a username with the password hash and if it is valid, grants an authentication token
-var authUser = function(username,pass,ipaddress, cb) {
+var authUser = function(username,pass,cb) {
 	console.log ("Looking for "+username);
-	db.users.find({"data.username":username},function(err,dob) {
+	db.users.find({"username":username},function(err,dob) {
 		if (dob.length == 0) {
 			cb(201); 
 			return
 		}
-		//bc.compare(pass, dob[0].data.password ,function(err, res) {
 		var passHash = cr.createHash("sha256","ascii");
 		passHash.update(pass);
 
-		if (dob[0].data.password == passHash.digest("base64")) {
-			var authToken = x.toB64(x.XOR(username+Math.floor(Math.random()*1000000)+x.toB64(username),ipaddress));
+		if (dob[0].password == passHash.digest("base64")) {
+			var authToken = x.toB64(x.XOR(username+Math.floor(Math.random()*1000000)+x.toB64(username),"0.1.2.3"));
 			db.users.update({"_id":dob[0]._id}, {"$push":{"private.authToken":authToken}},function() {
 				if (cb) {
 					cb(null,authToken);
 				}
 			})
 		} else {
+            console.log("not found.");
 			cb(202,"");
 		}
 		//})
 	})
 }
 
-//Specifies the functions to be exported as a node module
 module.exports = {
-	"getUserData": getUserData,
-	"authUser": authUser,
-	"updateUser": updateUser,
-	"endSession": endSession,
-	"createUser": createUser,
-	"isValid": isValid,
-	"getCourses": getCourses,
-
+    "createUser": createUser,
+    "isValid": isValid,
+    "getCourses": getCourses,
+    "endSession": endSession,
+    "updateUser": updateUser,
+    "getUserData": getUserData,
+    "authUser": authUser
 }
-

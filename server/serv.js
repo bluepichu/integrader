@@ -8,30 +8,22 @@ var querystring = require('querystring');
 
 var persist = require("./persist");
 
-var siva = new persist.User({
-	name: {
-		first: "Siva",
-		last: "Somayyajula"
-	},
-	username: "sivawashere",
-	pwd: "testing",
-	email: "siva.somayyajula@gmail.com",
-	type: "STUDENT"
-});
-
-console.log(siva);
-
 //sg is our symbolic grader module
 var sg = require("./symGrader");
 
 //Users represents the interface with a Mongo no-sql database
 var users = require("./users");
-var args = process.argv
+var args = process.argv;
 
 //Command-Line Options
 if (args[2] && ( args[2] == "-h" || args[2] == "--help") ) {
 	console.log("Usage servjs [port] [index file]")
 	return
+}
+
+if(args[2] && (args[2] == "-t" || args[2] == "--test")){
+    users.addTestData();
+    return
 }
 
 //Aliases for webpages. I.E. instead of http://localhost/views/login.html, you can do http://localhost/login
@@ -159,7 +151,7 @@ http.createServer(function(req,res) {
 			if (req.url === "/login") {
 
 				//Authenticates the user using our database module
-				users.authUser(dec.username,dec.password,"0.1.2.3",function(err, authToken) {
+				users.authUser(dec.username,dec.password,function(err, authToken) {
 
 					//If they are not authenticated, send them back to login, alerting them of the error
 					if (err) {
@@ -171,7 +163,7 @@ http.createServer(function(req,res) {
 
 					//Otherwise redirect them to the problem page, and issue them an authentication token
 					} else {
-						var opt = [["Location","/assignment"], ["Set-Cookie","auth="+authToken], ["Set-Cookie","username="+dec.username]]
+						var opt = [["Location","/index"], ["Set-Cookie","auth="+authToken], ["Set-Cookie","username="+dec.username]]
 						console.log(opt);
 						res.writeHead(302, "Redirect", opt );
 						res.end();
@@ -182,7 +174,7 @@ http.createServer(function(req,res) {
 			} else if (req.url === "/register") {
 
 				//Creates a user using our database module. Behaves similarly to login
-				users.createUser(dec.name,dec.email,dec.username,dec.password,"0.1.2.3" ,function(err, authToken) {
+				users.createUser(dec.firstName, dec.lastName, dec.email, dec.username, dec.password, dec.type, function(err, authToken) {
 					console.log("Given authToken: "+authToken);
 					if (err) {
 						res.writeHead(200, "OK", {"Content-Type": "text/html"});
