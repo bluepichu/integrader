@@ -54,49 +54,63 @@
                         {{incrementPosition}}
                         
                         {{#ifCond type "==" "content"}}
+                        <div class="content">
                         <p>{{content}}</p>
-                        {{else}}
+                            </div>
+                        {{/ifCond}}
                         {{#ifCond type "==" "video"}}
+                        <div class="video">
                         <iframe width="560" height="315" src="//www.youtube.com/embed/{{url}}" frameborder="0" allowfullscreen></iframe>
-                        {{else}}
+                            </div>
+                        {{/ifCond}}
                         {{#ifCond type "==" "image"}}
-                        <img src="{{url}}" {{#if width}}width="{{width}}"{{/if}}/>
-                        {{else}}
-                        <div class="answer-area">
+                        <div class="image">
+                            <img src="{{url}}" {{#if width}}width="{{width}}"{{/if}}/>
+                            </div>
+                        {{/ifCond}}
                             
                             {{#ifCond type "==" "radio"}}
                             {{pushPosition}}
+                        <div class="answer-area radio">
                             {{#each choices}}
                             {{incrementPosition}}
                             <input type="radio" name="{{swapPosition}}p{{position}}{{swapPosition}}" value="{{position}}" /><label for="{{position}}">{{this}}</label><br />
                             {{/each}}
                             {{popPosition}}
+                            </div>
                             {{/ifCond}}
                             
                             {{#ifCond type "==" "checkbox"}}
                             {{pushPosition}}
+                            <div class="answer-area checkbox">
                             {{#each choices}}
                             {{incrementPosition}}
                             <input type="checkbox" name="{{swapPosition}}p{{position}}{{swapPosition}}" value="{{position}}" /><label for="{{position}}">{{this}}</label><br />
                             {{/each}}
+                                </div>
                             {{popPosition}}
                             {{/ifCond}}
                             
                             {{#ifCond type "==" "numerical"}}
+                                <div class="answer-area numerical">
                             <input type="text" class="numerical" id="p{{position}}" /><span class="units">{{units}}</span>
                             <div class="errors" id="error{{position}}"></div>
+                                    </div>
                             {{/ifCond}}
                             
                             {{#ifCond type "==" "symbolic"}}
+                                    <div class="answer-area symbolic">
                             <div class="variable-list">
                                 {{{listVariables variables}}}
                             </div>
                             <input type="text" class="symbolic" id="p{{position}}" />  
                             <div class="symbolic-render-area" id="render{{position}}"></div>
                             <div class="errors" id="error{{position}}"></div>
+                                        </div>
                             {{/ifCond}}
                             
                             {{#ifCond type "==" "dropdown"}}
+                                        <div class="answer-area dropdown">
                             <select id="p{{position}}">
                                 {{pushPosition}}
                                 {{#each choices}}
@@ -105,11 +119,8 @@
                                 {{/each}}
                                 {{popPosition}}
                             </select>
+                                            </div>
                             {{/ifCond}}
-                        </div>
-                        {{/ifCond}}
-                        {{/ifCond}}
-                        {{/ifCond}}
                         
                         {{/each}}
                         

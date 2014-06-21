@@ -8,6 +8,7 @@ SHADES OF GRAY
 #F6F6F6
 #F2F2F2
 #F2F2F2
+#CCCCCC
 #999999
 #555555
 #333333
@@ -458,6 +459,42 @@ textarea {
 input[type="submit"] {
     width: 64px;
     margin: 16px 0px 16px 152px;
+}
+
+.register input[type="text"],
+.register input[type="password"] {
+    width: 200px;
+    margin: 4px;
+}
+
+.register input[type="text"].name {
+    width: 96px;
+}
+
+/* EDIT */
+
+ol.questions li.new-question {
+    color: #999999;
+}
+
+ol.questions li.new-question:before {
+    content: "";
+}
+
+.editing div.content-main form>div,
+.editing div.content-main form>h2 {
+    /*margin: -4px;
+    padding: 4px;*/
+}
+
+.editing div.content-main form>div:hover,
+.editing div.content-main form>h2:hover {
+    background: #CCCCCC;
+}
+
+.edit {
+    border: 1px solid #111111;
+    
 }
 
 /*     FONTS     */

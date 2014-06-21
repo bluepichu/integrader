@@ -39,7 +39,8 @@ var pages = {
 	login:"views/login.html",
 	register:"views/register.html",
 	assignment:"views/assignment.html",
-    index:"views/index.html"
+    index:"views/index.html",
+    edit:"views/edit.html"
 }
 
 //URL's that require a login to access. This is just for user-experience, the actual security is done when the user goes to access something
