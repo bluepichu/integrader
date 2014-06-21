@@ -6,6 +6,21 @@ var http = require("http")
 var fs = require("fs")
 var querystring = require('querystring');
 
+var persist = require("./persist");
+
+var siva = new persist.User({
+	name: {
+		first: "Siva",
+		last: "Somayyajula"
+	},
+	username: "sivawashere",
+	pwd: "testing",
+	email: "siva.somayyajula@gmail.com",
+	type: "STUDENT"
+});
+
+console.log(siva);
+
 //sg is our symbolic grader module
 var sg = require("./symGrader");
 

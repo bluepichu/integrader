@@ -1,10 +1,6 @@
-var mongoose = require('mongoose'),
-	Schema = mongoose.Schema,
-	bcrypt = require('bcrypt');
-
-// Please start mongod and mongo so that
-// your friendly neighborhood module can
-// connect to a mongo instance
+var mongoose   = require('mongoose'),
+      Schema   = mongoose.Schema
+      ObjectId = Schema.ObjectId;
 
 mongoose.connect('mongodb://localhost/test');
 var db = mongoose.connection;
@@ -13,53 +9,96 @@ db.on('open', function callback () {
 	console.log("Connected to mongo instance.");
 });
 
-// User schema with name and password. Courses to come.
-// Schemas? In my non-relational database?!?!?!
-var User = new Schema({
+var part = new Schema({
+	type: {
+		type: String,
+		enum: ['RADIO', 'CHECKBOX', 'NUMERICAL', 'SYMBOLIC', 'DROPDOWN', 'CONTENT', 'VIDEO', 'IMAGE']
+	},
+	points: { type: Number, default: 0 },
+	scoring: [Number]
+});
+
+var Part = mongoose.model('Part', part);
+exports.Part = Part;
+
+var question = new Schema({
+	parts: [Part]
+});
+
+var Question = mongoose.model('Question', question);
+exports.Question = Question;
+
+var assignment = new Schema({
 	name: {
+		type: String,
+		required: true
+	},
+	due: Date,
+	questions: [Question]
+});
+
+var Assignment = mongoose.model('Assignment', assignment);
+exports.Assignment = Assignment;
+
+var course = new Schema({
+	name: {
+		type: String,
+		required: true
+	},
+	instructor: {
+		type: ObjectId,
+		required: true
+	},
+	assignments: [Assignment],
+	announcements: [String]
+});
+
+var Course = mongoose.model('Course', course);
+exports.Course = Course;
+
+var user = new Schema({
+	name: {
+		first: String,
+		last: String
+	},
+	username: {
 		type: String,
 		required: true,
 		index: {
 			unique: true
 		}
 	},
+	email: {
+		type: String,
+		required: true
+	},
 	pwd: {
 		type: String,
 		required: true
-	}
+	},
+	type: {
+		type: String,
+		enum: ['STUDENT', 'INSTRUCTOR'],
+		required: true
+	},
+	courses: [Course],
+	seed: String
 });
 
-// Salt and hash the passwords on save
-// What do you do with your hashbrowns? Discuss.
-// If any of you want to up (or lower) the ante,
-// change the number 10 (the salt work factor)
-User.pre('save', function(next) {
-	var that = this;
-	bcrypt.genSalt(10, function(error, salt) {
-		if (error)
-			return next(error);
+var User = mongoose.model('User', user);
+exports.User = User;
 
-		console.log(that.pwd + " : "+salt);
-		bcrypt.hash(that.pwd, salt, function(error, hash) {
-			if (error)
-				return next(error);
-			that.pwd = hash;
-			next();
-		});
-	});
+var submission = new Schema({
+	userId: ObjectId,
+	assignmentId: ObjectId,
+	questionId: ObjectId,
+	partId: ObjectId,
+	type: {
+		type: String,
+		enum: ['SUBMISSION', 'NOTE'],
+	},
+	info: String
 });
 
-// Note to backend: authorize only returns success/failure
-// It is your job to maintain user state
-User.methods.authorize = function(pwd, callback) {
-	var that = this;
-	console.log(pwd + " : " + that.pwd);
-	bcrypt.compare(pwd, that.pwd, function(error, success) {
-		if (error)
-			return callback(error);
-		callback(null, success);
-	})
-};
-
-// Export User compiled from schema
-exports.User = mongoose.model('User', User);
+var Submission = mongoose.model('Submission', submission);
+exports.Submission = Submission;
