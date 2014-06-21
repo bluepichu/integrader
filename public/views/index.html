@@ -11,7 +11,7 @@
                 <a href="/"><div class="button logo"></div></a>
                 <div class="button-area">
                     {{#if user}}
-                    <span class="greeting">Hello, <span class="username">{{user}}</span></span>
+                    <span class="greeting">Hello, <span class="user">{{user.data.name}}</span></span>
                     {{else}}
                     <span class="greeting">Not logged in &middot; <a href="/login">Login</a></span>
                     {{/if}}
@@ -32,7 +32,7 @@
                                 <a href="{{path}}" class="no-link">
                                     <li class="clickable">
                                         <div class="progress micro progress-{{progress}}"></div>
-                                        <span class="title">{{title}}</span>
+                                        <span class="title {{#ifCond progress '==' 12}}completed{{/ifCond}}">{{title}}</span>
                                         <span class="subtitle">{{course}}</span>
                                     </li>
                                 </a>
@@ -47,26 +47,27 @@
                 </div>
                 <div class="content-main">
                     {{#if user}}
-                        <h2>Courses</h2>
-                        {{#if courses.length}}
-                        {{#each courses}}
-                        <div class="course-listing">
-                            <h3 class="course-title">{{title}}</h3>
-                            <h4 class="teacher">{{instructor}}</h4><br />
-                            <a href="/ap-physics-c" class="highlight">
-                                <span class="upcoming-count highlight">{{upcoming}} Upcoming Assignments &raquo;</span>
-                            </a>
-                            <span class="upcoming-next">Next due today (needs fixing)</span>
-                        </div>
-                        {{/each}}
-                        {{else}}
-                        <p>No courses to display.</p>
-                        {{/if}}
+                    <input type="text" class="filter" placeholder="Filter assignments..." />
+                    <h2>Courses</h2>
+                    {{#if courses.length}}
+                    {{#each courses}}
+                    <div class="course-listing">
+                        <h3 class="course-title">{{title}}</h3>
+                        <h4 class="teacher">{{instructor}}</h4><br />
+                        <a href="/ap-physics-c" class="highlight">
+                            <span class="upcoming-count highlight">{{upcoming}} Upcoming Assignments &raquo;</span>
+                        </a>
+                        <span class="upcoming-next">Next due today (needs fixing)</span>
+                    </div>
+                    {{/each}}
+                    {{else}}
+                    <p>No courses to display.</p>
+                    {{/if}}
                     {{else}}
                     <h2>Welcome to integrader</h2>
-                        <p>Science, technology, engineering, and math related courses require extreme proficiencies with calculations for long-term success in the subject. Thus, teachers of these subjects seek to improve student skills through controlled practice. Ideally, teachers want to ensure their students practice and not have to grade anything while knowing how well each student did. Currently, there are some solutions to this problem; However, all of these solutions are based on deprecated technologies, have unalterable issues with grading, are not open source, or some combination of these. These severe limitations restrict both instructors and teachers from achieving their goals: teachers do not get an accurate reflection of skills and have limited possible questions (as the majority of these softwares make it difficult to create your own questions Webassign included); students who can properly provide solutions are forced to deal with the nuances of the grading system and the inefficiencies of the software, for example, using invalid variable names (like capitalization of greek letters).</p>
-	
-    <p>The solution we provided (called integrader) is an updated, flexible implementation which allows students and teachers to seamlessly interact through practice problems on all existing major hardware systems. Additionally, by making the code open source and available to all as any new problems arise, including the presence of new hardware, the system can be edited to suit the purposes of the users, whether they be students or teachers.</p>
+                    <p>Science, technology, engineering, and math related courses require extreme proficiencies with calculations for long-term success in the subject. Thus, teachers of these subjects seek to improve student skills through controlled practice. Ideally, teachers want to ensure their students practice and not have to grade anything while knowing how well each student did. Currently, there are some solutions to this problem; However, all of these solutions are based on deprecated technologies, have unalterable issues with grading, are not open source, or some combination of these. These severe limitations restrict both instructors and teachers from achieving their goals: teachers do not get an accurate reflection of skills and have limited possible questions (as the majority of these softwares make it difficult to create your own questions Webassign included); students who can properly provide solutions are forced to deal with the nuances of the grading system and the inefficiencies of the software, for example, using invalid variable names (like capitalization of greek letters).</p>
+                    
+                    <p>The solution we provided (called integrader) is an updated, flexible implementation which allows students and teachers to seamlessly interact through practice problems on all existing major hardware systems. Additionally, by making the code open source and available to all as any new problems arise, including the presence of new hardware, the system can be edited to suit the purposes of the users, whether they be students or teachers.</p>
                     {{/if}}
                 </div>
             </div>
@@ -78,18 +79,18 @@
             var data = {
                 dates: [
                     {
-                        date: "2014-06-17",
+                        date: "2014-06-20",
                         assignments: [
                             {
                                 path: "/",
-                                progress: "00",
+                                progress: "12",
                                 title: "Waves: The Final Frontier",
                                 course: "AP Physics C"
                             }
                         ]
                     },
                     {
-                        date: "2014-06-18",
+                        date: "2014-06-21",
                         assignments: [
                             {
                                 path: "/",
@@ -106,7 +107,7 @@
                         ]
                     },
                     {
-                        date: "2014-06-19",
+                        date: "2014-06-22",
                         assignments: [
                             {
                                 path: "/",
@@ -137,7 +138,7 @@
                 courses: [
                     {
                         title: "AP Physics C",
-                        instructor: "Scholla, Stephen M",
+                        instructor: "Scholla, Stephen R",
                         upcoming: 3
                     },
                     {
@@ -155,7 +156,41 @@
         </script>
         
         <script type="text/javascript">
+            var user;
+            var loadCount = 0;
+            
+            var toLoad = ["/userinfo", "/courses"];
+            var loadVars = ["user", "courses"];
+            
+            var merge = function(a, b, prefix){
+                a[prefix] = {}
+                for(key in b){
+                    a[prefix][key] = b[key];
+                }
+            }
+            
             $(document).ready(function(){
+                for(i = 0; i < toLoad.length; i++){
+                    var req = new XMLHttpRequest();
+                    req.index = i;
+                    req.onload = loadedCB;
+                    req.open("get", toLoad[i], true);
+                    req.send();
+                }
+            });
+            
+            var loadedCB = function(){
+                window[loadVars[this.index]] = JSON.parse(this.responseText);
+                loadCount++;
+                
+                if(loadCount == toLoad.length){
+                    ready();
+                }
+            }
+            
+            var ready = function(){
+                merge(data, user, "user");
+                
                 var positionCounter = 0;
                 
                 Handlebars.registerHelper("position", function() {
@@ -208,6 +243,31 @@
                         return "<span class='title'>" + name + "</span><span class='subtitle'>" + monthNames[date.getMonth()] + " " + date.getDate() + "</span>";
                     } else {
                         return "<span class='title'>" + monthNames[date.getMonth()] + " " + date.getDate() + "</span>";
+                    } 
+                });
+                
+                Handlebars.registerHelper('ifCond', function (v1, operator, v2, options){
+                    switch (operator){
+                        case '==':
+                            return (v1 == v2) ? options.fn(this) : options.inverse(this);
+                        case '!=':
+                            return (v1 != v2) ? options.fn(this) : options.inverse(this);
+                        case '===':
+                            return (v1 === v2) ? options.fn(this) : options.inverse(this);
+                        case '<':
+                            return (v1 < v2) ? options.fn(this) : options.inverse(this);
+                        case '<=':
+                            return (v1 <= v2) ? options.fn(this) : options.inverse(this);
+                        case '>':
+                            return (v1 > v2) ? options.fn(this) : options.inverse(this);
+                        case '>=':
+                            return (v1 >= v2) ? options.fn(this) : options.inverse(this);
+                        case '&&':
+                            return (v1 && v2) ? options.fn(this) : options.inverse(this);
+                        case '||':
+                            return (v1 || v2) ? options.fn(this) : options.inverse(this);
+                        default:
+                            return options.inverse(this);
                     }
                 });
                 
@@ -218,7 +278,7 @@
                 var html = template(data);
                 
                 out.html(html);
-            });
+            }
         </script>
     </head>
     <body></body>
