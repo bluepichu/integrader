@@ -4,7 +4,7 @@ var x = require("./XOR/XOR")
 var cr = require("crypto");
 
 //Creates a user and grants him an authentication token
-var createUser = function(name,email,username,pass,ipaddress,cb) {
+var createUser = function(name,email,username,pass,type,ipaddress,cb) {
 	db.users.find({"data.username":username},function(err, dob) {
 		if (dob.length != 0) {
 			cb(101,"");

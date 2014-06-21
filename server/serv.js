@@ -146,7 +146,7 @@ http.createServer(function(req,res) {
 
 					//Otherwise redirect them to the problem page, and issue them an authentication token
 					} else {
-						var opt = [["Location","/assignment"], ["Set-Cookie","auth="+authToken], ["Set-Cookie","username="+dec.username]]
+						var opt = [["Location","/"], ["Set-Cookie","auth="+authToken], ["Set-Cookie","username="+dec.username]]
 						console.log(opt);
 						res.writeHead(302, "Redirect", opt );
 						res.end();
@@ -157,7 +157,7 @@ http.createServer(function(req,res) {
 			} else if (req.url === "/register") {
 
 				//Creates a user using our database module. Behaves similarly to login
-				users.createUser(dec.name,dec.email,dec.username,dec.password,"0.1.2.3" ,function(err, authToken) {
+				users.createUser(dec.name,dec.email,dec.username,dec.password,dec.type,"0.1.2.3" ,function(err, authToken) {
 					console.log("Given authToken: "+authToken);
 					if (err) {
 						res.writeHead(200, "OK", {"Content-Type": "text/html"});
@@ -166,7 +166,7 @@ http.createServer(function(req,res) {
 							res.end();
 						})
 					} else {
-						var opt = [["Location","/assignment"], ["Set-Cookie","auth="+authToken], ["Set-Cookie","username="+dec.username]]
+						var opt = [["Location","/"], ["Set-Cookie","auth="+authToken], ["Set-Cookie","username="+dec.username]]
 						res.writeHead(302, "Redirect",opt)
 						res.end();
 					}

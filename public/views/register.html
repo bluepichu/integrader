@@ -22,18 +22,49 @@
             <div class="content-main">
                 <h2>Register</h2>
                 <form class="answer-area" action="register" method="post">
-                    <span class="form-label">Username</span><input type="text" name="username" placeholder="Enter a username..." /><br />
-                    <span class="form-label">Password</span><input type="password" name="password" placeholder="Enter a password..." /><br />
-                    <span class="form-label">Confirm Password</span><input type="password" name="confirm" placeholder="Confirm your password..." /><br /><br />
+                    <span class="form-label">Name</span><input type="text" name="name" id="name" /><br />
+                    <span class="form-label">Email</span><input type="input" name="email" id="email" /><br />
+                    <span class="form-label">Username</span><input type="text" name="username" id="username" /><br />
+                    <span class="form-label">Password</span><input type="password" name="password" id="password" /><br />
+                    <span class="form-label">Confirm Password</span><input type="password" name="confirm" id="confirm" /><br /><br />
                     <span class="form-label">User Type</span>
-                    <select name="type">
+                    <select name="type" id="type">
                         <option value="" disabled selected>Select user type...</option>
                         <option value="student">Student</option>
                         <option vlaue="instructor">Instructor</option>
                     </select><br />
                     <input type="submit">
                 </form>
+                <div class="errors"></div>
             </div>
         </div>
+        
+        <script type="text/javascript">
+            $("form").submit(function(e){
+                $(".errors").html("");
+                if($("#name").val() == ""){
+                    $(".errors").html($(".errors").html() + "<br /><span class='bold title highlight'>Error:</span> Enter your name.");
+                }
+                if($("#email").val() == ""){
+                    $(".errors").html($(".errors").html() + "<br /><span class='bold title highlight'>Error:</span> Enter your email.");
+                } else if(! /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test($("#email").val())){
+                    $(".errors").html($(".errors").html() + "<br /><span class='bold title highlight'>Error:</span> Invalid email.");
+                }
+                if($("#username").val() == ""){
+                    $(".errors").html($(".errors").html() + "<br /><span class='bold title highlight'>Error:</span> Enter a username.");
+                }
+                if($("#password").val() == ""){
+                    $(".errors").html($(".errors").html() + "<br /><span class='bold title highlight'>Error:</span> Enter a password.");
+                } else if($("#password").val() != $("#confirm").val()){
+                    $(".errors").html($(".errors").html() + "<br /><span class='bold title highlight'>Error:</span> \"Password\" and \"Confirm Password\" fields do not match.");
+                    return false;
+                }
+                if($("#type").val() == null){
+                    $(".errors").html($(".errors").html() + "<br /><span class='bold title highlight'>Error:</span> Select a user type.");
+                }
+                
+                return $(".errors").html().length == 0;
+            });
+        </script>
     </body>
 </html>
