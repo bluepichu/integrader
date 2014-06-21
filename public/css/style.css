@@ -7,6 +7,7 @@ SHADES OF GRAY
 #FCFCFC
 #F6F6F6
 #F2F2F2
+#F2F2F2
 #999999
 #555555
 #333333
@@ -73,6 +74,10 @@ h2 {
 .highlight {
     color: #DD4B39 !important;
     text-decoration-color: #DD4B39 !important;
+}
+
+.bold {
+    font-weight: 700;
 }
 
 a:not(.no-link) {
@@ -316,6 +321,10 @@ ul.upcoming>li>ul li {
     padding: 4px;
 }
 
+ul.upcoming span.completed {
+    text-decoration: line-through;
+}
+
 /* ASSIGNMENT */
 
 ol.questions {
@@ -430,6 +439,11 @@ textarea {
 
 .variable-list {
     padding-bottom: 8px;
+}
+
+.errors {
+    font-size: 12px;
+    padding: 8px 4px 0px;
 }
 
 /* REGISTER */
