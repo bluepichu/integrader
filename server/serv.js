@@ -163,7 +163,7 @@ http.createServer(function(req,res) {
 
 					//Otherwise redirect them to the problem page, and issue them an authentication token
 					} else {
-						var opt = [["Location","/index"], ["Set-Cookie","auth="+authToken], ["Set-Cookie","username="+dec.username]]
+						var opt = [["Location","/"], ["Set-Cookie","auth="+authToken], ["Set-Cookie","username="+dec.username]]
 						console.log(opt);
 						res.writeHead(302, "Redirect", opt );
 						res.end();

@@ -4,12 +4,12 @@ var cr = require("crypto");
 
 //Creates a user and grants him an authentication token
 var createUser = function(firstName, lastName, email, username, pass, type, cb) {
-	db.users.find({"data.username":username},function(err, dob) {
+	db.users.find({"username":username},function(err, dob) {
 		if (dob.length != 0) {
 			cb(101,"");
 			return;
 		}
-		db.users.find({"data.email":email}, function(err, dob) {
+		db.users.find({"email":email}, function(err, dob) {
 			if (dob.length != 0) {
 				cb(102, "");
 				return;
@@ -68,7 +68,7 @@ var addTestData = function(){
 
 //Checks to see if a username/authToken pair is valid
 var isValid = function(username, authToken, cb) {
-	db.users.find({"data.username":username, "private.authToken": authToken}, function(err, dob) {
+	db.users.find({"username":username, "private.authToken": authToken}, function(err, dob) {
 		if (err || dob.length == 0) {
 			cb(false)
 			return
@@ -87,7 +87,7 @@ var getCourses = function(uids,cb) {
 
 //Revokes an authentication token
 var endSession = function(username, authToken) {
-	db.users.update({"data.username":username}, {"$pull":{"private.authToken":authToken}})
+	db.users.update({"username":username}, {"$pull":{"private.authToken":authToken}})
 }
 
 //Updates user data
@@ -99,8 +99,8 @@ var updateUser = function(username, authToken, data, cb) {
 			return;
 		}
 		var tmpobj = {};
-		tmpobj["data."+i] = data[i];
-		db.users.update({"data.username":username, "private.authToken":authToken}, {$set:tmpobj})
+		tmpobj[i] = data[i];
+		db.users.update({"username":username, "private.authToken":authToken}, {$set:tmpobj})
 	}
 	if (cb) {
 		cb(null, authToken);
@@ -109,16 +109,16 @@ var updateUser = function(username, authToken, data, cb) {
 
 //Returns user data
 var getUserData = function(username,authToken,cb) {
-	db.users.find({"data.username":username,"private.authToken":authToken},function(err, dob) {
+	db.users.find({"username":username,"private.authToken":authToken},function(err, dob) {
 		if (dob.length == 0) {
 			cb(202,"");
 			return
 		}
 		user = {
 			data: {
-				name: dob[0].data.name,
-				username: dob[0].data.username,
-				email: dob[0].data.email,
+				name: dob[0].name,
+				username: dob[0].username,
+				email: dob[0].email,
 			},
 			courses: dob[0].courses,
 		}

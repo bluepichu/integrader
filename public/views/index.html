@@ -11,7 +11,7 @@
                 <a href="/"><div class="button logo"></div></a>
                 <div class="button-area">
                     {{#if user}}
-                    <span class="greeting">Hello, <span class="user">{{user.data.name}}</span></span>
+                    <span class="greeting">Hello, <span class="user">{{user.data.name.first}}</span></span>
                     {{else}}
                     <span class="greeting">Not logged in &middot; <a href="/login">Login</a></span>
                     {{/if}}
@@ -189,7 +189,11 @@
             }
             
             var ready = function(){
-                merge(data, user, "user");
+                if($.isEmptyObject(user)){
+                    data.user = false;
+                } else {
+                    merge(data, user, "user");
+                }
                 
                 var positionCounter = 0;
                 

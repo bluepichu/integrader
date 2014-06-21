@@ -141,92 +141,7 @@
         
         <script type="text/javascript">
             // TEMPORARY
-            /*
-            var data = {
-                user: "Matthew",
-                title: "Waves - The Final Frontier",
-                questions: [
-                    {
-                        title: "Test Question",
-                        progress: "00",
-                        parts: [
-                            {
-                                type: "content",
-                                content: "This is content-type."
-                            },
-                            {
-                                type: "radio",
-                                choices: [
-                                    "This",
-                                    "is",
-                                    "radio",
-                                    "type."
-                                ]
-                            },
-                            {
-                                type: "checkbox",
-                                choices: [
-                                    "This",
-                                    "is",
-                                    "checkbox",
-                                    "type."
-                                ]
-                            },
-                            {
-                                type: "numerical",
-                                units: "numerical type questions"
-                            },
-                            {
-                                type: "symbolic",
-                                variables: ["a", "b", "theta"]
-                            },
-                            {
-                                type: "dropdown",
-                                choices: [
-                                    "This",
-                                    "is",
-                                    "dropdown",
-                                    "type."
-                                ]
-                            },
-                            {
-                                type: "content",
-                                content: "The following is a cute image of a kitten for testing purposes ONLY.  Any futher acknoledgement of the kitten's cuteness should be strictly avoided."
-                            },
-                            {
-                                type: "image",
-                                url: "http://takeinsocialmedia.com/wp-content/uploads/2014/02/cute-kitten-images-photos-0223204033.jpg"
-                            },
-                            {
-                                type: "video",
-                                url: "1-IKTtw335k"
-                            }
-                        ]
-                    },
-                    {
-                        title: "The Only Question",
-                        progress: "02",
-                        parts: [
-                            {
-                                type: "content",
-                                content: "This is the only part"
-                            }
-                        ]
-                    },
-                    {
-                        title: "No It's Not",
-                        progress: "05",
-                        parts: [
-                            {
-                                type: "content",
-                                content: "Haha sucka"
-                            }
-                        ]
-                    }
-                ]
-            };
-            */
-            
+                        
             var data = {
                 title: "Various Practice Problems",
                 UID : 1,
@@ -356,6 +271,9 @@
             
             var user;
             
+            var toLoad = ["/userinfo"];
+            var loadVars = ["user"];
+            
             var merge = function(a, b, prefix){
                 a[prefix] = {}
                 for(key in b){
@@ -364,15 +282,30 @@
             }
             
             $(document).ready(function(){
-                var req = new XMLHttpRequest();
-                req.onload = ready;
-                req.open("get", "/userinfo", true);
-                req.send();
+                for(i = 0; i < toLoad.length; i++){
+                    var req = new XMLHttpRequest();
+                    req.index = i;
+                    req.onload = loadedCB;
+                    req.open("get", toLoad[i], true);
+                    req.send();
+                }
             });
             
+            var loadedCB = function(){
+                window[loadVars[this.index]] = JSON.parse(this.responseText);
+                loadCount++;
+                
+                if(loadCount == toLoad.length){
+                    ready();
+                }
+            }
+            
             var ready = function(){
-                user = JSON.parse(this.responseText);
-                merge(data, user, "user");
+                if($.isEmptyObject(user)){
+                    data.user = false;
+                } else {
+                    merge(data, user, "user");
+                }
                 
                 var positionCounter = 0;
                 var positionStack = []
