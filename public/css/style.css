@@ -354,12 +354,15 @@ ol.questions li:before {
 
 /* INDEX */
 
-h3.course-title {
+.course-title {
     display: inline-block;
     margin: 0px;
-    font-size: 20px;
     padding-right: 16px;
     color: #333333;
+}
+
+h3 {
+    font-size: 20px;
 }
 
 h4.teacher {

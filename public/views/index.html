@@ -53,7 +53,7 @@
                     <div class="course-listing">
                         <h3 class="course-title">{{name}}</h3>
                         <h4 class="teacher">{{instructor.first}} {{instructor.last}}</h4><br />
-                        <a href="/course?id={{_id}}" class="highlight">
+                        <a href="/course?id={{_id}}" class="highlight course-link">
                             <span class="upcoming-count highlight">{{upcoming}} Upcoming Assignments &raquo;</span>
                         </a>
                         <span class="upcoming-next">Next due {{dateToName next}}</span>
@@ -70,6 +70,15 @@
                     {{/if}}
                 </div>
             </div>
+        </script>
+        
+        <script id="course-template" type="text/x-handlebars-template">
+            <h2 class="course-title">{{name}}</h2> <h4 class="teacher">{{instructor.first}} {{instructor.last}}</h4><br />
+            <p>{{description}}</p>
+            <h3>Upcoming Assignments</h3>
+            {{#each assignments}}
+                <div class="assignment-large">{{_id}}</div>
+            {{/each}}
         </script>
         
         <script type="text/javascript">
@@ -264,6 +273,33 @@
                 var html = template(data);
                 
                 out.html(html);
+                
+                $(".course-link").click(function(e){
+                    id = $(this).attr("href").split("id=")[1];
+                    
+                    for(i = 0; i < courses.length; i++){
+                        if(parseInt(courses[i]._id, 16) == parseInt(id, 16)){
+                            course = courses[i];
+                        }
+                    }
+                    
+                    out = $(".content-main");
+                    src = $("#course-template").html();
+                    
+                    template = Handlebars.compile(src);
+                    html = template(course);
+                    
+                    out.children().fadeOut(300);
+                    
+                    setTimeout(function(){
+                        toAdd = $(html);
+                        toAdd.hide();
+                        out.append(toAdd);
+                        toAdd.fadeIn(300);
+                    }, 300);
+                    
+                    e.preventDefault();
+                });
             }
         </script>
     </head>

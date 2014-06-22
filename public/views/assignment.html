@@ -4,6 +4,7 @@
         <script src="/js/jquery.min.js"></script>
         <script src="/js/handlebars.js"></script>
         <script src="/js/inputParser.js"></script>
+        <script src="/js/seedrandom.min.js"></script>
         
         <script type="text/x-mathjax-config">
             MathJax.Hub.Config({
@@ -55,7 +56,7 @@
                         
                         {{#ifCond type "==" "CONTENT"}}
                         <div class="content">
-                            <p>{{content}}</p>
+                            <p>{{{formatReds content}}}</p>
                         </div>
                         {{/ifCond}}
                         {{#ifCond type "==" "VIDEO"}}
@@ -137,100 +138,6 @@
                 \(\require{color}\)
                 \(\definecolor{err}{RGB}{221, 75, 57}\)
             </div>
-        </script>
-        
-        <script type="text/javascript">
-            // TEMPORARY
-            /*
-            var data = {
-                name: "Various Practice Problems",
-                due: "2014-06-23",
-                questions: [
-                    {
-                        name: "Railgun (Tipler6 28.P.041)",
-                        progress: "00",
-                        parts: [
-                            {
-                                type: "CONTENT",
-                                content: "In the figure below, the rod has a mass \\(m\\) and a resistance \\(R\\).  The rails are horizontal, frictionless, and have negligible resistances.  The distance between the rails is \\(l\\).  An ideal battery that has an emf \\(E\\) is connected between points \\(a\\) and \\(b\\) so that the current in the rod is downward.  The rod is released at \\(t = 0\\)."
-                            },
-                            {
-                                type: "IMAGE",
-                                url: "https://dl.dropboxusercontent.com/u/3889893/sample1.gif",
-                                width: 300
-                            },
-                            {
-                                type: "CONTENT",
-                                content: "Derive an expression for the force on the rod as a function of the speed.",
-                            },
-                            {
-                                type: "SYMBOLIC",
-                                variables: ["B", "R", "v", "l", "E"],
-                                range: [[1,2],[1,2],[1,2],[1,2],[1,2]],
-                                steps: 3,
-                                answer: "l*B/R*(E-B*l*v)"
-                            },
-                            {
-                                type: "CONTENT",
-                                content: "Find an expression for the terminal speed of the rod."
-                            },
-                            {
-                                type: "SYMBOLIC",
-                                variables: ["B", "l", "E"],
-                                range: [[1,2],[1,2],[1,2]],
-                                steps: 3,
-                                answer: "E/(b*l)"
-                            }
-                        ]
-                    },
-                    {
-                        name: "Eddy Currents (Tipler6 26.P.038)",
-                        progress: "00",
-                        parts: [
-                            {
-                                type: "CONTENT",
-                                content: "In the figure below, let \\(B = .8 \\mathrm{T}\\), \\(v = 11.0 \\mathrm{m/s}\\), \\(l = 22 \\mathrm{cm}\\), and \\(R = 2 \\mathrm{\\Omega}\\)."
-                            },
-                            {
-                                type: "IMAGE",
-                                url: "https://dl.dropboxusercontent.com/u/3889893/sample2.gif",
-                                width: 300
-                            },
-                            {
-                                type: "CONTENT",
-                                content: "Find the induced EMF in the circuit.",
-                            },
-                            {
-                                type: "NUMERICAL",
-                                units: "V",
-                                answer: "2"
-                            },
-                            {
-                                type: "CONTENT",
-                                content: "Find the current in the circuit."
-                            },
-                            {
-                                type: "NUMERICAL",
-                                units: "A",
-                                answer: "1",
-                            },
-                            {
-                                type: "CONTENT",
-                                content: "In what direction is the current flowing?"
-                            },
-                            {
-                                type: "RADIO",
-                                choices: [
-                                    "clockwise",
-                                    "counterclockwise"
-                                ],
-                                answer: "1"
-                            }
-                        ]
-                    }
-                ]
-            }
-            */
         </script>
         
         <script type="text/javascript">            
@@ -371,6 +278,20 @@
                 Handlebars.registerHelper("log", function(){
                     console.log("!!!");
                     return "";
+                });
+                
+                Handlebars.registerHelper("formatReds", function(text){
+                    return text.replace(/\{\{[^\s]*\}\}/g, function(str){
+                        str = str.substring(2, str.length-2);
+                        str = str.split(":")[1].split("~");
+                        low = parseFloat(str[0]);
+                        high = parseFloat(str[1]);
+                        digits = parseFloat(str[2]);
+                        seedSalt = str[3];
+                        Math.seedrandom(user._id + seedSalt);
+                        num = (high-low) * Math.random() + low;
+                        return "<span class='highlight'>" + num.toPrecision(digits) + "</span>";
+                    });
                 });
                 
                 Handlebars.registerHelper('ifCond', function (v1, operator, v2, options){
