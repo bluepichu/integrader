@@ -25,7 +25,7 @@ var createUser = function(firstName, lastName, email, username, pass, type, cb) 
                     first: firstName,
                     last: lastName
                 },
-				"courses":[1],
+				"courses": [],
                 "type": type.toUpperCase()
 			}
 			console.log(user);
@@ -36,7 +36,7 @@ var createUser = function(firstName, lastName, email, username, pass, type, cb) 
 	})
 }
 
-/*
+
 var addTestData = function(){
     createUser("Student", "McLearnerson", "st@ud.ent", "student", "student", "student", function(){});
     createUser("Instructor", "McTeacherson", "in@struct.or", "instructor", "instructor", "instructor", function(){});
@@ -64,7 +64,7 @@ var addTestData = function(){
         ]
     });
 }
-*/
+
 
 //Checks to see if a username/authToken pair is valid
 var isValid = function(username, authToken, cb) {
@@ -114,6 +114,7 @@ var getUserData = function(username,authToken,cb) {
 			cb(202,"");
 			return
 		}
+        console.log(dob);
 		user = {
 			data: {
 				name: dob[0].name,
@@ -159,6 +160,7 @@ var authUser = function(username,pass,cb) {
 }
 
 module.exports = {
+    "addTestData": addTestData,
     "createUser": createUser,
     "isValid": isValid,
     "getCourses": getCourses,

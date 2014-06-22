@@ -38,13 +38,13 @@ var pages = {
 //URL's that require a login to access. This is just for user-experience, the actual security is done when the user goes to access something
 var rest = [
 	//"views/assignment.html",
-	"courses",
+	"courselist",
     "userinfo"
 ]
 
 //URLs that the client accesses for data.
 var dataPages = [
-    "courses",
+    "courselist",
     "userinfo"
 ]
 
@@ -77,7 +77,7 @@ http.createServer(function(req,res) {
 
 					//This is a special case of a GET request, because it is being accessed from an XMLHttpRequest, and needs to send data, not a file.
 					res.writeHead(200, {'Content-Type': cT});
-					if (url == "courses") {
+					if (url == "courselist") {
 
 						//Gets the data, again checks the authentication of the user
 						users.getUserData(cookies.username, cookies.auth, function(err,data) {
@@ -177,13 +177,14 @@ http.createServer(function(req,res) {
 				users.createUser(dec.firstName, dec.lastName, dec.email, dec.username, dec.password, dec.type, function(err, authToken) {
 					console.log("Given authToken: "+authToken);
 					if (err) {
+                        console.log(err);
 						res.writeHead(200, "OK", {"Content-Type": "text/html"});
 						getFile("views/register.html", {error: err}, function(data) {
 							res.write(data);
 							res.end();
 						})
 					} else {
-						var opt = [["Location","/assignment"], ["Set-Cookie","auth="+authToken], ["Set-Cookie","username="+dec.username]]
+						var opt = [["Location","/"], ["Set-Cookie","auth="+authToken], ["Set-Cookie","username="+dec.username]]
 						res.writeHead(302, "Redirect",opt)
 						res.end();
 					}
