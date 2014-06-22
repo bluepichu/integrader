@@ -6,27 +6,16 @@ var http = require("http")
 var fs = require("fs")
 var querystring = require('querystring');
 
-var persist = require("./persist");
-
-var siva = new persist.User({
-	name: {
-		first: "Siva",
-		last: "Somayyajula"
-	},
-	username: "sivawashere",
-	pwd: "testing",
-	email: "siva.somayyajula@gmail.com",
-	type: "STUDENT"
-});
-
-console.log(siva);
-
 //sg is our symbolic grader module
 var sg = require("./symGrader");
 
 //Users represents the interface with a Mongo no-sql database
 var users = require("./users");
 var args = process.argv
+
+var persist = require("./persist");
+
+persist.auth("sivawashere", "testing", function (authtoken) {console.log(authtoken);});
 
 //Command-Line Options
 if (args[2] && ( args[2] == "-h" || args[2] == "--help") ) {
@@ -39,21 +28,13 @@ var pages = {
 	login:"views/login.html",
 	register:"views/register.html",
 	assignment:"views/assignment.html",
-    index:"views/index.html",
-    edit:"views/edit.html"
+    index:"views/index.html"
 }
 
 //URL's that require a login to access. This is just for user-experience, the actual security is done when the user goes to access something
 var rest = [
 	//"views/assignment.html",
-	"courses",
-    "userinfo"
-]
-
-//URLs that the client accesses for data.
-var dataPages = [
-    "courses",
-    "userinfo"
+	//"courses"
 ]
 
 //This function creates the server and handles data from req[uests] and pipes them into the res[ponse].
@@ -64,7 +45,7 @@ http.createServer(function(req,res) {
 	if (req.method == "GET") {
 		 
 		//Chooses the URL. First priority is the url they request, second priority is the url passed as a command line argument, and the third priority is the login page
-		var url = req.url.substr(1) || args[3] || "views/index.html"
+		var url = req.url.substr(1) || args[3] || "views/login.html"
 
 		//Ignores URL options - Those are for the client
 		url = url.split("?")[0];
@@ -100,17 +81,7 @@ http.createServer(function(req,res) {
 								res.end();
 							}
 						})
-					} else if(url == "userinfo"){
-                        users.getUserData(cookies.username, cookies.auth, function(err,data) {
-							if (data) {
-								console.log(">>>>>>>>> "+data.courses);
-								res.write(JSON.stringify(data));
-                                res.end();
-							} else {
-								res.end();
-							}
-						})
-                    } else {
+					} else {
 
 						//In most cases, it can just get the file
 						getFile(url, {}, function(data) {
@@ -119,12 +90,9 @@ http.createServer(function(req,res) {
 						})
 					}
 				} else {
-                    if(dataPages.indexOf(url) >= 0){
-                        res.write("{}");
-                        res.end();
-                    }
+
 					//If the user is not validly logged in, redirect them to the login page
-					res.writeHead(302, "Redirect", {"Location":"/index"});
+					res.writeHead(302, "Redirect", {"Location":"/login"});
 					res.end();
 				}
 

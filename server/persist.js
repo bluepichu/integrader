@@ -1,6 +1,8 @@
-var mongoose   = require('mongoose'),
-      Schema   = mongoose.Schema
-      ObjectId = Schema.ObjectId;
+var mongoose = require('mongoose'),
+    Schema   = mongoose.Schema
+    ObjectId = Schema.ObjectId
+    crypto   = require('crypto')
+    xor      = require('./XOR');
 
 mongoose.connect('mongodb://localhost/test');
 var db = mongoose.connection;
@@ -84,6 +86,33 @@ var user = new Schema({
 	courses: [Course],
 	seed: String
 });
+
+user.pre('save', function(next) {
+	if (!this.isModified('pwd'))
+		return next();
+	var hash = crypto.createHash('sha256', 'ascii');
+	hash.update(this.pwd);
+	this.pwd = hash.digest('base64');
+	next();
+});
+
+user.methods.auth = function(pwd) {
+	var hash = crypto.createHash('sha256', 'ascii');
+	hash.update(pwd);
+	if (hash.digest('base64') === this.pwd)
+		return xor.toB64(xor.XOR(this.username + Math.floor(Math.random() * 1000000) + xor.toB64(this.username), '127.0.0.1'));
+	throw 'Incorrect username/password';
+};
+
+exports.auth = function(usr, pwd, cb) {
+	User.findOne({ username: usr }, function(err, user) {
+		if (err)
+			throw err;
+		else if (user === null)
+			throw "User does not exist";
+		cb(user.auth(pwd));
+	});
+};
 
 var User = mongoose.model('User', user);
 exports.User = User;
