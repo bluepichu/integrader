@@ -39,13 +39,15 @@ var pages = {
 var rest = [
 	//"views/assignment.html",
 	"courselist",
-    "userinfo"
+    "userinfo",
+    "assignmentlist"
 ]
 
 //URLs that the client accesses for data.
 var dataPages = [
     "courselist",
-    "userinfo"
+    "userinfo",
+    "assignmentlist"
 ]
 
 //This function creates the server and handles data from req[uests] and pipes them into the res[ponse].
@@ -102,6 +104,20 @@ http.createServer(function(req,res) {
 								res.end();
 							}
 						})
+                    } else if(url == "assignmentlist"){
+                        users.getUserData(cookies.username, cookies.auth, function(err, data){
+                            if(data){
+                                users.getCourses(data.courses, function(dob){
+                                    console.log(dob);
+                                    users.getAssignments(dob, function(dob){
+                                        res.write(JSON.stringify(dob));
+                                        res.end();
+                                    });
+                                });
+                            } else {
+                                res.end();
+                            }
+                        });
                     } else {
 
 						//In most cases, it can just get the file

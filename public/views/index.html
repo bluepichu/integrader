@@ -32,7 +32,7 @@
                                 <a href="{{path}}" class="no-link">
                                     <li class="clickable">
                                         <div class="progress micro progress-{{progress}}"></div>
-                                        <span class="title {{#ifCond progress '==' 12}}completed{{/ifCond}}">{{title}}</span>
+                                        <span class="title {{#ifCond progress '==' 12}}completed{{/ifCond}}">{{name}}</span>
                                         <span class="subtitle">{{course}}</span>
                                     </li>
                                 </a>
@@ -47,17 +47,17 @@
                 </div>
                 <div class="content-main">
                     {{#if user}}
-                    <input type="text" class="filter" placeholder="Filter assignments..." />
+                    <!--<input type="text" class="filter" placeholder="Filter assignments..." />-->
                     <h2>Courses</h2>
                     {{#if courses.length}}
                     {{#each courses}}
                     <div class="course-listing">
-                        <h3 class="course-title">{{title}}</h3>
+                        <h3 class="course-title">{{name}}</h3>
                         <h4 class="teacher">{{instructor}}</h4><br />
                         <a href="/ap-physics-c" class="highlight">
                             <span class="upcoming-count highlight">{{upcoming}} Upcoming Assignments &raquo;</span>
                         </a>
-                        <span class="upcoming-next">Next due today (needs fixing)</span>
+                        <span class="upcoming-next">Next due {{dateToName next}}</span>
                     </div>
                     {{/each}}
                     {{else}}
@@ -75,7 +75,7 @@
         
         <script type="text/javascript">
             // TEMPORARY
-            
+            /*
             var data = {
                 dates: [
                     {
@@ -153,14 +153,15 @@
                     }
                 ]
             };
+            */
         </script>
         
         <script type="text/javascript">
             var user;
             var loadCount = 0;
             
-            var toLoad = ["/userinfo", "/courselist"];
-            var loadVars = ["user", "courses"];
+            var toLoad = ["/userinfo", "/courselist", "/assignmentlist"];
+            var loadVars = ["user", "courses", "assignments"];
             
             var merge = function(a, b, prefix){
                 a[prefix] = {}
@@ -183,16 +184,61 @@
                 window[loadVars[this.index]] = JSON.parse(this.responseText);
                 loadCount++;
                 
+                console.log(loadVars[this.index]);
+                
                 if(loadCount == toLoad.length){
                     ready();
                 }
             }
             
             var ready = function(){
+                data = {};
+                
                 if($.isEmptyObject(user)){
                     data.user = false;
                 } else {
                     merge(data, user, "user");
+                }
+                
+                data.courses = [];
+                
+                for(i = 0; i < courses.length; i++){
+                    data.courses.push({});
+                    data.courses[i].name = courses[i].name;
+                    data.courses[i].instructor = courses[i].instructor;
+                    data.courses[i].upcoming = courses[i].assignments.length;
+                    earliest = null;
+                    for(j = 0; j < courses[i].assignments.length; j++){
+                        for(k = 0; k < assignments.length; k++){
+                            if(courses[i].assignments[j] == assignments[k]._id){
+                                assignments[k].course = courses[i].name;
+                                if(earliest == null || earliest > assignments[k].due){
+                                    earliest = assignments[k].due;
+                                }
+                            }
+                        }
+                    }
+                    data.courses[i].next = earliest;
+                }
+                
+                map = {};
+                keys = [];
+                
+                for(i = 0; i < assignments.length; i++){
+                    assignments[i].progress = "00";
+                    if(!(assignments[i].due in map)){
+                        map[assignments[i].due] = [];
+                        keys.push(assignments[i].due);
+                    }
+                    map[assignments[i].due].push(assignments[i]);
+                }
+                
+                data.dates = [];
+                
+                keys.sort();
+                
+                for(i = 0; i < keys.length; i++){
+                    data.dates.push({date: keys[i], assignments: map[keys[i]]});
                 }
                 
                 var positionCounter = 0;
@@ -214,9 +260,10 @@
                 var dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
                 var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec"];
                 
-                Handlebars.registerHelper("formatDate", function(date){
-                    date = new Date(date)
-                    date.setHours(24, 0, 0, 0);
+                var getNames = function(date){
+                    date = date.split("-");
+                    date = new Date(date[0], date[1]-1, date[2])
+                    date.setHours(0, 0, 0, 0);
                     day = new Date()
                     day.setHours(0, 0, 0, 0);
                     
@@ -241,13 +288,22 @@
                     }
                     
                     if(name != ""){
-                        if(name == "Today"){
-                            return "<span class='title highlight'>Today</span><span class='subtitle'>" + monthNames[date.getMonth()] + " " + date.getDate() + "</span>";
-                        }
-                        return "<span class='title'>" + name + "</span><span class='subtitle'>" + monthNames[date.getMonth()] + " " + date.getDate() + "</span>";
-                    } else {
-                        return "<span class='title'>" + monthNames[date.getMonth()] + " " + date.getDate() + "</span>";
-                    } 
+                        return [name, monthNames[date.getMonth()] + " " + date.getDate()];
+                    }
+                    return [monthNames[date.getMonth()] + " " + date.getDate(), ""];
+                }
+                
+                Handlebars.registerHelper("dateToName", function(date){
+                    return getNames(date)[0];
+                });
+                
+                Handlebars.registerHelper("formatDate", function(date){
+                    names = getNames(date);
+                    
+                    if(names[0] == "Today"){
+                        return "<span class='title highlight'>Today</span><span class='subtitle'>" + names[1] + "</span>";
+                    }
+                    return "<span class='title'>" + names[0] + "</span><span class='subtitle'>" + names[1] + "</span>";
                 });
                 
                 Handlebars.registerHelper('ifCond', function (v1, operator, v2, options){

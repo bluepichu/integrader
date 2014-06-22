@@ -85,6 +85,21 @@ var getCourses = function(uids,cb) {
 	})
 }
 
+//gets all assignments associated with a course id
+var getAssignments = function(courses,cb){
+    ids = [];
+    console.log("COURSES >>> ", courses);
+    for(i = 0; i < courses.length; i++){
+        for(j = 0; j < courses[i].assignments.length; j++){
+            ids.push(courses[i].assignments[j]);
+        }
+    }
+    db.assignments.find({"_id": {$in:ids}}, function(err, dob){
+        console.log(dob);
+        cb(dob);
+    });
+}
+
 //Revokes an authentication token
 var endSession = function(username, authToken) {
 	db.users.update({"username":username}, {"$pull":{"private.authToken":authToken}})
@@ -167,5 +182,6 @@ module.exports = {
     "endSession": endSession,
     "updateUser": updateUser,
     "getUserData": getUserData,
-    "authUser": authUser
+    "authUser": authUser,
+    "getAssignments": getAssignments
 }
