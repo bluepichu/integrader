@@ -29,7 +29,7 @@
                             {{{formatDate date}}}
                             {{#each assignments}}
                             <ul>
-                                <a href="{{path}}" class="no-link">
+                                <a href="/assignment?id={{_id}}" class="no-link">
                                     <li class="clickable">
                                         <div class="progress micro progress-{{progress}}"></div>
                                         <span class="title {{#ifCond progress '==' 12}}completed{{/ifCond}}">{{name}}</span>
@@ -53,7 +53,7 @@
                     <div class="course-listing">
                         <h3 class="course-title">{{name}}</h3>
                         <h4 class="teacher">{{instructor.first}} {{instructor.last}}</h4><br />
-                        <a href="/ap-physics-c" class="highlight">
+                        <a href="/course?id={{_id}}" class="highlight">
                             <span class="upcoming-count highlight">{{upcoming}} Upcoming Assignments &raquo;</span>
                         </a>
                         <span class="upcoming-next">Next due {{dateToName next}}</span>
@@ -70,89 +70,6 @@
                     {{/if}}
                 </div>
             </div>
-        </script>
-        
-        <script type="text/javascript">
-            // TEMPORARY
-            /*
-            var data = {
-                dates: [
-                    {
-                        date: "2014-06-20",
-                        assignments: [
-                            {
-                                path: "/",
-                                progress: "12",
-                                title: "Waves: The Final Frontier",
-                                course: "AP Physics C"
-                            }
-                        ]
-                    },
-                    {
-                        date: "2014-06-21",
-                        assignments: [
-                            {
-                                path: "/",
-                                progress: "01",
-                                title: "Waves: The Finaler Frontier",
-                                course: "AP Physics C"
-                            },
-                            {
-                                path: "/",
-                                progress: "02",
-                                title: "What is this class?",
-                                course: "AP US History"
-                            }
-                        ]
-                    },
-                    {
-                        date: "2014-06-22",
-                        assignments: [
-                            {
-                                path: "/",
-                                progress: "05",
-                                title: "Waves: The Finalest Frontier",
-                                course: "AP Physics C"
-                            },
-                            {
-                                path: "/",
-                                progress: "08",
-                                title: "No, seriously, what is this class?",
-                                course: "AP US History"
-                            }
-                        ]
-                    },
-                    {
-                        date: "2014-06-30",
-                        assignments: [
-                            {
-                                path: "/",
-                                progress: "11",
-                                title: "Course Survey",
-                                course: "Linear Algebra"
-                            }
-                        ]
-                    }
-                ],
-                courses: [
-                    {
-                        title: "AP Physics C",
-                        instructor: "Scholla, Stephen R",
-                        upcoming: 3
-                    },
-                    {
-                        title: "AP US History",
-                        instructor: "Sheptyck, Elizabeth A",
-                        upcoming: 2
-                    },
-                    {
-                        title: "Linear Algebra",
-                        instructor: "Spoden, Myra S",
-                        upcoming: 1
-                    }
-                ]
-            };
-            */
         </script>
         
         <script type="text/javascript">
@@ -210,6 +127,7 @@
                     data.courses[i].name = courses[i].name;
                     data.courses[i].instructor = courses[i].instructor;
                     data.courses[i].upcoming = courses[i].assignments.length;
+                    data.courses[i]._id = courses[i]._id;
                     earliest = null;
                     for(j = 0; j < courses[i].assignments.length; j++){
                         for(k = 0; k < assignments.length; k++){
@@ -243,6 +161,11 @@
                 for(i = 0; i < keys.length; i++){
                     data.dates.push({date: keys[i], assignments: map[keys[i]]});
                 }
+                
+                Handlebars.registerHelper("log", function(desc, obj) {
+                    console.log(desc, obj);
+                    return "";
+                });
                 
                 var positionCounter = 0;
                 

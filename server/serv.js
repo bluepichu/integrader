@@ -41,7 +41,8 @@ var rest = [
 	"courselist",
     "userinfo",
     "assignmentlist",
-    "getucainfo"
+    "getucainfo",
+    "assignmentinfo"
 ]
 
 //URLs that the client accesses for data.
@@ -49,7 +50,8 @@ var dataPages = [
     "courselist",
     "userinfo",
     "assignmentlist",
-    "getucainfo"
+    "getucainfo",
+    "assignmentinfo"
 ]
 
 //This function creates the server and handles data from req[uests] and pipes them into the res[ponse].
@@ -60,16 +62,28 @@ http.createServer(function(req,res) {
 	if (req.method == "GET") {
 		 
 		//Chooses the URL. First priority is the url they request, second priority is the url passed as a command line argument, and the third priority is the login page
-		var url = req.url.substr(1) || args[3] || "views/index.html"
+		var url = req.url.substr(1) || args[3] || "views/index.html";
 
-		//Ignores URL options - Those are for the client
-		url = url.split("?")[0];
+		url = url.split("?");
+        
+        if(url.length > 1){
+            getVarsArr = url[1].split("&");
+            getVars = {};
+
+            for(i = 0; i < getVarsArr.length; i++){
+                getVarsArr[i] = getVarsArr[i].split("=");
+                getVars[getVarsArr[i][0]] = getVarsArr[i][1];
+            }
+        }
+        
+        url = url[0];
+        
 		if (pages[url]) {
-			url = pages[url]
+			url = pages[url];
 		}
 
 		//Finds the mime type of the page being sought
-		var cT = getMime(url.split(".")[1])
+		var cT = getMime(url.split(".")[1]);
 
 		//Case for a restricted URL
 		if (rest.indexOf(url) >= 0) {
@@ -152,6 +166,51 @@ http.createServer(function(req,res) {
                                 res.end();
                             }
                         });
+                    } else if (url == "assignmentinfo"){
+                        console.log("ASSIGNMENT INFO.  VARS:", getVars);
+                        if(getVars["id"]){
+                            users.getUserData(cookies.username, cookies.auth, function(err, userData){
+                                console.log("GOT TO USER LEVEL.");
+                                if(userData){
+                                    users.getCourses(userData.courses, function(courseData){
+                                        console.log("GOT TO COURSE LEVEL.");
+                                        if(courseData){
+                                            users.getAssignments(courseData, function(assignmentData){
+                                                console.log("GOT TO ASSIGNMENT LEVEL.");
+                                                if(assignmentData){
+                                                    found = false;
+                                                    for(i = 0; i < assignmentData.length; i++){
+                                                        if(parseInt(assignmentData[i]._id, 16) == parseInt(getVars["id"], 16)){
+                                                            res.write(JSON.stringify(assignmentData[i]));
+                                                            res.end();
+                                                            found = true;
+                                                            console.log("ASSIGNMENT FOUND.");
+                                                            break;
+                                                        }
+                                                    }
+                                                    if(!found){
+                                                        res.write("{}");
+                                                        res.end();
+                                                    }
+                                                } else {
+                                                    res.write("{}");
+                                                    res.end();
+                                                }
+                                            });
+                                        } else {
+                                            res.write("{}");
+                                            res.end();
+                                        }
+                                    });
+                                } else {
+                                    res.write("{}");
+                                    res.end();
+                                }
+                            });
+                        } else {
+                            res.write("{}");
+                            res.end();
+                        }
                     } else {
 
 						//In most cases, it can just get the file

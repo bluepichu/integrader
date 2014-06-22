@@ -19,7 +19,7 @@
                 <a href="/"><div class="button logo"></div></a>
                 <div class="button-area">
                     {{#if user}}
-                    <span class="greeting">Hello, <span class="username">{{user.data.name}}</span></span>
+                    <span class="greeting">Hello, <span class="username">{{user.data.name.first}}</span></span>
                     {{else}}
                     <span class="greeting">Not logged in &middot; <a href="/login">Login</a></span>
                     {{/if}}
@@ -30,11 +30,11 @@
             <div class="main-area">
                 <div class="sidebar">
                     {{#if user}}
-                    <h2 class="sidebar-header">{{title}}</h2>
+                    <h2 class="sidebar-header">{{assignment.name}}</h2>
                     <ol class="questions">
-                        {{#each questions}}
+                        {{#each assignment.questions}}
                         {{incrementPosition}}
-                        <li class="clickable question-select" id="{{position}}"><div class="progress progress-{{progress}}" id="prog{{position}}"></div>{{title}}</li>
+                        <li class="clickable question-select" id="{{position}}"><div class="progress progress-{{progress}}" id="prog{{position}}"></div>{{name}}</li>
                         {{/each}}
                     </ol>
                     {{/if}}
@@ -42,10 +42,10 @@
                 {{resetPosition}}
                 <div class="content-main">
                     {{#if user}}
-                    {{#each questions}}
+                    {{#each assignment.questions}}
                     {{incrementPosition}}
                     <form class="question-container" id="q{{position}}">
-                        <h2>{{title}}</h2>
+                        <h2>{{name}}</h2>
                         
                         {{pushPosition}}
                         
@@ -53,23 +53,23 @@
                         
                         {{incrementPosition}}
                         
-                        {{#ifCond type "==" "content"}}
+                        {{#ifCond type "==" "CONTENT"}}
                         <div class="content">
-                        <p>{{content}}</p>
-                            </div>
+                            <p>{{content}}</p>
+                        </div>
                         {{/ifCond}}
-                        {{#ifCond type "==" "video"}}
+                        {{#ifCond type "==" "VIDEO"}}
                         <div class="video">
-                        <iframe width="560" height="315" src="//www.youtube.com/embed/{{url}}" frameborder="0" allowfullscreen></iframe>
-                            </div>
+                            <iframe width="560" height="315" src="//www.youtube.com/embed/{{url}}" frameborder="0" allowfullscreen></iframe>
+                        </div>
                         {{/ifCond}}
-                        {{#ifCond type "==" "image"}}
+                        {{#ifCond type "==" "IMAGE"}}
                         <div class="image">
                             <img src="{{url}}" {{#if width}}width="{{width}}"{{/if}}/>
-                            </div>
+                        </div>
                         {{/ifCond}}
                             
-                            {{#ifCond type "==" "radio"}}
+                            {{#ifCond type "==" "RADIO"}}
                             {{pushPosition}}
                         <div class="answer-area radio">
                             {{#each choices}}
@@ -80,7 +80,7 @@
                             </div>
                             {{/ifCond}}
                             
-                            {{#ifCond type "==" "checkbox"}}
+                            {{#ifCond type "==" "CHECKBOX"}}
                             {{pushPosition}}
                             <div class="answer-area checkbox">
                             {{#each choices}}
@@ -91,14 +91,14 @@
                             {{popPosition}}
                             {{/ifCond}}
                             
-                            {{#ifCond type "==" "numerical"}}
+                            {{#ifCond type "==" "NUMERICAL"}}
                                 <div class="answer-area numerical">
                             <input type="text" class="numerical" id="p{{position}}" /><span class="units">{{units}}</span>
                             <div class="errors" id="error{{position}}"></div>
                                     </div>
                             {{/ifCond}}
                             
-                            {{#ifCond type "==" "symbolic"}}
+                            {{#ifCond type "==" "SYMBOLIC"}}
                                     <div class="answer-area symbolic">
                             <div class="variable-list">
                                 {{{listVariables variables}}}
@@ -109,7 +109,7 @@
                                         </div>
                             {{/ifCond}}
                             
-                            {{#ifCond type "==" "dropdown"}}
+                            {{#ifCond type "==" "DROPDOWN"}}
                                         <div class="answer-area dropdown">
                             <select id="p{{position}}">
                                 {{pushPosition}}
@@ -141,41 +141,41 @@
         
         <script type="text/javascript">
             // TEMPORARY
-                        
+            /*
             var data = {
-                title: "Various Practice Problems",
-                UID : 1,
+                name: "Various Practice Problems",
+                due: "2014-06-23",
                 questions: [
                     {
-                        title: "Railgun (Tipler6 28.P.041)",
+                        name: "Railgun (Tipler6 28.P.041)",
                         progress: "00",
                         parts: [
                             {
-                                type: "content",
+                                type: "CONTENT",
                                 content: "In the figure below, the rod has a mass \\(m\\) and a resistance \\(R\\).  The rails are horizontal, frictionless, and have negligible resistances.  The distance between the rails is \\(l\\).  An ideal battery that has an emf \\(E\\) is connected between points \\(a\\) and \\(b\\) so that the current in the rod is downward.  The rod is released at \\(t = 0\\)."
                             },
                             {
-                                type: "image",
+                                type: "IMAGE",
                                 url: "https://dl.dropboxusercontent.com/u/3889893/sample1.gif",
                                 width: 300
                             },
                             {
-                                type: "content",
+                                type: "CONTENT",
                                 content: "Derive an expression for the force on the rod as a function of the speed.",
                             },
                             {
-                                type: "symbolic",
+                                type: "SYMBOLIC",
                                 variables: ["B", "R", "v", "l", "E"],
                                 range: [[1,2],[1,2],[1,2],[1,2],[1,2]],
                                 steps: 3,
                                 answer: "l*B/R*(E-B*l*v)"
                             },
                             {
-                                type: "content",
+                                type: "CONTENT",
                                 content: "Find an expression for the terminal speed of the rod."
                             },
                             {
-                                type: "symbolic",
+                                type: "SYMBOLIC",
                                 variables: ["B", "l", "E"],
                                 range: [[1,2],[1,2],[1,2]],
                                 steps: 3,
@@ -184,42 +184,42 @@
                         ]
                     },
                     {
-                        title: "Eddy Currents (Tipler6 26.P.038)",
+                        name: "Eddy Currents (Tipler6 26.P.038)",
                         progress: "00",
                         parts: [
                             {
-                                type: "content",
+                                type: "CONTENT",
                                 content: "In the figure below, let \\(B = .8 \\mathrm{T}\\), \\(v = 11.0 \\mathrm{m/s}\\), \\(l = 22 \\mathrm{cm}\\), and \\(R = 2 \\mathrm{\\Omega}\\)."
                             },
                             {
-                                type: "image",
+                                type: "IMAGE",
                                 url: "https://dl.dropboxusercontent.com/u/3889893/sample2.gif",
                                 width: 300
                             },
                             {
-                                type: "content",
+                                type: "CONTENT",
                                 content: "Find the induced EMF in the circuit.",
                             },
                             {
-                                type: "numerical",
+                                type: "NUMERICAL",
                                 units: "V",
                                 answer: "2"
                             },
                             {
-                                type: "content",
+                                type: "CONTENT",
                                 content: "Find the current in the circuit."
                             },
                             {
-                                type: "numerical",
+                                type: "NUMERICAL",
                                 units: "A",
                                 answer: "1",
                             },
                             {
-                                type: "content",
+                                type: "CONTENT",
                                 content: "In what direction is the current flowing?"
                             },
                             {
-                                type: "radio",
+                                type: "RADIO",
                                 choices: [
                                     "clockwise",
                                     "counterclockwise"
@@ -230,6 +230,7 @@
                     }
                 ]
             }
+            */
         </script>
         
         <script type="text/javascript">            
@@ -271,8 +272,20 @@
             
             var user;
             
-            var toLoad = ["/userinfo"];
-            var loadVars = ["user"];
+            var getQueryVariable = function(variable){
+                   var query = window.location.search.substring(1);
+                   var vars = query.split("&");
+                   for (var i=0;i<vars.length;i++) {
+                           var pair = vars[i].split("=");
+                           if(pair[0] == variable){return pair[1];}
+                   }
+                   return(false);
+            }
+            
+            
+            var loadCount = 0;
+            var toLoad = ["/userinfo", "/assignmentinfo?id=" + getQueryVariable("id")];
+            var loadVars = ["user", "assignment"];
             
             var merge = function(a, b, prefix){
                 a[prefix] = {}
@@ -301,10 +314,18 @@
             }
             
             var ready = function(){
+                data = {};
+                
                 if($.isEmptyObject(user)){
                     data.user = false;
                 } else {
                     merge(data, user, "user");
+                }
+                
+                if($.isEmptyObject(assignment)){
+                    data.assignment = false;
+                } else {
+                    merge(data, assignment, "assignment");
                 }
                 
                 var positionCounter = 0;
