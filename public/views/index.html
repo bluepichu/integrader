@@ -47,13 +47,12 @@
                 </div>
                 <div class="content-main">
                     {{#if user}}
-                    <!--<input type="text" class="filter" placeholder="Filter assignments..." />-->
                     <h2>Courses</h2>
                     {{#if courses.length}}
                     {{#each courses}}
                     <div class="course-listing">
                         <h3 class="course-title">{{name}}</h3>
-                        <h4 class="teacher">{{instructor}}</h4><br />
+                        <h4 class="teacher">{{instructor.first}} {{instructor.last}}</h4><br />
                         <a href="/ap-physics-c" class="highlight">
                             <span class="upcoming-count highlight">{{upcoming}} Upcoming Assignments &raquo;</span>
                         </a>
@@ -160,8 +159,8 @@
             var user;
             var loadCount = 0;
             
-            var toLoad = ["/userinfo", "/courselist", "/assignmentlist"];
-            var loadVars = ["user", "courses", "assignments"];
+            var toLoad = ["/getucainfo"];
+            var loadVars = ["ucaInfo"];
             
             var merge = function(a, b, prefix){
                 a[prefix] = {}
@@ -192,6 +191,10 @@
             }
             
             var ready = function(){
+                user = ucaInfo.user;
+                courses = ucaInfo.courses;
+                assignments = ucaInfo.assignments;
+                
                 data = {};
                 
                 if($.isEmptyObject(user)){

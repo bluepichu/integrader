@@ -40,14 +40,16 @@ var rest = [
 	//"views/assignment.html",
 	"courselist",
     "userinfo",
-    "assignmentlist"
+    "assignmentlist",
+    "getucainfo"
 ]
 
 //URLs that the client accesses for data.
 var dataPages = [
     "courselist",
     "userinfo",
-    "assignmentlist"
+    "assignmentlist",
+    "getucainfo"
 ]
 
 //This function creates the server and handles data from req[uests] and pipes them into the res[ponse].
@@ -115,6 +117,38 @@ http.createServer(function(req,res) {
                                     });
                                 });
                             } else {
+                                res.end();
+                            }
+                        });
+                    } else if(url == "getucainfo") {
+                        users.getUserData(cookies.username, cookies.auth, function(err, userData){
+                            if(userData){
+                                data = {};
+                                data.user = userData;
+                                console.log("USERDATA", userData);
+                                users.getCourses(userData.courses, function(courseData){
+                                    console.log("COURSEDATA", courseData);
+                                    if(courseData){
+                                        data.courses = courseData;
+                                        users.getAssignments(courseData, function(assignmentData){
+                                            if(assignmentData){
+                                                console.log("ASSIGNMENTDATA", assignmentData);
+                                                data.assignments = assignmentData;
+                                            } else {
+                                                data.assignments = {};
+                                            }
+                                            res.write(JSON.stringify(data));
+                                            res.end();
+                                        });
+                                    } else {
+                                        data.courses = {};
+                                        data.assignments = {};
+                                        res.write(JSON.stringify(data));
+                                        res.end();
+                                    }
+                                });
+                            } else {
+                                res.write("{user:{}, courses:{}, assignments:{}}");
                                 res.end();
                             }
                         });

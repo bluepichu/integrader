@@ -79,10 +79,25 @@ var isValid = function(username, authToken, cb) {
 
 //gets all courses associated with a course UID
 var getCourses = function(uids,cb) {
+    console.log("getCourses recieved", uids);
 	db.courses.find({"_id":{$in:uids}},function(err, dob) {
-		console.log(dob)
-		cb(dob);
-	})
+        iids = []
+        for(i = 0; i < dob.length; i++){
+            iids.push(dob[i].instructor);
+        }
+        db.users.find({"_id": {$in:iids}}, function(err, data){
+            for(i = 0; i < data.length; i++){
+                for(j = 0; j < dob.length; j++){
+                    if(parseInt(dob[j].instructor, 16) == parseInt(data[i]._id, 16)){
+                        console.log("INSTRUCTOR FOUND!");
+                        dob[j].instructor = data[i].name;
+                    }
+                }
+            }
+            console.log(dob)
+            cb(dob);
+        });
+	});
 }
 
 //gets all assignments associated with a course id
