@@ -92,7 +92,7 @@
             <p>{{description}}</p>
             <h3>Upcoming Assignments</h3>
             {{#each assignments}}
-                <div class="assignment-large">{{_id}}</div>
+                <div class="assignment-large">{{_id}}</div> <!-- not sure what to do here yet. -->
             {{/each}}
         </script>
         
@@ -136,7 +136,6 @@
                 courses = ucaInfo.courses;
                 assignments = ucaInfo.assignments;
                 
-                console.log(user.settings);
                 if(user.settings == null){
                     user.settings = {theme: "", doubleEnterSubmit: false};
                 } else if(user.settings.theme != ""){

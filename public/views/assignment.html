@@ -19,6 +19,20 @@
             <div class="lightbox-bg">
                 <div class="lightbox">
                     <h2>Settings</h2>
+                    <p>Click outside the lightbox to cancel changes.  Submit to save and view changes.</p><br />
+                    <label>Theme</label>
+                    <select name="theme-select" class="theme-select">
+                        <option value="" {{#ifCond user.settings.theme "==" ""}}selected{{/ifCond}}>Light (Default)</option>
+                        <option value="dark" {{#ifCond user.settings.theme "==" "dark"}}selected{{/ifCond}}>Dark</option>
+                    </select>
+                    <br /><br />
+                    <input type="checkbox" name="dbl-enter" id="dbl-enter" {{#if user.settings.doubleEnterSubmit}}checked{{/if}}/><label for="dbl-enter">Enable Double-Enter Submission</label>
+                    <input type="submit" />
+                </div>
+            </div>
+            <div class="lightbox-bg">
+                <div class="lightbox">
+                    <h2>Settings</h2>
                     <p>Click outside the lightbox to cancel changes.</p><br />
                     <label>Theme</label>
                     <select class="theme-select">
@@ -238,6 +252,12 @@
             var ready = function(){
                 data = {};
                 
+                if(user.settings == null){
+                    user.settings = {theme: "", doubleEnterSubmit: false};
+                } else if(user.settings.theme != ""){
+                    $("head").append("<link id='theme' rel='stylesheet' href='/css/" + user.settings.theme + ".css' />");
+                }
+                
                 if($.isEmptyObject(user)){
                     data.user = false;
                 } else {
@@ -424,8 +444,29 @@
                     }, 200);
                 });
                 
-                $(".lightbox input[type='submit'], .lightbox-bg").click(function(e){
-                    //change settings and submit to DB here
+                $(".lightbox input[type='submit']").click(function(e){
+                    $("#theme").remove();
+                    
+                    user.settings.theme = $(".lightbox .theme-select").val();
+                    user.settings.doubleEnterSubmit = $(".lightbox #dbl-enter").is(":checked");
+                    
+                    if(user.settings.theme != ""){
+                        $("head").append("<link id='theme' rel='stylesheet' href='/css/" + user.settings.theme + ".css' />");
+                    }
+                    
+                    var req = new XMLHttpRequest();
+                    req.open("post", "/updatesettings", true);
+                    req.send(JSON.stringify(user.settings));
+                    
+                    $(".lightbox").fadeOut(300);
+                    
+                    setTimeout(function(){
+                        $(".lightbox-bg").fadeOut(300);
+                    }, 100);
+                });
+                
+                //exit without submitting
+                $(".lightbox-bg").click(function(e){
                     $(".lightbox").fadeOut(300);
                     
                     setTimeout(function(){
