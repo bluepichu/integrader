@@ -1,4 +1,6 @@
-var db = require("mongojs").connect("localhost:27017/integ",["users","courses","assignments","testdb"]);
+var mjs = require("mongojs");
+var db = mjs.connect("localhost:27017/integ",["users","courses","assignments","testdb","submissions"]);
+var ObjectId = mjs.ObjectId;
 var x = require("./XOR/XOR");
 var cr = require("crypto");
 
@@ -199,6 +201,21 @@ var authUser = function(username,pass,cb) {
 	})
 }
 
+var getSubmissions = function(username, authToken, aid, cb){
+    db.users.find({"username": username, "private.authToken": authToken}, function(err, dob){
+        if(dob.length == 0){
+            cb(202, "");
+            return;
+        }
+        console.log("User authenticated.  ID:", dob[0]._id);
+        console.log(typeof(dob[0]._id));
+        console.log("QUERY: ", {"userId": dob[0]._id, "assignmentId": ObjectId(aid)});
+        db.submissions.find({"userId": dob[0]._id, "assignmentId": ObjectId(aid)}, function(err, data){
+            cb(null, data);
+        });
+    });
+}
+
 module.exports = {
     "addTestData": addTestData,
     "createUser": createUser,
@@ -209,5 +226,6 @@ module.exports = {
     "getUserData": getUserData,
     "authUser": authUser,
     "getAssignments": getAssignments,
-    "updateSettings": updateSettings
+    "updateSettings": updateSettings,
+    "getSubmissions": getSubmissions
 }

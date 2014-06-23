@@ -102,13 +102,13 @@ exports.User = User;
 var submission = new Schema({
 	userId: ObjectId,
 	assignmentId: ObjectId,
-	questionId: ObjectId,
-	partId: ObjectId,
+	question: Number,
+	part: Number,
 	type: {
 		type: String,
 		enum: ['SUBMISSION', 'NOTE'],
 	},
-	info: String
+	content: String
 });
 
 var Submission = mongoose.model('Submission', submission);

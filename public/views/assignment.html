@@ -245,11 +245,16 @@
                 loadCount++;
                 
                 if(loadCount == toLoad.length){
-                    ready();
+                    var req = new XMLHttpRequest();
+                    req.onload = ready;
+                    req.open("get", "/submissions?id=" + getQueryVariable("id"), true);
+                    req.send();
                 }
             }
             
             var ready = function(){
+                submissions = JSON.parse(this.responseText);
+                
                 data = {};
                 
                 if(user.settings == null){
