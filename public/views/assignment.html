@@ -153,7 +153,11 @@
                             {{/ifCond}}
                         
                         {{/each}}
-                        
+                        <div class="answer-area">
+                            <h3>Notes</h3>
+                            {{incrementPosition}}
+                            <textarea id="notes"></textarea>
+                        </div>
                         
                         {{popPosition}}
                     </form>
@@ -253,7 +257,7 @@
             }
             
             var ready = function(){
-                submissions = JSON.parse(this.responseText);
+                var submissions = JSON.parse(this.responseText);
                 
                 data = {};
                 
@@ -481,6 +485,30 @@
                 
                 $(".lightbox").click(function(e){
                     e.stopPropagation();
+                });
+                
+                for(i = 0; i < submissions.length; i++){
+                    console.log(i);
+                    if(submissions[i].type == "SUBMISSION"){
+                        $("#q" + pad(submissions[i].question, 3) + " #p" + pad(submissions[i].part, 3)).val(submissions[i].content);
+                    } else if(submissions[i].type == "NOTE"){
+                        $("#q" + pad(submissions[i].question, 3) + " #notes").val(submissions[i].content);
+                    }
+                }
+                
+                $("input[type='text']").change();
+                
+                $(".button-submit").click(function(e){
+                    data = {};
+                    $("form.question-container").each(function(num, cont){
+                        for(i = 1; true; i++){
+                            child = $("#" + pad(i, 3));
+                            if(child.length == 0){
+                                break;
+                            }
+                            //leaving off here
+                        }
+                    });
                 });
             }
         </script>

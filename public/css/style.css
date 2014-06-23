@@ -475,6 +475,10 @@ textarea {
     padding: 8px 4px 0px;
 }
 
+.answer-area h3 {
+    margin-top: 0px;
+}
+
 /* REGISTER */
 
 .form-label {
