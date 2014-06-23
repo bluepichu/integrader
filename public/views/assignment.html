@@ -379,7 +379,7 @@
                 
                 MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
                 
-                $(".symbolic").bind("change keydown keyup", function(e){
+                $("input[type='text'].symbolic").bind("change keydown keyup", function(e){
                     console.log("yes");
                     renderId = "render" + $(this).attr("id").substring(1);
                     errorId = "error" + $(this).attr("id").substring(1);
@@ -487,26 +487,24 @@
                 
                 $(".button-submit").click(function(e){
                     $("form.question-container").each(function(num, cont){
-                        for(i = 1; true; i++){
+                        for(i = 1; i < $(cont).children().length; i++){
                             child = $("#p" + pad(i, 3), cont);
-                            if(child.length == 0){
-                                break;
+                            if(child.length > 0){
+                                data = {
+                                    assignment: getQueryVariable("id"),
+                                    question: parseInt($(this).attr("id").substring(1)),
+                                    part: parseInt(child.attr("id").substring(1)),
+                                    type: "SUBMISSION",
+                                    content: child.val().toString()
+                                }
+
+                                var req = new XMLHttpRequest();
+                                req.onload = function(){ console.log(this.responseText); };
+                                req.open("post", "/answers", true);
+                                req.send(JSON.stringify(data));
+
+                                console.log("req sent");
                             }
-                            
-                            data = {
-                                assignment: getQueryVariable("id"),
-                                question: parseInt($(this).attr("id").substring(1)),
-                                part: parseInt(child.attr("id").substring(1)),
-                                type: "SUBMISSION",
-                                content: child.val().toString()
-                            }
-                            
-                            var req = new XMLHttpRequest();
-                            req.onload = function(){ console.log(this.responseText); };
-                            req.open("post", "/answers", true);
-                            req.send(JSON.stringify(data));
-                            
-                            console.log("req sent");
                         }
                     });
                 });

@@ -18,9 +18,10 @@ var part = new Schema({
     url: String,
     choices: [String],
     variables: [String],
+    ranges: [Object],
+    steps: Number,
     answer: String,
-	points: { type: Number, default: 0 },
-	scoring: [Number]
+	points: { type: Number, default: 0 }
 });
 
 var Part = mongoose.model('Part', part);

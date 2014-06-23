@@ -1,64 +1,36 @@
 {
-    title: "Various Practice Problems",
+    name: "Submission Testing",
+    due: "2014-06-24",
     questions: [
         {
-            title: "Sally, Bobby, and Apples",
-            content: [
-                "Sally and Bobby are going on a picnic, as you can see in the diagram below.",
-                "<img src='http://latinasypunto.files.wordpress.com/2010/09/picnic.jpg' height=250 />",
-                "Bobby has 4 apples and Sally has 3 apples.",
+            name: "Numerical, Symbolic, Dropdown",
+            parts: [
                 {
-                    text: "How many apples do they have put together?  (Check all that apply.)",
-                    type: "check",
-                    options: [
-                        "7",
-                        "6",
-                        "Kyle",
-                        "-2",
-                        "What's an apple?"
-                    ]
-                },
-                "Now suppose that Bobby gives Sally 16 of his apples.",
-                {
-                    text: "How many apples does Bobby have now?",
-                    type: "select",
-                    options: [
-                        "16 kg",
-                        "wut?",
-                        "African or European?"
-                    ]
+                    type: "CONTENT",
+                    content: "This question is to test numerical, symbolic, and dropdown submission types.  The answers are 1.234, \\(a^2 + b^2 - abcos(\\theta)\\), and 'the right answer.'"
                 },
                 {
-                    text: "How many apples does Sally have now?",
-                    type: "input"
+                    type: "NUMERICAL",
+                    answer: "1.234",
+                    points: 2
                 },
                 {
-                    text: "What is the mass of the moon with respect to teslas?  (Use the following variables as necessary: \\(a, x_0, theta, \\vec{r}\\).)",
-                    type: "symbolic",
-                    variables: ["a", "x_0", "theta", "apple", "\\vec{r}", "\\hat{i}"]
+                    type: "SYMBOLIC",
+                    variables: ["a", "b", "theta"],
+                    ranges: [[1, 5], [10, 50], [0, 3.14159]],
+                    steps: 4,
+                    answer: "a^2 + b^2 + a b cos(theta)",
+                    points: 5
                 },
                 {
-                    text: "This is the last question.",
-                    type: "check",
-                    options: [
-                        "yes"
-                    ]
-                }
-            ]
-        },
-        {
-            title: "Solenoids (Tipler 6 28.P.079)",
-            content: [
-                "A long solenoid has \\(n\\) turns per unit length and carries a current that varies with time according to \\(I = I_0 sin \\omega t\\). The solenoid has a circular cross section of radius \\(R\\). Find the induced electric field, at points near the plane equidistant from the ends of the solenoid, as a function of both the time \\(t\\) and the perpendicular distance \\(r\\) from the axis of the solenoid for the following. (Use the following as necessary: \\(n, r, R, t, \\mu_0, I_0, \\omega\\).)",
-                {
-                    text: "\\(r < R\\)",
-                    type: "symbolic",
-                    variables: ["n", "r", "R", "t", "\\mu_0", "I_0", "\\omega"]
-                },
-                {
-                    text: "\\(r > R\\)",
-                    type: "symbolic",
-                    variables: ["n", "r", "R", "t", "\\mu_0", "I_0", "\\omega"]
+                    type: "DROPDOWN",
+                    choices: [
+                        "A wrong answer",
+                        "The right answer",
+                        "Another wrong answer"
+                    ],
+                    answer: "2",
+                    points: 3
                 }
             ]
         }
