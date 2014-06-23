@@ -102,9 +102,9 @@ var grade = function(studentResponse, acceptedResponse){
             console.log("COMPARING", acceptedResponse.answer, "AND", studentResponse.content);
             return numerical(acceptedResponse.answer, [], [], studentResponse.content, .02);
             break;
-        case "SYMBOLIC":
+        /*case "SYMBOLIC":
             return symbolic(studentResponse.content, acceptedResponse.answer, acceptedResponse.variables, acceptedResponse.ranges, acceptedResponse.steps);
-            break;
+            break;*/
         case "DROPDOWN":
             console.log("COMPARING", studentResponse.content, "AND", acceptedResponse.answer);
             return parseInt(studentResponse.content) == parseInt(acceptedResponse.answer);
