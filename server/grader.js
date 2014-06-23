@@ -97,6 +97,7 @@ var numerical = function(equation,variables,values,answer,tolerance){
 
 
 var grade = function(studentResponse, acceptedResponse){
+    console.log("GRADING QUESTION", studentResponse.question, "PART", studentResponse.part);
     switch(acceptedResponse.type){
         case "NUMERICAL":
             console.log("COMPARING", acceptedResponse.answer, "AND", studentResponse.content);
@@ -106,10 +107,16 @@ var grade = function(studentResponse, acceptedResponse){
             return symbolic(studentResponse.content, acceptedResponse.answer, acceptedResponse.variables, acceptedResponse.ranges, acceptedResponse.steps);
             break;*/
         case "DROPDOWN":
+        case "RADIO":
             console.log("COMPARING", studentResponse.content, "AND", acceptedResponse.answer);
             return parseInt(studentResponse.content) == parseInt(acceptedResponse.answer);
             break;
+        case "CHECKBOX":
+            console.log("COMPARING", studentResponse.content, "AND", acceptedResponse.answer);
+            return studentResponse.content == acceptedResponse.answer;
+            break;
     }
+    return false;
 }
 
 module.exports = {

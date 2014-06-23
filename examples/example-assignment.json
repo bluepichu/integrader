@@ -35,7 +35,33 @@
             ]
         },
         {
-            
+            name: "Radio, Checkbox",
+            parts: [
+                {
+                    type: "CONTENT", 
+                    content: "This question is to test radio button and checkbox submission types.  The answers are 'the right answer' and {A, C}."
+                },
+                {
+                    type: "RADIO",
+                    choices: [
+                        "A wrong answer",
+                        "The right answer",
+                        "Another wrong answer"
+                    ],
+                    answer: "2",
+                    points: 4
+                },
+                {
+                    type: "CHECKBOX",
+                    choices: [
+                        "A",
+                        "B",
+                        "C"
+                    ],
+                    answer: "101",
+                    points: 8
+                }
+            ]
         }
     ]
 }
