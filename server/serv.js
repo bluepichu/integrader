@@ -298,9 +298,11 @@ http.createServer(function(req,res) {
 						res.end();
 					}
 				})
-
-			//Handles requests for submitting answer. Checks the correct answer against the submitted one
-			} else if (req.url == "/answers" ) {
+			} else if(req.url == "/updatesettings"){
+                console.log("updating user settings");
+                console.log(JSON.parse(fullBody));
+                users.updateSettings(cookies.username, cookies.auth, JSON.parse(fullBody));
+            } else if (req.url == "/answers" ) {
 				console.log("Received this junk");
 				users.getCourses([1], function(data) {
 					var post = JSON.parse(fullBody);

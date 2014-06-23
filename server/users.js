@@ -26,7 +26,11 @@ var createUser = function(firstName, lastName, email, username, pass, type, cb) 
                     last: lastName
                 },
 				"courses": [],
-                "type": type.toUpperCase()
+                "type": type.toUpperCase(),
+                "settings": {
+                    "theme": "",
+                    "doubleEnterSubmit": false
+                }
 			}
 			console.log(user);
 			db.users.save(user);
@@ -137,6 +141,11 @@ var updateUser = function(username, authToken, data, cb) {
 	}
 }
 
+var updateSettings = function(username, authToken, data){
+    console.log("UPDATING SETTINGS WITH", data);
+    db.users.update({"username": username, "private.authToken": authToken}, {$set:{settings: data}});
+}
+
 //Returns user data
 var getUserData = function(username,authToken,cb) {
 	db.users.find({"username":username,"private.authToken":authToken},function(err, dob) {
@@ -152,6 +161,7 @@ var getUserData = function(username,authToken,cb) {
 				email: dob[0].email,
 			},
 			courses: dob[0].courses,
+            settings: dob[0].settings
 		}
 		
 		if (cb) {
@@ -198,5 +208,6 @@ module.exports = {
     "updateUser": updateUser,
     "getUserData": getUserData,
     "authUser": authUser,
-    "getAssignments": getAssignments
+    "getAssignments": getAssignments,
+    "updateSettings": updateSettings
 }

@@ -275,6 +275,30 @@ header {
     background: transparent url("/images/button-settings-dark.png");
 }
 
+.button-back {
+    background: transparent url("/images/button-back-light.png");
+    width: 24px;
+    height: 24px;
+    margin: 6px 4px;
+    float: left;
+}
+
+.button-back:hover {
+    background: transparent url("/images/button-back-dark.png");
+}
+
+.button-submit {
+    background: transparent url("/images/button-submit-light.png");
+    width: 24px;
+    height: 24px;
+    margin: 6px 4px;
+    float: right;
+}
+
+.button-submit:hover {
+    background: transparent url("/images/button-submit-dark.png");
+}
+
 .button {
     cursor: pointer;
 }
@@ -400,6 +424,7 @@ div.answer-area {
     margin: 16px 0px;
     background: #F6F6F6;
     font-size: 14px;
+    color: #333333;
 }
 
 input[type="radio"],
@@ -498,6 +523,36 @@ ol.questions li.new-question:before {
 .edit {
     border: 1px solid #111111;
     
+}
+
+/*     LIGHTBOX     */
+
+.lightbox-bg {
+    background: rgba(0, 0, 0, .6);
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    z-index: 100;
+}
+
+.lightbox {
+    background: #FFFFFF;
+    color: #333333;
+    position: fixed;
+    width: 600px;
+    height: 400px;
+    top: calc(50% - 200px);
+    left: calc(50% - 300px);
+    box-shadow: 0px 0px 40px 20px rgba(0, 0, 0, .2);
+    padding: 16px;
+}
+
+.lightbox input[type="submit"] {
+    position: absolute;
+    bottom: 0px;
+    right: 16px;
 }
 
 /*     FONTS     */

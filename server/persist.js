@@ -90,7 +90,10 @@ var user = new Schema({
 		required: true
 	},
 	courses: [Course],
-	seed: String
+	settings: {
+        theme: String,
+        doubleEnterSubmit: Boolean
+    }
 });
 
 var User = mongoose.model('User', user);

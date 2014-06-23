@@ -7,6 +7,20 @@
         <title>Home</title>
         
         <script id="template" type="text/x-handlebars-template">
+            <div class="lightbox-bg">
+                <div class="lightbox">
+                    <h2>Settings</h2>
+                    <p>Click outside the lightbox to cancel changes.  Submit to save and view changes.</p><br />
+                    <label>Theme</label>
+                    <select name="theme-select" class="theme-select">
+                        <option value="" {{#ifCond user.settings.theme "==" ""}}selected{{/ifCond}}>Light (Default)</option>
+                        <option value="dark" {{#ifCond user.settings.theme "==" "dark"}}selected{{/ifCond}}>Dark</option>
+                    </select>
+                    <br /><br />
+                    <input type="checkbox" name="dbl-enter" id="dbl-enter" {{#if user.settings.doubleEnterSubmit}}checked{{/if}}/><label for="dbl-enter">Enable Double-Enter Submission</label>
+                    <input type="submit" />
+                </div>
+            </div>
             <header>
                 <a href="/"><div class="button logo"></div></a>
                 <div class="button-area">
@@ -15,6 +29,7 @@
                     {{else}}
                     <span class="greeting">Not logged in &middot; <a href="/login">Login</a></span>
                     {{/if}}
+                    <div class="button button-back"></div>
                     <div class="button button-settings"></div>
                     <a href="/"><div class="button button-home"></div></a>
                 </div>
@@ -120,6 +135,13 @@
                 user = ucaInfo.user;
                 courses = ucaInfo.courses;
                 assignments = ucaInfo.assignments;
+                
+                console.log(user.settings);
+                if(user.settings == null){
+                    user.settings = {theme: "", doubleEnterSubmit: false};
+                } else if(user.settings.theme != ""){
+                    $("head").append("<link id='theme' rel='stylesheet' href='/css/" + user.settings.theme + ".css' />");
+                }
                 
                 data = {};
                 
@@ -274,6 +296,24 @@
                 
                 out.html(html);
                 
+                var mainpage = null;
+                
+                $(".button-back").hide();
+                
+                $(".button-back").click(function(e){
+                    if(mainpage != null){
+                        $(".button-back").fadeOut(300);
+                        $(".content-main").children().fadeOut(300);
+                        
+                        setTimeout(function(){
+                            $(".content-main").empty();
+                            $(".content-main").append(mainpage);
+                            mainpage.fadeIn(300);
+                            mainpage = null;
+                        }, 300);
+                    }
+                });
+                
                 $(".course-link").click(function(e){
                     id = $(this).attr("href").split("id=")[1];
                     
@@ -292,13 +332,59 @@
                     out.children().fadeOut(300);
                     
                     setTimeout(function(){
+                        mainpage = $(".content-main").children().detach();
                         toAdd = $(html);
                         toAdd.hide();
                         out.append(toAdd);
                         toAdd.fadeIn(300);
+                        $(".button-back").fadeIn(300);
                     }, 300);
                     
                     e.preventDefault();
+                });
+                
+                $(".lightbox-bg, .lightbox").hide();
+                
+                $(".button-settings").click(function(e){
+                    $(".lightbox-bg").fadeIn(300);
+                    
+                    setTimeout(function(){
+                        $(".lightbox").fadeIn(300);
+                    }, 200);
+                });
+                
+                $(".lightbox input[type='submit']").click(function(e){
+                    $("#theme").remove();
+                    
+                    user.settings.theme = $(".lightbox .theme-select").val();
+                    user.settings.doubleEnterSubmit = $(".lightbox #dbl-enter").is(":checked");
+                    
+                    if(user.settings.theme != ""){
+                        $("head").append("<link id='theme' rel='stylesheet' href='/css/" + user.settings.theme + ".css' />");
+                    }
+                    
+                    var req = new XMLHttpRequest();
+                    req.open("post", "/updatesettings", true);
+                    req.send(JSON.stringify(user.settings));
+                    
+                    $(".lightbox").fadeOut(300);
+                    
+                    setTimeout(function(){
+                        $(".lightbox-bg").fadeOut(300);
+                    }, 100);
+                });
+                
+                //exit without submitting
+                $(".lightbox-bg").click(function(e){
+                    $(".lightbox").fadeOut(300);
+                    
+                    setTimeout(function(){
+                        $(".lightbox-bg").fadeOut(300);
+                    }, 100);
+                });
+                
+                $(".lightbox").click(function(e){
+                    e.stopPropagation();
                 });
             }
         </script>
