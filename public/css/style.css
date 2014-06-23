@@ -77,6 +77,10 @@ h2 {
     text-decoration-color: #DD4B39 !important;
 }
 
+.greeting {
+    color: #333333;
+}
+
 .bold {
     font-weight: 700;
 }

@@ -1,4 +1,4 @@
-#!/usr/local/bin/node
+#!/usr/bin/env node
 
 //The code is build ontop of node's generic HTTP stack. No express or similar libraries
 
@@ -8,8 +8,8 @@ var querystring = require('querystring');
 
 var persist = require("./persist");
 
-//sg is our symbolic grader module
-var sg = require("./symGrader");
+//grader is our grader module
+var grader = require("./grader");
 
 //Users represents the interface with a Mongo no-sql database
 var users = require("./users");
@@ -319,43 +319,17 @@ http.createServer(function(req,res) {
                 users.updateSettings(cookies.username, cookies.auth, JSON.parse(fullBody));
             } else if (req.url == "/answers" ) {
 				console.log("Received this junk");
-				users.getCourses([1], function(data) {
-					var post = JSON.parse(fullBody);
-					var qs = (data[0].assignments[0].questions[post.question].content)
-					var iter = 0;
-					var ended = false;
-					for (var i = 0; i < qs.length; i++) {
-						if (typeof qs[i] == "object") {
-							if (iter == parseInt(post.part)) {
-								if (qs[i].answer) {
-									if (qs[i].type == "symbolic") {
-										var ans = sg.test(post.answer, qs[i].answer, qs[i].variables, qs[i].range, 3, [], 0)
-										res.writeHead(200, "OK", {"Content-Type":"text/html"});
-										res.write((ans).toString());
-										res.end();
-										ended = true;
-										
-									} else { 
-										res.writeHead(200, "OK", {"Content-Type":"text/html"});
-										res.write((qs[i].answer == post.answer).toString());
-										res.end();
-										ended = true;
-									}
-								}
-								console.log(qs[i]);
-								console.log(post);
-							}
-							iter++;
-						}
-					}
-					if (!ended) {
-						res.writeHead(200, "OK", {"Content-Type":"text/html"});
-						res.write("false");
-						res.end();
-					}
-
-				})
-
+                console.log(fullBody);
+				users.submit(cookies.username, cookies.auth, JSON.parse(fullBody), function(err, data){
+                    console.log("ready to roll");
+                    if(data){
+                        res.write(JSON.stringify(data));
+                        res.end();
+                    } else {
+                        res.write("{}");
+                        res.end();
+                    }
+                });
 			//Sending useless data. Ignore it
 			} else {
 				res.write("Invalid Post Data");

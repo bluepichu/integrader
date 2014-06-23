@@ -18,6 +18,7 @@ var part = new Schema({
     url: String,
     choices: [String],
     variables: [String],
+    answer: String,
 	points: { type: Number, default: 0 },
 	scoring: [Number]
 });
@@ -108,7 +109,8 @@ var submission = new Schema({
 		type: String,
 		enum: ['SUBMISSION', 'NOTE'],
 	},
-	content: String
+	content: String,
+    response: Boolean
 });
 
 var Submission = mongoose.model('Submission', submission);

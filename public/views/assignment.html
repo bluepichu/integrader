@@ -30,20 +30,6 @@
                     <input type="submit" />
                 </div>
             </div>
-            <div class="lightbox-bg">
-                <div class="lightbox">
-                    <h2>Settings</h2>
-                    <p>Click outside the lightbox to cancel changes.</p><br />
-                    <label>Theme</label>
-                    <select class="theme-select">
-                        <option selected>Light (Default)</option>
-                        <option>Dark</option>
-                    </select>
-                    <br /><br />
-                    <input type="checkbox" name="dbl-enter" id="dbl-enter" /><label for="dbl-enter">Enable Double-Enter Submission</label>
-                    <input type="submit" />
-                </div>
-            </div>
             <header>
                 <a href="/"><div class="button logo"></div></a>
                 <div class="button-area">
@@ -257,7 +243,7 @@
             }
             
             var ready = function(){
-                var submissions = JSON.parse(this.responseText);
+                window.submissions = JSON.parse(this.responseText);
                 
                 data = {};
                 
@@ -435,7 +421,6 @@
                 });
                 
                 $(".numerical").bind("change keydown keyup", function(e){
-                    console.log($(this).val());
                     if(isNaN($(this).val())){
                         $(this).parent().children(".errors").html("<span class='bold title highlight'>Error: </span>Entered value is not a number.");
                     } else {
@@ -455,6 +440,8 @@
                 
                 $(".lightbox input[type='submit']").click(function(e){
                     $("#theme").remove();
+                    
+                    console.log("!!!");
                     
                     user.settings.theme = $(".lightbox .theme-select").val();
                     user.settings.doubleEnterSubmit = $(".lightbox #dbl-enter").is(":checked");
@@ -499,14 +486,27 @@
                 $("input[type='text']").change();
                 
                 $(".button-submit").click(function(e){
-                    data = {};
                     $("form.question-container").each(function(num, cont){
                         for(i = 1; true; i++){
-                            child = $("#" + pad(i, 3));
+                            child = $("#p" + pad(i, 3), cont);
                             if(child.length == 0){
                                 break;
                             }
-                            //leaving off here
+                            
+                            data = {
+                                assignment: getQueryVariable("id"),
+                                question: parseInt($(this).attr("id").substring(1)),
+                                part: parseInt(child.attr("id").substring(1)),
+                                type: "SUBMISSION",
+                                content: child.val().toString()
+                            }
+                            
+                            var req = new XMLHttpRequest();
+                            req.onload = function(){ console.log(this.responseText); };
+                            req.open("post", "/answers", true);
+                            req.send(JSON.stringify(data));
+                            
+                            console.log("req sent");
                         }
                     });
                 });
