@@ -33,7 +33,10 @@ var createUser = function(firstName, lastName, email, username, pass, type, cb) 
                 "settings": {
                     "theme": "",
                     "doubleEnterSubmit": false
-                }
+                },
+		"private": {
+			"authToken":[authToken]
+		}
             }
             console.log(user);
             db.users.save(user);
