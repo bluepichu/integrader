@@ -50,7 +50,7 @@
                     <ol class="questions">
                         {{#each assignment.questions}}
                         {{incrementPosition}}
-                        <li class="clickable question-select" id="{{position}}"><div class="progress" id="prog{{position}}"></div>{{name}}</li>
+                        <li class="clickable question-select" id="{{position}}"><div class="progress progress-00" id="prog{{position}}"></div>{{name}}</li>
                         {{/each}}
                     </ol>
                     {{/if}}
@@ -517,14 +517,14 @@
                         if(submissions[i].response){
                             if(!assignment.questions[submissions[i].question-1].parts[submissions[i].part-1].correct){
                                 assignment.questions[submissions[i].question-1].parts[submissions[i].part-1].correct = true;
-                                $(".status", $("#q" + pad(submissions[i].question, 3) + ">div")[submissions[i].part-1]).addClass("correct");
+                                $(".status", $("#q" + pad(submissions[i].question, 3) + ">div")[submissions[i].part-1]).removeClass("incorrect").addClass("correct");
                                 assignment.questions[submissions[i].question-1].earnedPoints += assignment.questions[submissions[i].question-1].parts[submissions[i].part-1].points;
                                 icon = $(".question-select #prog" + pad(submissions[i].question, 3))[0];
                                 icon.className = icon.className.replace(/\bprogress-..\b/g, "");
                                 icon.className += " progress-" + pad(Math.floor(assignment.questions[submissions[i].question-1].earnedPoints, assignment.questions[submissions[i].question-1].totalPoints), 2);
                             }
                         } else {
-                            $(".status", $("#q" + pad(submissions[i].question, 3) + ">div")[submissions[i].part-1]).addClass("incorrect");
+                            $(".status", $("#q" + pad(submissions[i].question, 3) + ">div")[submissions[i].part-1]).removeClass("correct").addClass("incorrect");
                         }
                     } else if(submissions[i].type == "NOTE"){
                         $("#q" + pad(submissions[i].question, 3) + " #notes").val(submissions[i].content);
@@ -536,9 +536,10 @@
                 $(".button-submit").click(function(e){
                     $("form.question-container").each(function(questionNum, cont){
                         $(cont).children("div").each(function(partNum, ans){
-                            if(!$(ans).hasClass("answer-area")){
+                            if(!$(ans).hasClass("answer-area") || partNum >= assignment.questions[questionNum].parts.length || assignment.questions[questionNum].parts[partNum].correct){
                                 return;
                             }
+                            
                             data = {
                                 assignment: getQueryVariable("id"),
                                 question: questionNum+1,
@@ -563,6 +564,9 @@
                                         data.content += "0";
                                     }
                                 });
+                                if(parseInt(data.content) == 0){
+                                    delete data.content;
+                                }
                             }
                             
                             if(!data.content){
@@ -570,7 +574,21 @@
                             }
                             
                             var req = new XMLHttpRequest();
-                            req.onload = function(){ console.log(this.responseText); };
+                            req.onload = function(){
+                                data = JSON.parse(this.responseText);
+                                if(data.response){
+                                    if(!assignment.questions[data.question-1].parts[data.part-1].correct){
+                                        assignment.questions[data.question-1].parts[data.part-1].correct = true;
+                                        $(".status", $("#q" + pad(data.question, 3) + ">div")[data.part-1]).removeClass("incorrect").addClass("correct");
+                                        assignment.questions[data.question-1].earnedPoints += assignment.questions[data.question-1].parts[data.part-1].points;
+                                        icon = $(".question-select #prog" + pad(data.question, 3))[0];
+                                        icon.className = icon.className.replace(/\bprogress-..\b/g, "");
+                                        icon.className += " progress-" + pad(Math.floor(assignment.questions[data.question-1].earnedPoints, assignment.questions[data.question-1].totalPoints), 2);
+                                    }
+                                } else {
+                                    $(".status", $("#q" + pad(data.question, 3) + ">div")[data.part-1]).removeClass("correct").addClass("incorrect");
+                                }
+                            }
                             req.open("post", "/answers", true);
                             req.send(JSON.stringify(data));
                             
