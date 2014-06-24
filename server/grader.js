@@ -16,8 +16,8 @@ var compare = function(equation1,equation2,variables,values){
 		instructions1.push(variables[i]+"="+values[i]);
 		instructions2.push(variables[i]+"="+values[i]);
 	}
-	instructions1.push("round("+implicitMultiplication(equation1)+",3)");
-	instructions2.push("round("+implicitMultiplication(equation2)+",3)");
+	instructions1.push("round("+equation1+",3)");
+	instructions2.push("round("+equation2+",3)");
     console.log(instructions1);
     console.log(instructions2);
 	console.log("~~~~~", (math.eval(instructions1)[len]+", "+(math.eval(instructions2)[len])))
@@ -38,28 +38,6 @@ var getAllIndexes = function(str){
 		check = str.indexOf(')',check+1)
 	}
 	return [openParens,closeParens];
-}
-
-var implicitMultiplication = function(str){
-	var indexes=getAllIndexes(str)
-	var offset = 0;
-	var i;
-	for(var x in indexes[0]){
-		i=indexes[0][x];
-		if((i-1+offset)>-1 && 
-"0123456789)abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVQXYZ".indexOf(str.charAt(i-1+offset))>-1){
-			str=str.substring(0,(i+offset))+"*"+str.substring((i+offset),str.length)
-			offset+=1;
-		}	
-	}
-	for(var x in indexes[1]){
-		i=indexes[1][x];
-		if((i+1+offset)<str.length && "0123456789)abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVQXYZ".indexOf(str.charAt(i+1+offset))>-1){
-			str=str.substring(0,(i+offset+1))+"*"+str.substring((i+offset+1),str.length)
-			offset+=1;
-		}
-	}
-	return str;
 }
 
 operators = ["+", "-", "*", "/", " ", "^", "_"];
@@ -129,10 +107,8 @@ var symbolicRec = function(eq1,eq2,variables,range,steps,array,index){
 
 
 var symbolic = function(eq1,eq2,variables,range,steps){
-    fp = funcParse(eq1);
-    console.log(fp);
-    eq1 = parse(fp);
-    symbolicRec(eq1, eq2, variables, range, steps, [], 0);
+    eq1 = parse(eq1);
+    return symbolicRec(eq1, eq2, variables, range, steps, [], 0);
 }
 
 var numerical = function(equation,variables,values,answer,tolerance){
@@ -142,9 +118,9 @@ var numerical = function(equation,variables,values,answer,tolerance){
 	{
 		instructions.push(variables[i]+"="+values[i]);
 	}
-	instructions.push(implicitMultiplication(equation));
+	instructions.push(equation);
 	var trueValue = math.eval(instructions)[len];
-	var testValue = math.eval(implicitMultiplication(answer));
+	var testValue = math.eval(answer);
 	return(testValue>=trueValue*(1-tolerance)&&testValue<=trueValue*(1+tolerance))
 }
 
