@@ -181,13 +181,20 @@ span.subtitle {
     background-size: 20px 20px;
     vertical-align: top;
     margin-right: 4px;
+    vertical-align: -5px;
 }
-
+/*
 .progress.micro {
     width: 16px;
     height: 16px;
     background-size: 16px 16px;
     margin-right: 2px;
+}
+*/
+.progress.progress-large {
+    width: 24px;
+    height: 24px;
+    background-size: 24px 24px;
 }
 
 .clickable {
@@ -325,7 +332,7 @@ header {
 }
 
 h2.sidebar-header {
-    font-size: 16px;
+    font-size: 20px;
     font-weight: 600;
     margin-top: 0px;
 }
@@ -367,6 +374,7 @@ ol.questions li:before {
     text-align: right;
     width: 20px;
     padding-right: 8px;
+    font-weight: 700;
 }
 
 /*     CONTENT     */
@@ -452,6 +460,7 @@ textarea {
     border-radius: 4px;
     padding: 2px;
     border: 1px solid #999999;
+    
 }
 
 textarea {

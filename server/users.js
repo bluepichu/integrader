@@ -34,9 +34,9 @@ var createUser = function(firstName, lastName, email, username, pass, type, cb) 
                     "theme": "",
                     "doubleEnterSubmit": false
                 },
-		"private": {
-			"authToken":[authToken]
-		}
+                "private": {
+                    "authToken":[authToken]
+                }
             }
             console.log(user);
             db.users.save(user);
@@ -168,6 +168,7 @@ var getUserData = function(username,authToken,cb) {
         }
         console.log(dob);
         user = {
+            _id: dob[0]._id,
             data: {
                 name: dob[0].name,
                 username: dob[0].username,
@@ -208,18 +209,20 @@ var authUser = function(username,pass,cb) {
             console.log("not found.");
             cb(202,"");
         }
-        //})
     })
 }
 
 var getSubmissions = function(username, authToken, aid, cb){
+    for(i = 0; i < aid.length; i++){
+        aid[i] = ObjectId(aid[i]);
+    }
     db.users.find({"username": username, "private.authToken": authToken}, function(err, dob){
         if(dob.length == 0 || err){
             cb(202, "");
             return;
         }
-        console.log("QUERY: ", {"userId": dob[0]._id, "assignmentId": ObjectId(aid)});
-        db.submissions.find({"userId": dob[0]._id, "assignmentId": ObjectId(aid)}, function(err, data){
+        console.log("QUERY: ", {"userId": dob[0]._id, "assignmentId": aid});
+        db.submissions.find({"userId": dob[0]._id, "assignmentId": {$in: aid}}, function(err, data){
             cb(null, data);
         });
     });
@@ -252,9 +255,7 @@ var submit = function(username, authToken, data, cb){
                     console.log(assignmentData);
                     console.log(assignmentData.questions);
                     console.log("~~~~~~~~~~~~~~~~", dob);
-                    data.response = grader.grade(data, assignmentData
-                                                 .questions[data.question-1]
-                                                 .parts[data.part-1]);
+                    data.response = grader.grade(data, assignmentData.questions[data.question-1].parts[data.part-1], dob[0]._id);
                     submissionData = {
                         "userId": dob[0]._id,
                         "assignmentId": assignmentData._id,

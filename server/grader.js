@@ -1,3 +1,5 @@
+var rand = require("seedrandom");
+
 var mathjs = require("mathjs");
 var math = mathjs();
 var steps =4;
@@ -92,14 +94,17 @@ var funcParse = function(arr){ //Finds the first values from the given array tha
    }
 }
 
-var symbolicRec = function(eq1,eq2,variables,range,steps,array,index){
-	if(array.length==variables.length){
-		return compare(eq1,eq2,variables,array);
+var symbolicRec = function(eq1, eq2, variables, range, steps, array, index){
+	if(array.length == variables.length){
+        console.log(array);
+		return compare(eq1, eq2, variables, array);
 	}
     
-	for(var i=range[index][0];i<range[index][1];i+=(range[index][1]-range[index][0])/(steps-1)){
-		if(!symbolicRec(eq1,eq2,variables,range,steps,array.slice(0).concat([i]),index+1))
+	for(var i = range[index][0]; i <= range[index][1]; i += (range[index][1]-range[index][0])/(steps-1)){
+        array.push(i);
+		if(!symbolicRec(eq1, eq2, variables, range, steps, array, index+1))
 			return false;
+        array.pop(i);
 	}
 	return true;
 }
@@ -121,16 +126,25 @@ var numerical = function(equation,variables,values,answer,tolerance){
 	instructions.push(equation);
 	var trueValue = math.eval(instructions)[len];
 	var testValue = math.eval(answer);
+    console.log("TRUE", trueValue, "TEST", testValue);
 	return(testValue>=trueValue*(1-tolerance)&&testValue<=trueValue*(1+tolerance))
 }
 
 
-var grade = function(studentResponse, acceptedResponse){
+var grade = function(studentResponse, acceptedResponse, userid){
     console.log("GRADING QUESTION", studentResponse.question, "PART", studentResponse.part);
+    console.log("DATA", studentResponse, "ACCEPTED", acceptedResponse);
     switch(acceptedResponse.type){
         case "NUMERICAL":
             console.log("COMPARING", acceptedResponse.answer, "AND", studentResponse.content);
-            return numerical(acceptedResponse.answer, [], [], studentResponse.content, .02);
+            values = []
+            for(i = 0; i < acceptedResponse.variables.length; i++){
+                console.log("SEEDING", userid + acceptedResponse.ranges[i][3]);
+                Math.seedrandom(userid + acceptedResponse.ranges[i][3]);
+                values.push((acceptedResponse.ranges[i][0] + (acceptedResponse.ranges[i][1] - acceptedResponse.ranges[i][0]) * Math.random()).toPrecision(acceptedResponse.ranges[i][2]));
+            }
+            console.log("USING VARIABLES", acceptedResponse.variables, "AND VALUES", values);
+            return numerical(acceptedResponse.answer, acceptedResponse.variables, values, studentResponse.content, .02);
             break;
         case "SYMBOLIC":
             return symbolic(studentResponse.parsedContent, acceptedResponse.answer, acceptedResponse.variables, acceptedResponse.ranges, acceptedResponse.steps);
@@ -149,5 +163,6 @@ var grade = function(studentResponse, acceptedResponse){
 }
 
 module.exports = {
-    "grade": grade
+    "grade": grade,
+    "parse": parse
 }

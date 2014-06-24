@@ -12,7 +12,9 @@
                 {
                     type: "NUMERICAL",
                     answer: "1.234",
-                    points: 2
+                    points: 2,
+                    variables: [],
+                    values: []
                 },
                 {
                     type: "SYMBOLIC",

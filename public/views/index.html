@@ -46,7 +46,7 @@
                             <ul>
                                 <a href="/assignment?id={{_id}}" class="no-link">
                                     <li class="clickable">
-                                        <div class="progress micro progress-{{progress}}"></div>
+                                        <div class="progress micro progress-{{progress}}" id="prog{{_id}}"></div>
                                         <span class="title {{#ifCond progress '==' 12}}completed{{/ifCond}}">{{name}}</span>
                                         <span class="subtitle">{{course}}</span>
                                     </li>
@@ -92,7 +92,7 @@
             <p>{{description}}</p>
             <h3>Upcoming Assignments</h3>
             {{#each assignments}}
-                <div class="assignment-large">{{_id}}</div> <!-- not sure what to do here yet. -->
+            <div class="assignment-large">{{_id}}</div> <!-- not sure what to do here yet. -->
             {{/each}}
         </script>
         
@@ -131,16 +131,18 @@
                 }
             }
             
+            var pad = function(n, width, z) {
+                z = z || '0';
+                n = n + '';
+                return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
+            }
+            
+            var data = {};
+            
             var ready = function(){
                 user = ucaInfo.user;
                 courses = ucaInfo.courses;
                 assignments = ucaInfo.assignments;
-                
-                if(user.settings == null){
-                    user.settings = {theme: "", doubleEnterSubmit: false};
-                } else if(user.settings.theme != ""){
-                    $("head").append("<link id='theme' rel='stylesheet' href='/css/" + user.settings.theme + ".css' />");
-                }
                 
                 data = {};
                 
@@ -150,48 +152,106 @@
                     merge(data, user, "user");
                 }
                 
-                data.courses = [];
-                
-                for(i = 0; i < courses.length; i++){
-                    data.courses.push({});
-                    data.courses[i].name = courses[i].name;
-                    data.courses[i].instructor = courses[i].instructor;
-                    data.courses[i].upcoming = courses[i].assignments.length;
-                    data.courses[i]._id = courses[i]._id;
-                    earliest = null;
-                    for(j = 0; j < courses[i].assignments.length; j++){
-                        for(k = 0; k < assignments.length; k++){
-                            if(courses[i].assignments[j] == assignments[k]._id){
-                                assignments[k].course = courses[i].name;
-                                if(earliest == null || earliest > assignments[k].due){
-                                    earliest = assignments[k].due;
+                if(user){
+                    if(user.settings == null){
+                        user.settings = {theme: "", doubleEnterSubmit: false};
+                    } else if(user.settings.theme != ""){
+                        $("head").append("<link id='theme' rel='stylesheet' href='/css/" + user.settings.theme + ".css' />");
+                    }
+                    
+                    data.courses = [];
+                    
+                    for(i = 0; i < courses.length; i++){
+                        data.courses.push({});
+                        data.courses[i].name = courses[i].name;
+                        data.courses[i].instructor = courses[i].instructor;
+                        data.courses[i].upcoming = courses[i].assignments.length;
+                        data.courses[i]._id = courses[i]._id;
+                        earliest = null;
+                        for(j = 0; j < courses[i].assignments.length; j++){
+                            for(k = 0; k < assignments.length; k++){
+                                if(courses[i].assignments[j] == assignments[k]._id){
+                                    assignments[k].course = courses[i].name;
+                                    if(earliest == null || earliest > assignments[k].due){
+                                        earliest = assignments[k].due;
+                                    }
                                 }
                             }
                         }
+                        data.courses[i].next = earliest;
                     }
-                    data.courses[i].next = earliest;
-                }
-                
-                map = {};
-                keys = [];
-                
-                for(i = 0; i < assignments.length; i++){
-                    assignments[i].progress = "00";
-                    if(!(assignments[i].due in map)){
-                        map[assignments[i].due] = [];
-                        keys.push(assignments[i].due);
+                    
+                    var dateMap = {};
+                    var keys = [];
+                    var values = [];
+                    var assignmentMap = {};
+                    
+                    today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    
+                    for(i = 0; i < assignments.length; i++){
+                        due = new Date(Date.parse(assignments[i].due));
+                        due.setHours(24, 0, 0, 0);
+                        if(due < today){
+                            continue;
+                        }
+                        if(!(assignments[i].due in dateMap)){
+                            dateMap[assignments[i].due] = [];
+                            keys.push(assignments[i].due);
+                        }
+                        assignmentMap[assignments[i]._id] = assignments[i];
+                        dateMap[assignments[i].due].push(assignments[i]);
+                        values.push(assignments[i]._id);
+                        
+                        assignments[i].earnedPoints = 0;
+                        assignments[i].totalPoints = 0;
+                        assignments[i].progress = "00";
+                        for(j = 0; j < assignments[i].questions.length; j++){
+                            for(k = 0; k < assignments[i].questions[j].parts.length; k++){
+                                assignments[i].questions[j].parts[k].earnedPoints = 0;
+                                assignments[i].totalPoints += assignments[i].questions[j].parts[k].points || 0;
+                            }
+                        }
                     }
-                    map[assignments[i].due].push(assignments[i]);
+                    
+                    var req = new XMLHttpRequest();
+                    req.onload = function(){
+                        submissions = JSON.parse(this.responseText);
+                        
+                        for(i = 0; i < submissions.length; i++){
+                            sub = submissions[i];
+                            
+                            if(sub.type != "SUBMISSION" || !sub.response){
+                                continue;
+                            }
+                            
+                            assignment = assignmentMap[sub.assignmentId];
+                            question = assignment.questions[sub.question-1];
+                            part = question.parts[sub.part-1];
+                            
+                            if(!part.correct){
+                                part.correct = true;
+                                assignment.earnedPoints += part.points;
+                                assignment.progress = pad(Math.floor(assignment.earnedPoints*12/assignment.totalPoints), 2);
+                            }
+                        }
+                        
+                        load();
+                    }
+                    req.open("get", "submissions?id=" + values.join(","), true);
+                    req.send();
+                    
+                    data.dates = [];
+                    
+                    keys.sort();
+                    
+                    for(i = 0; i < keys.length; i++){
+                        data.dates.push({date: keys[i], assignments: dateMap[keys[i]]});
+                    }
                 }
-                
-                data.dates = [];
-                
-                keys.sort();
-                
-                for(i = 0; i < keys.length; i++){
-                    data.dates.push({date: keys[i], assignments: map[keys[i]]});
-                }
-                
+            }
+            
+            var load = function(){
                 Handlebars.registerHelper("log", function(desc, obj) {
                     console.log(desc, obj);
                     return "";
@@ -218,12 +278,12 @@
                 
                 var getNames = function(date){
                     date = date.split("-");
-                    date = new Date(date[0], date[1]-1, date[2])
+                    date = new Date(date[0], date[1]-1, date[2]);
                     date.setHours(0, 0, 0, 0);
-                    day = new Date()
+                    day = new Date();
                     day.setHours(0, 0, 0, 0);
                     
-                    name = ""
+                    name = "";
                     
                     for(i = 0; i < 7; i++){
                         if(day.getTime() == date.getTime()){
