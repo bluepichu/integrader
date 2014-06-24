@@ -159,12 +159,53 @@
                         $("head").append("<link id='theme' rel='stylesheet' href='/css/" + user.settings.theme + ".css' />");
                     }
                     
+                    var dateMap = {};
+                    var keys = [];
+                    var values = [];
+                    var assignmentMap = {};
+                    
+                    today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    
+                    for(i = 0; i < assignments.length; i++){
+                        due = new Date(Date.parse(assignments[i].due));
+                        due.setHours(24, 0, 0, 0);
+                        assignmentMap[assignments[i]._id] = assignments[i];
+                        if(due < today){
+                            continue;
+                        }
+                        if(!(assignments[i].due in dateMap)){
+                            dateMap[assignments[i].due] = [];
+                            keys.push(assignments[i].due);
+                        }
+                        dateMap[assignments[i].due].push(assignments[i]);
+                        values.push(assignments[i]._id);
+                        
+                        assignments[i].earnedPoints = 0;
+                        assignments[i].totalPoints = 0;
+                        assignments[i].progress = "00";
+                        for(j = 0; j < assignments[i].questions.length; j++){
+                            for(k = 0; k < assignments[i].questions[j].parts.length; k++){
+                                assignments[i].questions[j].parts[k].earnedPoints = 0;
+                                assignments[i].totalPoints += assignments[i].questions[j].parts[k].points || 0;
+                            }
+                        }
+                    }
+                    
                     data.courses = [];
                     
                     for(i = 0; i < courses.length; i++){
                         data.courses.push({});
                         data.courses[i].name = courses[i].name;
                         data.courses[i].instructor = courses[i].instructor;
+                        courses[i].assignments = courses[i].assignments.filter(function(assignment){
+                            due = new Date(Date.parse(assignmentMap[assignment].due));
+                            due.setHours(24, 0, 0, 0);
+                            today = new Date();
+                            today.setHours(0, 0, 0, 0);
+                            console.log(due.getTime(), today.getTime());
+                            return due.getTime() >= today.getTime();
+                        });
                         data.courses[i].upcoming = courses[i].assignments.length;
                         data.courses[i]._id = courses[i]._id;
                         earliest = null;
@@ -179,39 +220,6 @@
                             }
                         }
                         data.courses[i].next = earliest;
-                    }
-                    
-                    var dateMap = {};
-                    var keys = [];
-                    var values = [];
-                    var assignmentMap = {};
-                    
-                    today = new Date();
-                    today.setHours(0, 0, 0, 0);
-                    
-                    for(i = 0; i < assignments.length; i++){
-                        due = new Date(Date.parse(assignments[i].due));
-                        due.setHours(24, 0, 0, 0);
-                        if(due < today){
-                            continue;
-                        }
-                        if(!(assignments[i].due in dateMap)){
-                            dateMap[assignments[i].due] = [];
-                            keys.push(assignments[i].due);
-                        }
-                        assignmentMap[assignments[i]._id] = assignments[i];
-                        dateMap[assignments[i].due].push(assignments[i]);
-                        values.push(assignments[i]._id);
-                        
-                        assignments[i].earnedPoints = 0;
-                        assignments[i].totalPoints = 0;
-                        assignments[i].progress = "00";
-                        for(j = 0; j < assignments[i].questions.length; j++){
-                            for(k = 0; k < assignments[i].questions[j].parts.length; k++){
-                                assignments[i].questions[j].parts[k].earnedPoints = 0;
-                                assignments[i].totalPoints += assignments[i].questions[j].parts[k].points || 0;
-                            }
-                        }
                     }
                     
                     var req = new XMLHttpRequest();
@@ -277,6 +285,7 @@
                 var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec"];
                 
                 var getNames = function(date){
+                    console.log(date);
                     date = date.split("-");
                     date = new Date(date[0], date[1]-1, date[2]);
                     date.setHours(0, 0, 0, 0);
