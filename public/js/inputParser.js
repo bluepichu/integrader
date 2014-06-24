@@ -17,6 +17,17 @@ var seps = [];
 var vars = [];
 
 var inputToLatex = function(input, variables){
+    obj = symbolicParse(input, variables);
+    
+    parse(obj.arr);
+    
+    return {
+        latexString: obj.arr.join(" "),
+        errors: obj.errors
+    };
+}
+
+var symbolicParse = function(input, variables){
     var arr = [input];
     var parenStack = [];
     err = [];
@@ -162,12 +173,8 @@ var inputToLatex = function(input, variables){
     
     console.log(arr);
     
-    //parse
-    
-    parse(arr);
-    
     return {
-        latexString: arr.join(" "),
+        arr: arr,
         errors: err
     };
 }

@@ -393,6 +393,7 @@
                     errorId = "error" + $(this).attr("id").substring(1);
                     
                     if(this.variables === undefined){
+                        console.log("updating variables list");
                         var varList = [];
                         variables = $(this).parent().children(".variable-list").children("#variable-storage").children(".variable").each(function(n, el){
                             varList.push($(el).text());
@@ -550,7 +551,14 @@
                             if($(ans).hasClass("numerical")){
                                 data.content = $("input[type='text'][name='p" + pad(partNum+1, 3) + "']", ans).val();
                             } else if($(ans).hasClass("symbolic")){
-                                data.content = $("input[type='text'][name='p" + pad(partNum+1, 3) + "']", ans).val();
+                                inp = $("input[type='text'][name='p" + pad(partNum+1, 3) + "']", ans);
+                                inp.change();
+                                data.content = inp.val();
+                                parsed = symbolicParse(data.content, inp[0].variables);
+                                if(parsed.errors.length > 0){
+                                    return;
+                                }
+                                data.parsedContent = parsed.arr;
                             } else if($(ans).hasClass("dropdown")){
                                 data.content = $("select[name='p" + pad(partNum+1, 3) + "']", ans).val();
                             } else if($(ans).hasClass("radio")){

@@ -18,8 +18,8 @@
                     type: "SYMBOLIC",
                     variables: ["a", "b", "theta"],
                     ranges: [[1, 5], [10, 50], [0, 3.14159]],
-                    steps: 4,
-                    answer: "a^2 + b^2 + a b cos(theta)",
+                    steps: 2,
+                    answer: "a^2 + b^2 + a*b*cos(theta)",
                     points: 5
                 },
                 {
