@@ -50,7 +50,7 @@
                     <ol class="questions">
                         {{#each assignment.questions}}
                         {{incrementPosition}}
-                        <li class="clickable question-select" id="{{position}}"><div class="progress progress-{{progress}}" id="prog{{position}}"></div>{{name}}</li>
+                        <li class="clickable question-select" id="{{position}}"><div class="progress" id="prog{{position}}"></div>{{name}}</li>
                         {{/each}}
                     </ol>
                     {{/if}}
@@ -477,6 +477,14 @@
                     e.stopPropagation();
                 });
                 
+                for(i = 0; i < assignment.questions.length; i++){
+                    assignment.questions[i].totalPoints = 0;
+                    assignment.questions[i].earnedPoints = 0;
+                    for(j = 0; j < assignment.questions[i].parts.length; j++){
+                        assignment.questions[i].totalPoints += assignment.questions[i].parts[j].points || 0;
+                    }
+                }
+                
                 for(i = 0; i < submissions.length; i++){
                     console.log(i);
                     if(submissions[i].type == "SUBMISSION"){
@@ -499,6 +507,14 @@
                                     $(el).prop("checked", false);
                                 }
                             });
+                        }
+                        
+                        if(submissions[i].response){
+                            assignment.questions[submissions[i].question-1].parts[submissions[i].part-1].correct = true;
+                            assignment.questions[submissions[i].question-1].earnedPoints += assignment.questions[submissions[i].question-1].parts[submissions[i].part-1].points;
+                            icon = $(".question-select #prog" + pad(submissions[i].question, 3))[0];
+                            icon.className = icon.className.replace(/\bprogress-..\b/g, "");
+                            icon.className += " progress-" + pad(Math.floor(assignment.questions[submissions[i].question-1].earnedPoints, assignment.questions[submissions[i].question-1].totalPoints), 2);
                         }
                     } else if(submissions[i].type == "NOTE"){
                         $("#q" + pad(submissions[i].question, 3) + " #notes").val(submissions[i].content);
