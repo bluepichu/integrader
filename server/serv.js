@@ -347,7 +347,7 @@ console.log('Server running');
 //Helper method to read files
 var getFile = function(url,rep, cb) {
 	url = url.split("..")
-	url = "../public/"+url[url.length-1];
+	url = __dirname+"/../public/"+url[url.length-1];
 	fs.readFile(url, function(err, data) {
 		if (err || !data) {
 			cb("404")
