@@ -356,8 +356,10 @@
                     }
                     ret = "Use the following variables as necessary: ";
                     hidden = "<div class='hidden' id='variable-storage'>";
+                    vars = {};
                     for(i = 0; i < variables.length; i++){
-                        ret += "\\(" + variables[i] + "\\)";
+                        vars[variables[i]] = replacements[variables[i]] || variables[i];
+                        ret += "\\(" + vars[variables[i]] + "\\)";
                         hidden += "<span class='variable'>" + variables[i] + "</span>";
                         if(i < variables.length-1){
                             ret += ", ";

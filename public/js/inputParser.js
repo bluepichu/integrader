@@ -4,7 +4,7 @@ rightParens = [")", "]", "}", "|"];
 functions = ["sin", "cos", "tan", "cot", "sec", "csc", "ln", "log"];
 firstSeparators = ["hat", "vector"];
 
-replacements = {
+var replacements = {
     "theta": "\\theta",
     "phi": "\\phi",
     "Theta": "\\Theta",
