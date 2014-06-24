@@ -1,20 +1,24 @@
-**Integrader**
-==============
+![Integrader](https://raw.githubusercontent.com/bluepichu/integrader/master/public/images/logo-light.png)
 
-TSA Open Source Software entry 2014. 
+## Description
 
-To run, clone the repo, and execute
-```bash
-node /server/serv.js
-```
-This will open it up in localhost:1337.
+Integrader is a project created to provide students and teachers with a streamlined method of completing and grading basic assignment types.  Grading can be tedious for teachers, and working on paper can be tedious for students; this solves both problems by allowing students to use the internet and by automating the grading system.
 
---------------
+## Installation
 
-**TODO**
-==============
+To install, follow these steps:
 
-| Zach | Matthew | Kyle | Siva | Danial |
-|------|---------|------|------|--------|
-| Finish Server | Finish GUI | Work on Interpreter | Work on User DB | Not Sure |
-| Tie `post` requests to db | -- | -- | Work on other DB modules | -- |
+1. Clone the repository.
+2. Navigate to `/server`.
+3. Install the following Node packages:
+  - utils
+  - seedrandom
+  - mongoose
+  - mongojs
+  - mathjs
+4. Run `mongod` to start the MongoDB database.
+5. Run `node server/serv.js` to begin integrader.  This will open integrader `localhost:1337`.
+
+## Release Notes
+
+**Version 0.1**: Stable for student login only.  Course and assignment creation must be done by hand directly into the database.
