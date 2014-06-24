@@ -429,6 +429,7 @@ div.answer-area {
     background: #F6F6F6;
     font-size: 14px;
     color: #333333;
+    position: relative;
 }
 
 input[type="radio"],
@@ -481,6 +482,23 @@ textarea {
 
 .answer-area h3 {
     margin-top: 0px;
+}
+
+.status {
+    background: #111111;
+    width: 24px;
+    height: 24px;
+    position: absolute;
+    right: 0px;
+    top: 0px;
+}
+
+.status.correct {
+    background: #44DD44; /* TEMP */
+}
+
+.status.incorrect {
+    background: #DD4B39; /* TEMP */
 }
 
 /* REGISTER */

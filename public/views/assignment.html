@@ -88,6 +88,7 @@
                             {{#ifCond type "==" "RADIO"}}
                             {{pushPosition}}
                         <div class="answer-area radio">
+                            <div class="status"></div>
                             {{#each choices}}
                             {{incrementPosition}}
                             <input type="radio" name="{{swapPosition}}p{{position}}{{swapPosition}}" value="{{position}}" /><label for="{{position}}">{{this}}</label><br />
@@ -99,6 +100,7 @@
                             {{#ifCond type "==" "CHECKBOX"}}
                             {{pushPosition}}
                             <div class="answer-area checkbox">
+                                <div class="status"></div>
                             {{#each choices}}
                             {{incrementPosition}}
                             <input type="checkbox" name="{{swapPosition}}p{{position}}{{swapPosition}}" value="{{position}}" /><label for="{{position}}">{{this}}</label><br />
@@ -109,6 +111,7 @@
                             
                             {{#ifCond type "==" "NUMERICAL"}}
                                 <div class="answer-area numerical">
+                                    <div class="status"></div>
                             <input type="text" class="numerical" name="p{{position}}" id="p{{position}}" /><span class="units">{{units}}</span>
                             <div class="errors" id="error{{position}}"></div>
                                     </div>
@@ -116,6 +119,7 @@
                             
                             {{#ifCond type "==" "SYMBOLIC"}}
                                     <div class="answer-area symbolic">
+                                        <div class="status"></div>
                             <div class="variable-list">
                                 {{{listVariables variables}}}
                             </div>
@@ -127,6 +131,7 @@
                             
                             {{#ifCond type "==" "DROPDOWN"}}
                                         <div class="answer-area dropdown">
+                                            <div class="status"></div>
                             <select id="p{{position}}" name="p{{position}}">
                                 <option value="" disabled selected>Select an answer...</option>
                                 {{pushPosition}}
@@ -510,11 +515,16 @@
                         }
                         
                         if(submissions[i].response){
-                            assignment.questions[submissions[i].question-1].parts[submissions[i].part-1].correct = true;
-                            assignment.questions[submissions[i].question-1].earnedPoints += assignment.questions[submissions[i].question-1].parts[submissions[i].part-1].points;
-                            icon = $(".question-select #prog" + pad(submissions[i].question, 3))[0];
-                            icon.className = icon.className.replace(/\bprogress-..\b/g, "");
-                            icon.className += " progress-" + pad(Math.floor(assignment.questions[submissions[i].question-1].earnedPoints, assignment.questions[submissions[i].question-1].totalPoints), 2);
+                            if(!assignment.questions[submissions[i].question-1].parts[submissions[i].part-1].correct){
+                                assignment.questions[submissions[i].question-1].parts[submissions[i].part-1].correct = true;
+                                $(".status", $("#q" + pad(submissions[i].question, 3) + ">div")[submissions[i].part-1]).addClass("correct");
+                                assignment.questions[submissions[i].question-1].earnedPoints += assignment.questions[submissions[i].question-1].parts[submissions[i].part-1].points;
+                                icon = $(".question-select #prog" + pad(submissions[i].question, 3))[0];
+                                icon.className = icon.className.replace(/\bprogress-..\b/g, "");
+                                icon.className += " progress-" + pad(Math.floor(assignment.questions[submissions[i].question-1].earnedPoints, assignment.questions[submissions[i].question-1].totalPoints), 2);
+                            }
+                        } else {
+                            $(".status", $("#q" + pad(submissions[i].question, 3) + ">div")[submissions[i].part-1]).addClass("incorrect");
                         }
                     } else if(submissions[i].type == "NOTE"){
                         $("#q" + pad(submissions[i].question, 3) + " #notes").val(submissions[i].content);
