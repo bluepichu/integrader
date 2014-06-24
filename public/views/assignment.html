@@ -88,10 +88,10 @@
                             {{#ifCond type "==" "RADIO"}}
                             {{pushPosition}}
                         <div class="answer-area radio">
-                            <div class="status"></div>
+                            <div class="status">3</div>
                             {{#each choices}}
                             {{incrementPosition}}
-                            <input type="radio" name="{{swapPosition}}p{{position}}{{swapPosition}}" value="{{position}}" /><label for="{{position}}">{{this}}</label><br />
+                            <input type="radio" name="{{swapPosition}}p{{position}}{{swapPosition}}" value="{{position}}" id="rad{{position}}" /><label for="rad{{position}}">{{this}}</label><br />
                             {{/each}}
                             {{popPosition}}
                             </div>
@@ -100,10 +100,10 @@
                             {{#ifCond type "==" "CHECKBOX"}}
                             {{pushPosition}}
                             <div class="answer-area checkbox">
-                                <div class="status"></div>
+                                <div class="status">3</div>
                             {{#each choices}}
                             {{incrementPosition}}
-                            <input type="checkbox" name="{{swapPosition}}p{{position}}{{swapPosition}}" value="{{position}}" /><label for="{{position}}">{{this}}</label><br />
+                            <input type="checkbox" name="{{swapPosition}}p{{position}}{{swapPosition}}" value="{{position}}" id="cb{{position}}" /><label for="cb{{position}}">{{this}}</label><br />
                             {{/each}}
                                 </div>
                             {{popPosition}}
@@ -111,7 +111,7 @@
                             
                             {{#ifCond type "==" "NUMERICAL"}}
                                 <div class="answer-area numerical">
-                                    <div class="status"></div>
+                                    <div class="status">3</div>
                             <input type="text" class="numerical" name="p{{position}}" id="p{{position}}" /><span class="units">{{units}}</span>
                             <div class="errors" id="error{{position}}"></div>
                                     </div>
@@ -119,7 +119,7 @@
                             
                             {{#ifCond type "==" "SYMBOLIC"}}
                                     <div class="answer-area symbolic">
-                                        <div class="status"></div>
+                                        <div class="status">3</div>
                             <div class="variable-list">
                                 {{{listVariables variables}}}
                             </div>
@@ -131,7 +131,7 @@
                             
                             {{#ifCond type "==" "DROPDOWN"}}
                                         <div class="answer-area dropdown">
-                                            <div class="status"></div>
+                                            <div class="status">3</div>
                             <select id="p{{position}}" name="p{{position}}">
                                 <option value="" disabled selected>Select an answer...</option>
                                 {{pushPosition}}
@@ -488,6 +488,7 @@
                     assignment.questions[i].earnedPoints = 0;
                     for(j = 0; j < assignment.questions[i].parts.length; j++){
                         assignment.questions[i].totalPoints += assignment.questions[i].parts[j].points || 0;
+                        assignment.questions[i].parts[j].tries = 3;
                     }
                 }
                 
@@ -522,10 +523,15 @@
                                 assignment.questions[submissions[i].question-1].earnedPoints += assignment.questions[submissions[i].question-1].parts[submissions[i].part-1].points;
                                 icon = $(".question-select #prog" + pad(submissions[i].question, 3))[0];
                                 icon.className = icon.className.replace(/\bprogress-..\b/g, "");
-                                icon.className += " progress-" + pad(Math.floor(assignment.questions[submissions[i].question-1].earnedPoints, assignment.questions[submissions[i].question-1].totalPoints), 2);
+                                icon.className += " progress-" + pad(Math.floor(assignment.questions[submissions[i].question-1].earnedPoints*12/assignment.questions[submissions[i].question-1].totalPoints), 2);
                             }
                         } else {
                             $(".status", $("#q" + pad(submissions[i].question, 3) + ">div")[submissions[i].part-1]).removeClass("correct").addClass("incorrect");
+                        }
+                        assignment.questions[submissions[i].question-1].parts[submissions[i].part-1].tries--;
+                        $(".status", $("#q" + pad(submissions[i].question, 3) + ">div")[submissions[i].part-1]).text(assignment.questions[submissions[i].question-1].parts[submissions[i].part-1].tries);
+                        if(assignment.questions[submissions[i].question-1].parts[submissions[i].part-1].tries <= 0 || assignment.questions[submissions[i].question-1].parts[submissions[i].part-1].correct){
+                            $("input, select", $("#q" + pad(submissions[i].question, 3) + ">div")[submissions[i].part-1]).attr("disabled", true);
                         }
                     } else if(submissions[i].type == "NOTE"){
                         $("#q" + pad(submissions[i].question, 3) + " #notes").val(submissions[i].content);
@@ -537,7 +543,7 @@
                 $(".button-submit").click(function(e){
                     $("form.question-container").each(function(questionNum, cont){
                         $(cont).children("div").each(function(partNum, ans){
-                            if(!$(ans).hasClass("answer-area") || partNum >= assignment.questions[questionNum].parts.length || assignment.questions[questionNum].parts[partNum].correct){
+                            if(!$(ans).hasClass("answer-area") || partNum >= assignment.questions[questionNum].parts.length || assignment.questions[questionNum].parts[partNum].tries <= 0 || assignment.questions[questionNum].parts[partNum].correct){
                                 return;
                             }
                             
@@ -596,6 +602,11 @@
                                 } else {
                                     $(".status", $("#q" + pad(data.question, 3) + ">div")[data.part-1]).removeClass("correct").addClass("incorrect");
                                 }
+                                assignment.questions[data.question-1].parts[data.part-1].tries--;
+                                $(".status", $("#q" + pad(data.question, 3) + ">div")[data.part-1]).text(assignment.questions[data.question-1].parts[data.part-1].tries);
+                                if(assignment.questions[data.question-1].parts[data.part-1].tries <= 0 || assignment.questions[data.question-1].parts[data.part-1].correct){
+                                    $("input, select", $("#q" + pad(data.question, 3) + ">div")[data.part-1]).attr("disabled", true);
+                                }
                             }
                             req.open("post", "/answers", true);
                             req.send(JSON.stringify(data));
@@ -605,6 +616,24 @@
                     });
                 });
             }
+            
+            var enterTimeout = null;
+            
+            $(document).keydown(function(e){
+                if(!user.settings.doubleEnterSubmit){
+                    return;
+                }
+                if(e.keyCode == 13){
+                    if(enterTimeout){
+                        enterTimeOut = null;
+                        $(".button-submit").click();
+                    } else {
+                        enterTimeout = setTimeout(function(){
+                            enterTimeout = null;
+                        }, 500);
+                    }
+                }
+            });
         </script>
         
         <script src="/js/imagepreload.js"></script>

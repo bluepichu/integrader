@@ -485,12 +485,15 @@ textarea {
 }
 
 .status {
-    background: #111111;
+    background: #CCCCCC;
+    color: #333333;
+    padding-top: 2px;
     width: 24px;
     height: 24px;
     position: absolute;
     right: 0px;
     top: 0px;
+    text-align: center;
 }
 
 .status.correct {

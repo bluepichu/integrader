@@ -237,29 +237,36 @@ var submit = function(username, authToken, data, cb){
             cb(202, "");
             return;
         } else {
-            console.log("received submission:", data);
-            db.assignments.find({"_id": ObjectId(data.assignment)}, function(err, assignmentData){
-                if(!assignmentData || err){
-                    cb(err, "");
+            db.submissions.find({"userId": dob[0]._id, "assignmentId": ObjectId(aid), "question": data.question, "part": data.part, type: "SUBMISSION"}, function(err, prev){
+                if(prev.length >= 3){
+                    cb(202, "");
+                    return;
                 }
-                assignmentData = assignmentData[0];
-                console.log(assignmentData);
-                console.log(assignmentData.questions);
-                console.log("~~~~~~~~~~~~~~~~", dob);
-                data.response = grader.grade(data, assignmentData
-                                             .questions[data.question-1]
-                                             .parts[data.part-1]);
-                submissionData = {
-                    "userId": dob[0]._id,
-                    "assignmentId": assignmentData._id,
-                    "question": data.question,
-                    "part": data.part,
-                    "response": data.response,
-                    "content": data.content,
-                    "type": "SUBMISSION"
-                };
-                db.submissions.save(submissionData);
-                cb(null, submissionData);
+                
+                console.log("received submission:", data);
+                db.assignments.find({"_id": ObjectId(data.assignment)}, function(err, assignmentData){
+                    if(!assignmentData || err){
+                        cb(err, "");
+                    }
+                    assignmentData = assignmentData[0];
+                    console.log(assignmentData);
+                    console.log(assignmentData.questions);
+                    console.log("~~~~~~~~~~~~~~~~", dob);
+                    data.response = grader.grade(data, assignmentData
+                                                 .questions[data.question-1]
+                                                 .parts[data.part-1]);
+                    submissionData = {
+                        "userId": dob[0]._id,
+                        "assignmentId": assignmentData._id,
+                        "question": data.question,
+                        "part": data.part,
+                        "response": data.response,
+                        "content": data.content,
+                        "type": "SUBMISSION"
+                    };
+                    db.submissions.save(submissionData);
+                    cb(null, submissionData);
+                });
             });
         }
     });
