@@ -6,7 +6,13 @@ Integrader is a project created to provide students and teachers with a streamli
 
 ## Installation
 
-To install, follow these steps:
+### Requirements
+
+Integrader requires Node.js and MongoDB to run.  It has only been tested with Node.js v.0.10.29 and MongoDB Standard 2.6.
+
+### Running
+
+To run Integrader, follow these steps:
 
 1. Clone the repository.
 2. Navigate to `/server`.
