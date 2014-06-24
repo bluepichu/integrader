@@ -34,7 +34,7 @@
                 <a href="/"><div class="button logo"></div></a>
                 <div class="button-area">
                     {{#if user}}
-                    <span class="greeting">Hello, <span class="username">{{user.data.name.first}}</span></span>
+                    <span class="greeting">Hello, <span class="user">{{user.data.name.first}}</span> &middot; <a id="logout" href="/logout">Logout</a></span>
                     {{else}}
                     <span class="greeting">Not logged in &middot; <a href="/login">Login</a></span>
                     {{/if}}
@@ -632,26 +632,35 @@
                         });
                     });
                 });
-            }
-            
-            var enterTimeout = null;
-            
-            $(document).keydown(function(e){
-                if(!user.settings.doubleEnterSubmit){
-                    return;
-                }
-                if(e.keyCode == 13){
+                
+                $("#logout").click(function(e){
+                    var req = new XMLHttpRequest();
+                    req.onload = function(){ console.log("logging out..."); location.reload(); };
+                    req.open("post", "/logout", true);
+                    req.send();
+
                     e.preventDefault();
-                    if(enterTimeout){
-                        enterTimeOut = null;
-                        $(".button-submit").click();
-                    } else {
-                        enterTimeout = setTimeout(function(){
-                            enterTimeout = null;
-                        }, 500);
+                });
+                
+                var enterTimeout = null;
+            
+                $(document).keydown(function(e){
+                    if(!user.settings.doubleEnterSubmit){
+                        return;
                     }
-                }
-            });
+                    if(e.keyCode == 13){
+                        e.preventDefault();
+                        if(enterTimeout){
+                            enterTimeOut = null;
+                            $(".button-submit").click();
+                        } else {
+                            enterTimeout = setTimeout(function(){
+                                enterTimeout = null;
+                            }, 500);
+                        }
+                    }
+                });
+            }
         </script>
         
         <script src="/js/imagepreload.js"></script>

@@ -7,7 +7,6 @@ SHADES OF GRAY
 #FCFCFC
 #F6F6F6
 #F2F2F2
-#F2F2F2
 #CCCCCC
 #999999
 #555555
@@ -16,6 +15,9 @@ SHADES OF GRAY
 
 RED
 #DD4B39
+
+GREEN
+#44DD44
 
 */
 
@@ -390,7 +392,8 @@ ol.questions li:before {
 
 /* INDEX */
 
-.course-title {
+.course-title,
+.assignment-title {
     display: inline-block;
     margin: 0px;
     padding-right: 16px;
@@ -401,11 +404,17 @@ h3 {
     font-size: 20px;
 }
 
-h4.teacher {
+h4.teacher,
+h4.score {
     display: inline-block;
     margin: 0px;
     font-size: 16px;
     color: #999999;
+}
+
+h4.score {
+    text-align: right;
+    float: right;
 }
 
 span.upcoming-count {
@@ -419,10 +428,15 @@ span.upcoming-next {
     color: #BBBBBB;
 }
 
-div.course-listing {
+.course-listing,
+.assignment-listing {
     background: #F6F6F6;
     margin: 8px;
     padding: 16px;
+}
+
+.assignment-listing:hover {
+    background: #F2F2F2;
 }
 
 div.course-listing a:link {

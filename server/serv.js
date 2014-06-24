@@ -296,7 +296,9 @@ http.createServer(function(req,res) {
 						res.end();
 					}
 				})
-
+            } else if (req.url === "/logout"){
+                users.endSession(cookies.username, cookies.auth);
+                res.end();
 			//Handles all registration requests
 			} else if (req.url === "/register") {
 
@@ -320,6 +322,7 @@ http.createServer(function(req,res) {
                 console.log("updating user settings");
                 console.log(JSON.parse(fullBody));
                 users.updateSettings(cookies.username, cookies.auth, JSON.parse(fullBody));
+                res.end();
             } else if (req.url == "/answers" ) {
 				console.log("Received this junk");
                 console.log(fullBody);
@@ -336,7 +339,7 @@ http.createServer(function(req,res) {
 			//Sending useless data. Ignore it
 			} else {
 				res.write("Invalid Post Data");
-				res.end;
+				res.end();
 			}
 		});
 	}

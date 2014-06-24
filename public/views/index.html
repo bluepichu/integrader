@@ -25,7 +25,7 @@
                 <a href="/"><div class="button logo"></div></a>
                 <div class="button-area">
                     {{#if user}}
-                    <span class="greeting">Hello, <span class="user">{{user.data.name.first}}</span></span>
+                    <span class="greeting">Hello, <span class="user">{{user.data.name.first}}</span> &middot; <a id="logout" href="/logout">Logout</a></span>
                     {{else}}
                     <span class="greeting">Not logged in &middot; <a href="/login">Login</a></span>
                     {{/if}}
@@ -39,6 +39,7 @@
                     {{#if user}}
                     <h2 class="sidebar-header">Upcoming Assignments</h2>
                     <ul class="upcoming">
+                        {{#if dates.length}}
                         {{#each dates}}
                         <li>
                             {{{formatDate date}}}
@@ -55,6 +56,9 @@
                             {{/each}}
                         </li>
                         {{/each}}
+                        {{else}}
+                        <p>No assignments to show.</p>
+                        {{/if}}
                     </ul>
                     {{else}}
                     <p><a href="/login">Login</a> to view upcoming assignments.</p>
@@ -71,7 +75,7 @@
                         <a href="/course?id={{_id}}" class="highlight course-link">
                             <span class="upcoming-count highlight">{{upcoming}} Upcoming Assignments &raquo;</span>
                         </a>
-                        <span class="upcoming-next">Next due {{dateToName next}}</span>
+                        <span class="upcoming-next">Next due {{dateToName next false}}</span>
                     </div>
                     {{/each}}
                     {{else}}
@@ -91,12 +95,21 @@
             <h2 class="course-title">{{name}}</h2> <h4 class="teacher">{{instructor.first}} {{instructor.last}}</h4><br />
             <p>{{description}}</p>
             <h3>Upcoming Assignments</h3>
-            {{#each assignments}}
-            <div class="assignment-large">{{_id}}</div> <!-- not sure what to do here yet. -->
-            {{/each}}
+            <div>
+                {{#each assignments}}
+                <a class="no-link" href="/assignment?id={{this}}">
+                    <div class="assignment-listing">
+                        <h3 class="assignment-title"><span class="progress progress-large progress-{{assignmentData this 'progress'}}"></span>{{assignmentData this "name"}}</h3>
+                        <h4 class="score">{{{dateToName (assignmentData this "due") true}}} &middot; <span class="score">{{formatScore this}}</span></h4>
+                    </div>
+                </a>
+                {{/each}}
+            </div>
         </script>
         
         <script type="text/javascript">
+            var addHTML = "<input type='text' id='course-id' placeholder='Enter a course ID...' /><input type='submit'>";
+            
             var user;
             var loadCount = 0;
             
@@ -162,7 +175,7 @@
                     var dateMap = {};
                     var keys = [];
                     var values = [];
-                    var assignmentMap = {};
+                    window.assignmentMap = {};
                     
                     today = new Date();
                     today.setHours(0, 0, 0, 0);
@@ -222,6 +235,14 @@
                         data.courses[i].next = earliest;
                     }
                     
+                    data.dates = [];
+                    
+                    keys.sort();
+                    
+                    for(i = 0; i < keys.length; i++){
+                        data.dates.push({date: keys[i], assignments: dateMap[keys[i]]});
+                    }
+                    
                     var req = new XMLHttpRequest();
                     req.onload = function(){
                         submissions = JSON.parse(this.responseText);
@@ -248,14 +269,8 @@
                     }
                     req.open("get", "submissions?id=" + values.join(","), true);
                     req.send();
-                    
-                    data.dates = [];
-                    
-                    keys.sort();
-                    
-                    for(i = 0; i < keys.length; i++){
-                        data.dates.push({date: keys[i], assignments: dateMap[keys[i]]});
-                    }
+                } else {
+                    load();
                 }
             }
             
@@ -318,8 +333,12 @@
                     return [monthNames[date.getMonth()] + " " + date.getDate(), ""];
                 }
                 
-                Handlebars.registerHelper("dateToName", function(date){
-                    return getNames(date)[0];
+                Handlebars.registerHelper("dateToName", function(date, highlight){
+                    name = getNames(date)[0];
+                    if(highlight && name == "Today"){
+                        return "<span class='highlight'>Today</span>";
+                    }
+                    return name;
                 });
                 
                 Handlebars.registerHelper("formatDate", function(date){
@@ -329,6 +348,14 @@
                         return "<span class='title highlight'>Today</span><span class='subtitle'>" + names[1] + "</span>";
                     }
                     return "<span class='title'>" + names[0] + "</span><span class='subtitle'>" + names[1] + "</span>";
+                });
+                
+                Handlebars.registerHelper('assignmentData', function(id, item){
+                    return assignmentMap[id][item];
+                });
+                
+                Handlebars.registerHelper('formatScore', function(id){
+                    return assignmentMap[id].earnedPoints + "/" + assignmentMap[id].totalPoints + " (" + (100*assignmentMap[id].earnedPoints/assignmentMap[id].totalPoints).toFixed(2) + "%)";
                 });
                 
                 Handlebars.registerHelper('ifCond', function (v1, operator, v2, options){
@@ -383,6 +410,7 @@
                 });
                 
                 $(".course-link").click(function(e){
+                    e.preventDefault();
                     id = $(this).attr("href").split("id=")[1];
                     
                     for(i = 0; i < courses.length; i++){
@@ -407,8 +435,6 @@
                         toAdd.fadeIn(300);
                         $(".button-back").fadeIn(300);
                     }, 300);
-                    
-                    e.preventDefault();
                 });
                 
                 $(".lightbox-bg, .lightbox").hide();
@@ -453,6 +479,15 @@
                 
                 $(".lightbox").click(function(e){
                     e.stopPropagation();
+                });
+                
+                $("#logout").click(function(e){
+                    var req = new XMLHttpRequest();
+                    req.onload = function(){ console.log("logging out..."); location.reload(); };
+                    req.open("post", "/logout", true);
+                    req.send();
+
+                    e.preventDefault();
                 });
             }
         </script>
