@@ -237,7 +237,7 @@ var submit = function(username, authToken, data, cb){
             cb(202, "");
             return;
         } else {
-            db.submissions.find({"userId": dob[0]._id, "assignmentId": ObjectId(aid), "question": data.question, "part": data.part, type: "SUBMISSION"}, function(err, prev){
+            db.submissions.find({"userId": dob[0]._id, "assignmentId": ObjectId(data.assignment), "question": data.question, "part": data.part, type: "SUBMISSION"}, function(err, prev){
                 if(prev.length >= 3){
                     cb(202, "");
                     return;
