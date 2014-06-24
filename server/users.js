@@ -273,6 +273,28 @@ var submit = function(username, authToken, data, cb){
     });
 }
 
+var addCourse = function(username, authToken, courseId, cb){
+    try {
+        courseId = ObjectId(courseId);
+    } catch(err) {
+        cb(202, false);
+        return;
+    }
+    db.courses.find({"_id": courseId}, function(err, data){
+        if(data.length == 0 || err){
+            cb(202, false);
+        }
+        db.users.update({"username": username, "private.authToken": authToken, type: "STUDENT"}, {$push: {courses: courseId}}, function(err, dob){
+            if(dob.length == 0 || err){
+                cb(202, false);
+                return;
+            } else {
+                cb(null, true);
+            } 
+        });
+    });
+}
+
 module.exports = {
     "addTestData": addTestData,
     "createUser": createUser,
@@ -285,5 +307,6 @@ module.exports = {
     "getAssignments": getAssignments,
     "updateSettings": updateSettings,
     "getSubmissions": getSubmissions,
-    "submit": submit
+    "submit": submit,
+    "addCourse": addCourse
 }

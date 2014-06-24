@@ -8,7 +8,7 @@
         
         <script id="template" type="text/x-handlebars-template">
             <div class="lightbox-bg">
-                <div class="lightbox">
+                <div class="lightbox settings">
                     <h2>Settings</h2>
                     <p>Click outside the lightbox to cancel changes.  Submit to save and view changes.</p><br />
                     <label>Theme</label>
@@ -20,6 +20,12 @@
                     <input type="checkbox" name="dbl-enter" id="dbl-enter" {{#if user.settings.doubleEnterSubmit}}checked{{/if}}/><label for="dbl-enter">Enable Double-Enter Submission</label>
                     <input type="submit" />
                 </div>
+                <div class="lightbox add-course">
+                    <p>Click outside the lightbox to cancel.</p>
+                    <label>Course ID</label>
+                    <input type="text" name="course-id" id="course-id" />
+                    <input type="submit" />
+                </div>
             </div>
             <header>
                 <a href="/"><div class="button logo"></div></a>
@@ -27,10 +33,11 @@
                     {{#if user}}
                     <span class="greeting">Hello, <span class="user">{{user.data.name.first}}</span> &middot; <a id="logout" href="/logout">Logout</a></span>
                     {{else}}
-                    <span class="greeting">Not logged in &middot; <a href="/login">Login</a></span>
+                    <span class="greeting">Not logged in &middot; <a href="/login">Login</a> &middot; <a href="/register">Register</a></span>
                     {{/if}}
                     <div class="button button-back"></div>
                     <div class="button button-settings"></div>
+                    <div class="button button-add"></div>
                     <a href="/"><div class="button button-home"></div></a>
                 </div>
             </header>
@@ -57,7 +64,7 @@
                         </li>
                         {{/each}}
                         {{else}}
-                        <p>No assignments to show.</p>
+                        <p>No assignments to display.</p>
                         {{/if}}
                     </ul>
                     {{else}}
@@ -79,7 +86,7 @@
                     </div>
                     {{/each}}
                     {{else}}
-                    <p>No courses to display.</p>
+                    <p>No courses to display.  <a href="/addcourse" id="add-course">Click here to add a course.</a></p>
                     {{/if}}
                     {{else}}
                     <h2>Welcome to integrader</h2>
@@ -443,15 +450,15 @@
                     $(".lightbox-bg").fadeIn(300);
                     
                     setTimeout(function(){
-                        $(".lightbox").fadeIn(300);
+                        $(".lightbox.settings").fadeIn(300);
                     }, 200);
                 });
                 
-                $(".lightbox input[type='submit']").click(function(e){
+                $(".lightbox.settings input[type='submit']").click(function(e){
                     $("#theme").remove();
                     
-                    user.settings.theme = $(".lightbox .theme-select").val();
-                    user.settings.doubleEnterSubmit = $(".lightbox #dbl-enter").is(":checked");
+                    user.settings.theme = $(".lightbox.settings .theme-select").val();
+                    user.settings.doubleEnterSubmit = $(".lightbox.settings #dbl-enter").is(":checked");
                     
                     if(user.settings.theme != ""){
                         $("head").append("<link id='theme' rel='stylesheet' href='/css/" + user.settings.theme + ".css' />");
@@ -461,11 +468,41 @@
                     req.open("post", "/updatesettings", true);
                     req.send(JSON.stringify(user.settings));
                     
-                    $(".lightbox").fadeOut(300);
+                    $(".lightbox.settings").fadeOut(300);
                     
                     setTimeout(function(){
                         $(".lightbox-bg").fadeOut(300);
                     }, 100);
+                });
+                
+                $(".button-add").click(function(e){
+                    $(".lightbox-bg").fadeIn(300);
+                    
+                    setTimeout(function(){
+                        $(".lightbox.add-course").fadeIn(300);
+                    }, 200);
+                });
+                
+                $(".lightbox.add-course input[type='submit']").click(function(e){
+                    var req = new XMLHttpRequest();
+                    req.onload = function(){
+                        if(JSON.parse(this.responseText).response){
+                            location.reload();
+                        }
+                    }
+                    req.open("post", "/addcourse", true);
+                    req.send(JSON.stringify({courseId: $(".lightbox.add-course #course-id").val()}));
+                    
+                    $(".lightbox.add-course").fadeOut(300);
+                    
+                    setTimeout(function(){
+                        $(".lightbox-bg").fadeOut(300);
+                    }, 100);
+                });
+                
+                $("a#add-course").click(function(e){
+                    e.preventDefault();
+                    $(".button-add").click();
                 });
                 
                 //exit without submitting

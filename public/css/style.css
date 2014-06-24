@@ -288,6 +288,18 @@ header {
     background: transparent url("/images/button-settings-dark.png");
 }
 
+.button-add {
+    background: transparent url("/images/button-add-light.png");
+    width: 24px;
+    height: 24px;
+    margin: 6px 4px;
+    float: right;
+}
+
+.button-add:hover {
+    background: transparent url("/images/button-add-dark.png");
+}
+
 .button-back {
     background: transparent url("/images/button-back-light.png");
     width: 24px;

@@ -37,7 +37,7 @@ var pages = {
 
 //URL's that require a login to access. This is just for user-experience, the actual security is done when the user goes to access something
 var rest = [
-	//"views/assignment.html",
+	"views/assignment.html",
 	"courselist",
     "userinfo",
     "assignmentlist",
@@ -243,7 +243,7 @@ http.createServer(function(req,res) {
                         res.end();
                     }
 					//If the user is not validly logged in, redirect them to the login page
-					res.writeHead(302, "Redirect", {"Location":"/index"});
+					res.writeHead(302, "Redirect", {"Location":"/"});
 					res.end();
 				}
 
@@ -275,7 +275,7 @@ http.createServer(function(req,res) {
 			var dec = querystring.parse(fullBody);
 			
 			//Handles login posts
-			if (req.url === "/login") {
+			if (req.url == "/login") {
 
 				//Authenticates the user using our database module
 				users.authUser(dec.username,dec.password,function(err, authToken) {
@@ -296,11 +296,11 @@ http.createServer(function(req,res) {
 						res.end();
 					}
 				})
-            } else if (req.url === "/logout"){
+            } else if (req.url == "/logout"){
                 users.endSession(cookies.username, cookies.auth);
                 res.end();
 			//Handles all registration requests
-			} else if (req.url === "/register") {
+			} else if (req.url == "/register") {
 
 				//Creates a user using our database module. Behaves similarly to login
 				users.createUser(dec.firstName, dec.lastName, dec.email, dec.username, dec.password, dec.type, function(err, authToken) {
@@ -323,7 +323,7 @@ http.createServer(function(req,res) {
                 console.log(JSON.parse(fullBody));
                 users.updateSettings(cookies.username, cookies.auth, JSON.parse(fullBody));
                 res.end();
-            } else if (req.url == "/answers" ) {
+            } else if(req.url == "/answers" ) {
 				console.log("Received this junk");
                 console.log(fullBody);
 				users.submit(cookies.username, cookies.auth, JSON.parse(fullBody), function(err, data){
@@ -337,7 +337,17 @@ http.createServer(function(req,res) {
                     }
                 });
 			//Sending useless data. Ignore it
-			} else {
+			} else if(req.url == "/addcourse"){
+                users.addCourse(cookies.username, cookies.auth, JSON.parse(fullBody).courseId, function(err, data){
+                    if(data){
+                        res.write(JSON.stringify({response: true}));
+                        res.end();
+                    } else {
+                        res.write(JSON.stringify({response: false}));
+                        res.end();
+                    }
+                });
+            } else {
 				res.write("Invalid Post Data");
 				res.end();
 			}

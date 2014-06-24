@@ -12,6 +12,8 @@ preload([
     "/images/button-home-light.png",
     "/images/button-settings-dark.png",
     "/images/button-settings-light.png",
+    "/images/button-add-dark.png",
+    "/images/button-add-light.png",
     "/images/button-submit-dark.png",
     "/images/button-submit-light.png",
     "/images/logo-dark.png",
