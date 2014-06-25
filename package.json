@@ -21,5 +21,11 @@
   "bugs": {
     "url": "https://github.com/bluepichu/integrader/issues"
   },
-  "homepage": "https://github.com/bluepichu/integrader"
+  "homepage": "https://github.com/bluepichu/integrader",
+  "dependencies": {
+    "mathjs": "^0.24.1",
+    "mongojs": "^0.13.0",
+    "mongoose": "^3.8.12",
+    "seedrandom": "^2.3.6"
+  }
 }
