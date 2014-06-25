@@ -268,7 +268,7 @@ http.createServer(function(req,res) {
 		});
 		
 		req.on('end', function() {
-			console.log("Post data received "+fullBody);
+			console.log("Post data received "+fullBody + " for page " + req.url);
 			
 			
 			//If the data is an HTTP query string, decode it
@@ -339,6 +339,16 @@ http.createServer(function(req,res) {
 			//Sending useless data. Ignore it
 			} else if(req.url == "/addcourse"){
                 users.addCourse(cookies.username, cookies.auth, JSON.parse(fullBody).courseId, function(err, data){
+                    if(data){
+                        res.write(JSON.stringify({response: true}));
+                        res.end();
+                    } else {
+                        res.write(JSON.stringify({response: false}));
+                        res.end();
+                    }
+                });
+            } else if(req.url == "/addannouncement"){
+                users.addAnnouncement(cookies.username, cookies.auth, JSON.parse(fullBody), function(err, data){
                     if(data){
                         res.write(JSON.stringify({response: true}));
                         res.end();

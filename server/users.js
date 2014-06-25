@@ -50,14 +50,14 @@ var createUser = function(firstName, lastName, email, username, pass, type, cb) 
 var addTestData = function(){
     createUser("Student", "McLearnerson", "st@ud.ent", "student", "student", "student", function(){});
     createUser("Instructor", "McTeacherson", "in@struct.or", "instructor", "instructor", "instructor", function(){});
-    
+
     db.courses.save({
         name: "Physics (Test)",
         instructor: 1, //this should be some other value I think
         assignments: [0], //this should be some other value I think
         announcements: []
     });
-    
+
     db.assignments.save({
         name: "Test Assignment",
         due: "21-06-2014",
@@ -175,14 +175,15 @@ var getUserData = function(username,authToken,cb) {
                 email: dob[0].email,
             },
             courses: dob[0].courses,
-            settings: dob[0].settings
+            settings: dob[0].settings,
+            type: dob[0].type
         }
-        
+
         if (cb) {
             cb(null,user);
         }
         //console.log(user)
-        
+
         //db.users.remove({"private.authToken":{$in:[authToken]}})
     })
 }
@@ -197,7 +198,7 @@ var authUser = function(username,pass,cb) {
         }
         var passHash = cr.createHash("sha256","ascii");
         passHash.update(pass);
-        
+
         if (dob[0].password == passHash.digest("base64")) {
             var authToken = x.toB64(x.XOR(username+Math.floor(Math.random()*1000000)+x.toB64(username),"0.1.2.3"));
             db.users.update({"_id":dob[0]._id}, {"$push":{"private.authToken":authToken}},function() {
@@ -288,24 +289,82 @@ var submit = function(username, authToken, data, cb){
     });
 }
 
-var addCourse = function(username, authToken, courseId, cb){
+var addCourse = function(username, authToken, courseId, cb, forceAdd){
+    forceAdd = forceAdd || false;
+    db.users.find({"username": username, "private.authToken": authToken}, function(err, userData){
+        if(userData.length == 0 || err){
+            console.log("FAILED AUTH.");
+            cb(202, false);
+            return;
+        }
+        console.log(userData);
+        if(forceAdd || userData[0].type == "STUDENT"){
+            console.log("STUDENT?", userData[0].type == "STUDENT");
+            try {
+                courseId = ObjectId(courseId);
+            } catch(err) {
+                cb(202, false);
+                return;
+            }
+            db.courses.find({"_id": courseId}, function(err, data){
+                if(data.length == 0 || err){
+                    cb(202, false);
+                    return;
+                }
+                query = {
+                    "username": username,
+                    "private.authToken": authToken
+                }
+                if(!forceAdd){
+                    query.type = "STUDENT";
+                }
+                console.log(query);
+                db.users.update(query, {$push: {courses: courseId}}, function(err, dob){
+                    if(dob.length == 0 || err){
+                        cb(202, false);
+                        return;
+                    } else {
+                        console.log("COURSE ADDED!");
+                        cb(null, true);
+                        return;
+                    } 
+                });
+            });
+        } else {
+            console.log("ABOUT TO CRATE NEW COURSE");
+            console.log(userData);
+            courseData = {
+                name: courseId,
+                instructor: userData[0]._id,
+                assignments: [],
+                announcements: []
+            }
+            console.log("CREATING COURSE", courseData);
+            db.courses.save(courseData, function(err, dob){
+                addCourse(username, authToken, String(dob._id), cb, true)
+            });
+        }
+    });
+}
+
+var addAnnouncement = function(username, authToken, data, cb){
     try {
-        courseId = ObjectId(courseId);
+        courseId = ObjectId(data.courseId);
     } catch(err) {
         cb(202, false);
         return;
     }
-    db.courses.find({"_id": courseId}, function(err, data){
+    db.users.find({"username": username, "private.authToken": authToken, type: "INSTRUCTOR"}, function(err, dob){
         if(data.length == 0 || err){
             cb(202, false);
         }
-        db.users.update({"username": username, "private.authToken": authToken, type: "STUDENT"}, {$push: {courses: courseId}}, function(err, dob){
-            if(dob.length == 0 || err){
+        console.log("PUSHING ANNOUNCEMENT:", {"_id": courseId, instructor: user._id}, {$push: {announcements: {$each: [data.announcement], $position: 0}}});
+        db.courses.update({"_id": courseId, instructor: user._id}, {$push: {announcements: {$each: [data.announcement], $position: 0}}}, function(err, data){
+            if(data.length == 0 || err){
                 cb(202, false);
-                return;
             } else {
                 cb(null, true);
-            } 
+            }
         });
     });
 }
@@ -323,5 +382,6 @@ module.exports = {
     "updateSettings": updateSettings,
     "getSubmissions": getSubmissions,
     "submit": submit,
-    "addCourse": addCourse
+    "addCourse": addCourse,
+    "addAnnouncement": addAnnouncement
 }

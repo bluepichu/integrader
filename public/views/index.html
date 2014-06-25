@@ -3,9 +3,9 @@
         <link rel=stylesheet href="/css/style.css" />
         <script src="/js/jquery.min.js"></script>
         <script src="/js/handlebars.js"></script>
-        
+
         <title>Home</title>
-        
+
         <script id="template" type="text/x-handlebars-template">
             <div class="lightbox-bg">
                 <div class="lightbox settings">
@@ -21,11 +21,20 @@
                     <input type="submit" />
                 </div>
                 <div class="lightbox add-course">
+                    <h2>{{#ifCond user.type "==" "STUDENT"}}Add{{else}}New{{/ifCond}} Course</h2>
                     <p>Click outside the lightbox to cancel.</p>
-                    <label>Course ID</label>
+                    <label>{{#ifCond user.type "==" "STUDENT"}}Course ID{{else}}Course Name{{/ifCond}}</label>
                     <input type="text" name="course-id" id="course-id" />
                     <input type="submit" />
                 </div>
+                {{#ifCond user.type "==" "INSTRUCTOR"}}
+                <div class="lightbox add-announcement">
+                    <h2>New Announcement</h2>
+                    <p>Click outside the lightbox to cancel.</p>
+                    <textarea placeholder="Enter an announcement..."></textarea>
+                    <input type="submit" />
+                </div>
+                {{/ifCond}}
             </div>
             <header>
                 <a href="/"><div class="button logo"></div></a>
@@ -35,9 +44,11 @@
                     {{else}}
                     <span class="greeting">Not logged in &middot; <a href="/login">Login</a> &middot; <a href="/register">Register</a></span>
                     {{/if}}
+                    {{#if user}}
                     <div class="button button-back"></div>
                     <div class="button button-settings"></div>
                     <div class="button button-add"></div>
+                    {{/if}}
                     <a href="/"><div class="button button-home"></div></a>
                 </div>
             </header>
@@ -52,9 +63,9 @@
                             {{{formatDate date}}}
                             {{#each assignments}}
                             <ul>
-                                <a href="/assignment?id={{_id}}" class="no-link">
+                                <a href="/{{#ifCond ../../user.type '==' 'STUDENT'}}assignment{{else}}edit{{/ifCond}}?id={{_id}}" class="no-link">
                                     <li class="clickable">
-                                        <div class="progress micro progress-{{progress}}" id="prog{{_id}}"></div>
+                                        {{#ifCond ../../user.type "==" "STUDENT"}}<div class="progress micro progress-{{progress}}" id="prog{{_id}}"></div>{{/ifCond}}
                                         <span class="title {{#ifCond progress '==' 12}}completed{{/ifCond}}">{{name}}</span>
                                         <span class="subtitle">{{course}}</span>
                                     </li>
@@ -73,16 +84,20 @@
                 </div>
                 <div class="content-main">
                     {{#if user}}
-                    <h2>Courses</h2>
+                    <h2>{{#ifCond user.type "==" "INSTRUCTOR"}}Your{{/ifCond}} Courses</h2>
                     {{#if courses.length}}
                     {{#each courses}}
                     <div class="course-listing">
                         <h3 class="course-title">{{name}}</h3>
-                        <h4 class="teacher">{{instructor.first}} {{instructor.last}}</h4><br />
-                        <a href="/course?id={{_id}}" class="highlight course-link">
-                            <span class="upcoming-count highlight">{{upcoming}} Upcoming Assignments &raquo;</span>
-                        </a>
+                        <h4 class="teacher">{{#ifCond ../user.type "==" "STUDENT"}} {{instructor.first}} {{instructor.last}} {{else}} {{_id}} {{/ifCond}}</h4><br />
+                        {{#if upcoming}}
+                        <a href="/course?id={{_id}}" class="highlight course-link"><span class="upcoming-count highlight">{{upcoming}} Upcoming Assignments &raquo;</span></a>
                         <span class="upcoming-next">Next due {{dateToName next false}}</span>
+                        {{else}}
+                        <a href="/course?id={{_id}}" class="course-link gray-link">
+                            <span class="upcoming-count">No Upcoming Assignments &raquo;</span>
+                        </a>
+                        {{/if}}
                     </div>
                     {{/each}}
                     {{else}}
@@ -91,53 +106,61 @@
                     {{else}}
                     <h2>Welcome to integrader</h2>
                     <p>Science, technology, engineering, and math related courses require extreme proficiencies with calculations for long-term success in the subject. Thus, teachers of these subjects seek to improve student skills through controlled practice. Ideally, teachers want to ensure their students practice and not have to grade anything while knowing how well each student did. Currently, there are some solutions to this problem; However, all of these solutions are based on deprecated technologies, have unalterable issues with grading, are not open source, or some combination of these. These severe limitations restrict both instructors and teachers from achieving their goals: teachers do not get an accurate reflection of skills and have limited possible questions (as the majority of these softwares make it difficult to create your own questions Webassign included); students who can properly provide solutions are forced to deal with the nuances of the grading system and the inefficiencies of the software, for example, using invalid variable names (like capitalization of greek letters).</p>
-                    
+
                     <p>The solution we provided (called integrader) is an updated, flexible implementation which allows students and teachers to seamlessly interact through practice problems on all existing major hardware systems. Additionally, by making the code open source and available to all as any new problems arise, including the presence of new hardware, the system can be edited to suit the purposes of the users, whether they be students or teachers.</p>
                     {{/if}}
                 </div>
             </div>
         </script>
-        
+
         <script id="course-template" type="text/x-handlebars-template">
-            <h2 class="course-title">{{name}}</h2> <h4 class="teacher">{{instructor.first}} {{instructor.last}}</h4><br />
+            <h2 class="course-title">{{name}}</h2> <h4 class="teacher">{{#ifCond user.type "==" "STUDENT"}}{{instructor.first}} {{instructor.last}}{{else}}{{_id}}{{/ifCond}}</h4><br />
             <p>{{description}}</p>
             <h3>Upcoming Assignments</h3>
             <div>
                 {{#each assignments}}
-                <a class="no-link" href="/assignment?id={{this}}">
+                <a class="no-link" href="/{{#ifCond ../user.type '==' 'STUDENT'}}assignment{{else}}edit{{/ifCond}}?id={{this}}">
                     <div class="assignment-listing">
-                        <h3 class="assignment-title"><span class="progress progress-large progress-{{assignmentData this 'progress'}}"></span>{{assignmentData this "name"}}</h3>
-                        <h4 class="score">{{{dateToName (assignmentData this "due") true}}} &middot; <span class="score">{{formatScore this}}</span></h4>
+                        <h3 class="assignment-title">{{#ifCond ../user.type "==" "STUDENT"}}<span class="progress progress-large progress-{{assignmentData this 'progress'}}"></span>{{/ifCond}}{{assignmentData this "name"}}</h3>
+                        <h4 class="score">{{{dateToName (assignmentData this "due") true}}} {{#ifCond ../user.type "==" "STUDENT"}} &middot; <span class="score">{{formatScore this}}</span> {{/ifCond}} </h4>
                     </div>
                 </a>
                 {{/each}}
+                {{#ifCond user.type "==" "INSTRUCTOR"}}
+                <a class="no-link" href="/new?courseid={{_id}}">
+                    <div class="assignment-listing">
+                        <h3 class="assignment-title">New Assignment</h3>
+                    </div>
+                </a>
+                {{/ifCond}}
             </div>
             <h3>Announcements</h3>
             <div>
+                {{#ifCond user.type "==" "INSTRUCTOR"}}<div class="assignment-listing add-announcement button"><p>New announcement...</p></div>{{/ifCond}}
                 {{#each announcements}}
-                <div class="assignment-listing">
+                <div class="assignment-listing no-hover">
                     <p>{{this}}</p>
                 </div>
                 {{/each}}
             </div>
         </script>
-        
+
         <script type="text/javascript">
             var addHTML = "<input type='text' id='course-id' placeholder='Enter a course ID...' /><input type='submit'>";
-            
+
             var user;
             var loadCount = 0;
-            
+
             var toLoad = ["/getucainfo"];
             var loadVars = ["ucaInfo"];
-            
+
             var merge = function(a, b, prefix){
                 a[prefix] = {}
                 for(key in b){
                     a[prefix][key] = b[key];
                 }
             }
-            
+
             $(document).ready(function(){
                 for(i = 0; i < toLoad.length; i++){
                     var req = new XMLHttpRequest();
@@ -147,54 +170,54 @@
                     req.send();
                 }
             });
-            
+
             var loadedCB = function(){
                 window[loadVars[this.index]] = JSON.parse(this.responseText);
                 loadCount++;
-                
+
                 console.log(loadVars[this.index]);
-                
+
                 if(loadCount == toLoad.length){
                     ready();
                 }
             }
-            
+
             var pad = function(n, width, z) {
                 z = z || '0';
                 n = n + '';
                 return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
             }
-            
+
             var data = {};
-            
+
             var ready = function(){
                 user = ucaInfo.user;
                 courses = ucaInfo.courses;
                 assignments = ucaInfo.assignments;
-                
+
                 data = {};
-                
+
                 if($.isEmptyObject(user)){
                     data.user = false;
                 } else {
                     merge(data, user, "user");
                 }
-                
+
                 if(user){
                     if(user.settings == null){
                         user.settings = {theme: "", doubleEnterSubmit: false};
                     } else if(user.settings.theme != ""){
                         $("head").append("<link id='theme' rel='stylesheet' href='/css/" + user.settings.theme + ".css' />");
                     }
-                    
+
                     var dateMap = {};
                     var keys = [];
                     var values = [];
                     window.assignmentMap = {};
-                    
+
                     today = new Date();
                     today.setHours(0, 0, 0, 0);
-                    
+
                     for(i = 0; i < assignments.length; i++){
                         due = new Date(Date.parse(assignments[i].due));
                         due.setHours(24, 0, 0, 0);
@@ -208,7 +231,7 @@
                         }
                         dateMap[assignments[i].due].push(assignments[i]);
                         values.push(assignments[i]._id);
-                        
+
                         assignments[i].earnedPoints = 0;
                         assignments[i].totalPoints = 0;
                         assignments[i].progress = "00";
@@ -219,9 +242,9 @@
                             }
                         }
                     }
-                    
+
                     data.courses = [];
-                    
+
                     for(i = 0; i < courses.length; i++){
                         data.courses.push({});
                         data.courses[i].name = courses[i].name;
@@ -249,37 +272,37 @@
                         }
                         data.courses[i].next = earliest;
                     }
-                    
+
                     data.dates = [];
-                    
+
                     keys.sort();
-                    
+
                     for(i = 0; i < keys.length; i++){
                         data.dates.push({date: keys[i], assignments: dateMap[keys[i]]});
                     }
-                    
+
                     var req = new XMLHttpRequest();
                     req.onload = function(){
                         submissions = JSON.parse(this.responseText);
-                        
+
                         for(i = 0; i < submissions.length; i++){
                             sub = submissions[i];
-                            
+
                             if(sub.type != "SUBMISSION" || !sub.response){
                                 continue;
                             }
-                            
+
                             assignment = assignmentMap[sub.assignmentId];
                             question = assignment.questions[sub.question-1];
                             part = question.parts[sub.part-1];
-                            
+
                             if(!part.correct){
                                 part.correct = true;
                                 assignment.earnedPoints += part.points;
                                 assignment.progress = pad(Math.floor(assignment.earnedPoints*12/assignment.totalPoints), 2);
                             }
                         }
-                        
+
                         load();
                     }
                     req.open("get", "submissions?id=" + values.join(","), true);
@@ -288,32 +311,32 @@
                     load();
                 }
             }
-            
+
             var load = function(){
                 Handlebars.registerHelper("log", function(desc, obj) {
                     console.log(desc, obj);
                     return "";
                 });
-                
+
                 var positionCounter = 0;
-                
+
                 Handlebars.registerHelper("position", function() {
                     return pad(positionCounter, 3);
                 });
-                
+
                 Handlebars.registerHelper("incrementPosition", function() {
                     positionCounter++;
                     return "";
                 });
-                
+
                 Handlebars.registerHelper("resetPosition", function() {
                     positionCounter = 0;
                     return "";
                 });
-                
+
                 var dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
                 var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec"];
-                
+
                 var getNames = function(date){
                     console.log(date);
                     date = date.split("-");
@@ -321,9 +344,9 @@
                     date.setHours(0, 0, 0, 0);
                     day = new Date();
                     day.setHours(0, 0, 0, 0);
-                    
+
                     name = "";
-                    
+
                     for(i = 0; i < 7; i++){
                         if(day.getTime() == date.getTime()){
                             switch(i){
@@ -341,13 +364,13 @@
                         }
                         day = new Date(day.getTime() + 24*60*60*1000);
                     }
-                    
+
                     if(name != ""){
                         return [name, monthNames[date.getMonth()] + " " + date.getDate()];
                     }
                     return [monthNames[date.getMonth()] + " " + date.getDate(), ""];
                 }
-                
+
                 Handlebars.registerHelper("dateToName", function(date, highlight){
                     name = getNames(date)[0];
                     if(highlight && name == "Today"){
@@ -355,24 +378,24 @@
                     }
                     return name;
                 });
-                
+
                 Handlebars.registerHelper("formatDate", function(date){
                     names = getNames(date);
-                    
+
                     if(names[0] == "Today"){
                         return "<span class='title highlight'>Today</span><span class='subtitle'>" + names[1] + "</span>";
                     }
                     return "<span class='title'>" + names[0] + "</span><span class='subtitle'>" + names[1] + "</span>";
                 });
-                
+
                 Handlebars.registerHelper('assignmentData', function(id, item){
                     return assignmentMap[id][item];
                 });
-                
+
                 Handlebars.registerHelper('formatScore', function(id){
                     return assignmentMap[id].earnedPoints + "/" + assignmentMap[id].totalPoints + " (" + (100*assignmentMap[id].earnedPoints/assignmentMap[id].totalPoints).toFixed(2) + "%)";
                 });
-                
+
                 Handlebars.registerHelper('ifCond', function (v1, operator, v2, options){
                     switch (operator){
                         case '==':
@@ -397,24 +420,24 @@
                             return options.inverse(this);
                     }
                 });
-                
+
                 var out = $("body");
                 var src = $("#template").html();
-                
+
                 var template = Handlebars.compile(src);
                 var html = template(data);
-                
+
                 out.html(html);
-                
+
                 var mainpage = null;
-                
+
                 $(".button-back").hide();
-                
+
                 $(".button-back").click(function(e){
                     if(mainpage != null){
                         $(".button-back").fadeOut(300);
                         $(".content-main").children().fadeOut(300);
-                        
+
                         setTimeout(function(){
                             $(".content-main").empty();
                             $(".content-main").append(mainpage);
@@ -423,74 +446,84 @@
                         }, 300);
                     }
                 });
-                
+
                 $(".course-link").click(function(e){
                     e.preventDefault();
                     id = $(this).attr("href").split("id=")[1];
-                    
+
                     for(i = 0; i < courses.length; i++){
                         if(parseInt(courses[i]._id, 16) == parseInt(id, 16)){
                             course = courses[i];
+                            break;
                         }
                     }
-                    
+
+                    merge(course, user, "user");
+
                     out = $(".content-main");
                     src = $("#course-template").html();
-                    
+
                     template = Handlebars.compile(src);
                     html = template(course);
-                    
+
                     out.children().fadeOut(300);
-                    
+
                     setTimeout(function(){
                         mainpage = $(".content-main").children().detach();
                         toAdd = $(html);
                         toAdd.hide();
                         out.append(toAdd);
+                        $(".add-announcement").click(function(e){
+                            $(".lightbox-bg").fadeIn(300);
+
+                            setTimeout(function(){
+                                $(".lightbox.add-announcement").fadeIn(300);
+                            }, 200);
+                        });
                         toAdd.fadeIn(300);
                         $(".button-back").fadeIn(300);
                     }, 300);
                 });
-                
+
                 $(".lightbox-bg, .lightbox").hide();
-                
+
                 $(".button-settings").click(function(e){
                     $(".lightbox-bg").fadeIn(300);
-                    
+
                     setTimeout(function(){
                         $(".lightbox.settings").fadeIn(300);
                     }, 200);
                 });
-                
+
                 $(".lightbox.settings input[type='submit']").click(function(e){
                     $("#theme").remove();
-                    
+
                     user.settings.theme = $(".lightbox.settings .theme-select").val();
                     user.settings.doubleEnterSubmit = $(".lightbox.settings #dbl-enter").is(":checked");
-                    
+
                     if(user.settings.theme != ""){
                         $("head").append("<link id='theme' rel='stylesheet' href='/css/" + user.settings.theme + ".css' />");
                     }
-                    
+
                     var req = new XMLHttpRequest();
                     req.open("post", "/updatesettings", true);
                     req.send(JSON.stringify(user.settings));
-                    
+
                     $(".lightbox.settings").fadeOut(300);
-                    
+
                     setTimeout(function(){
                         $(".lightbox-bg").fadeOut(300);
                     }, 100);
                 });
-                
+
                 $(".button-add").click(function(e){
                     $(".lightbox-bg").fadeIn(300);
-                    
+
                     setTimeout(function(){
                         $(".lightbox.add-course").fadeIn(300);
                     }, 200);
                 });
-                
+
                 $(".lightbox.add-course input[type='submit']").click(function(e){
                     var req = new XMLHttpRequest();
                     req.onload = function(){
@@ -500,32 +533,52 @@
                     }
                     req.open("post", "/addcourse", true);
                     req.send(JSON.stringify({courseId: $(".lightbox.add-course #course-id").val()}));
-                    
+
                     $(".lightbox.add-course").fadeOut(300);
-                    
+
                     setTimeout(function(){
                         $(".lightbox-bg").fadeOut(300);
                     }, 100);
                 });
-                
+
+                $(".lightbox.add-announcement input[type='submit']").click(function(e){
+                    var req = new XMLHttpRequest();
+                    req.onload = function(){
+                        if(JSON.parse(this.responseText).response){
+                            location.reload();
+                        }
+                    }
+                    req.open("post", "/addannouncement", true);
+                    req.send(JSON.stringify({
+                        courseId: $("h4.teacher").text(),
+                        announcement: $(".lightbox.add-announcement textarea").val()
+                    }));
+
+                    $(".lightbox.add-course").fadeOut(300);
+
+                    setTimeout(function(){
+                        $(".lightbox-bg").fadeOut(300);
+                    }, 100);
+                });
+
                 $("a#add-course").click(function(e){
                     e.preventDefault();
                     $(".button-add").click();
                 });
-                
+
                 //exit without submitting
                 $(".lightbox-bg").click(function(e){
                     $(".lightbox").fadeOut(300);
-                    
+
                     setTimeout(function(){
                         $(".lightbox-bg").fadeOut(300);
                     }, 100);
                 });
-                
+
                 $(".lightbox").click(function(e){
                     e.stopPropagation();
                 });
-                
+
                 $("#logout").click(function(e){
                     var req = new XMLHttpRequest();
                     req.onload = function(){ console.log("logging out..."); location.reload(); };

@@ -115,6 +115,11 @@ a.no-link:active {
     font-size: inherit;
 }
 
+a.gray-link {
+    color: #999999;
+    text-decoration-color: #999999;
+}
+
 span.title {
     color: #555555;
     padding-right: 8px;
@@ -427,6 +432,7 @@ h4.score {
 h4.score {
     text-align: right;
     float: right;
+    padding: 4px;
 }
 
 span.upcoming-count {
@@ -447,12 +453,8 @@ span.upcoming-next {
     padding: 16px;
 }
 
-.assignment-listing:hover {
+.assignment-listing:not(.no-hover):hover {
     background: #F2F2F2;
-}
-
-div.course-listing a:link {
-    text-decoration-color: #DD4B39;
 }
 
 /* ASSIGNMENT */
