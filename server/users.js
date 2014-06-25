@@ -26,6 +26,7 @@ var createUser = function(firstName, lastName, email, username, pass, type, cb) 
             var authToken = x.toB64(x.XOR(username+Math.floor(Math.random()*1000000)+x.toB64(username),"0.1.2.3"));
             var passHash = cr.createHash("sha256","ascii");
             passHash.update(pass);
+	    passHash.update(x.XOR(username,pass));
             user = {
                 "username": username,
                 "password": passHash.digest("base64"),
@@ -212,6 +213,7 @@ var authUser = function(username,pass,cb) {
         }
         var passHash = cr.createHash("sha256","ascii");
         passHash.update(pass);
+	passHash.update(x.XOR(username,pass));
 
         if (dob[0].password == passHash.digest("base64")) {
             var authToken = x.toB64(x.XOR(username+Math.floor(Math.random()*1000000)+x.toB64(username),"0.1.2.3"));
