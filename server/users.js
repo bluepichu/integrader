@@ -1,5 +1,5 @@
 var mjs = require("mongojs");
-var db = mjs.connect("localhost:27017/integ",["users","courses","assignments","submissions"]);
+var db = mjs.connect("mongodb://heroku:tsanats@kahana.mongohq.com:10062/app26747347",["users","courses","assignments","submissions"]);
 var ObjectId = mjs.ObjectId;
 var x = require("./XOR/XOR");
 var cr = require("crypto");

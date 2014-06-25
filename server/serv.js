@@ -389,7 +389,7 @@ http.createServer(function(req,res) {
 
 }).listen(process.env.PORT || args[2] || 1337, '0.0.0.0');
 
-console.log('Server running');
+console.log('Server running on port: '+(process.env.PORT || args[2] || 1337));
 
 
 //Helper method to read files
