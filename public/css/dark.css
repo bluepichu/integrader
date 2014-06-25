@@ -20,6 +20,13 @@ RED
 
 /*     VARIOUS     */
 
+
+/*     PRELOADING  */
+body:after {
+        display:none;
+        content: url("/images/button-submit-dark.png") url("/images/button-back-dark.png") url("/images/button-add-dark.png") url("/images/button-settings-dark.png") url("/images/button-home-dark.png") url(/images/logo-dark.png)
+}
+
 * {
     box-sizing: border-box;
     font-family: "Open Sans";
