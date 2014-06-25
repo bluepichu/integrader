@@ -387,8 +387,7 @@ http.createServer(function(req,res) {
         });
     }
 
-    //Listen on the port specified, or default to 1337. Accepts connections from all IPs
-}).listen(args[2] || 1337, '0.0.0.0');
+}).listen(process.env.PORT || args[2] || 1337, '0.0.0.0');
 
 console.log('Server running');
 

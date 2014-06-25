@@ -1,0 +1,31 @@
+{
+  "name": "integrader",
+  "version": "0.1.0",
+  "description": "Online homework platform",
+  "main": "server/serv.js",
+  "scripts": {
+    "test": "node server/serv.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/bluepichu/integrader.git"
+  },
+  "keywords": [
+    "integrader",
+    "grade",
+    "web",
+    "assign"
+  ],
+  "author": "zwade, bluepichu",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bluepichu/integrader/issues"
+  },
+  "homepage": "https://github.com/bluepichu/integrader",
+  "dependencies": {
+    "mathjs": "^0.24.1",
+    "mongojs": "^0.13.0",
+    "mongoose": "^3.8.12",
+    "seedrandom": "^2.3.6"
+  }
+}
