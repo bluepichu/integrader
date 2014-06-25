@@ -301,7 +301,7 @@ var submit = function(username, authToken, data, cb){
 var addCourse = function(username, authToken, courseId, cb, forceAdd){
     forceAdd = forceAdd || false;
     db.users.find({"username": username, "private.authToken": authToken}, function(err, userData){
-        if(user(dob && dob.length == 0) || err){
+        if((userData && userData.length == 0) || err){
             console.log("FAILED AUTH.");
             cb(202, false);
             return;
@@ -316,7 +316,7 @@ var addCourse = function(username, authToken, courseId, cb, forceAdd){
                 return;
             }
             db.courses.find({"_id": courseId}, function(err, data){
-                if((dob && dob.length == 0) || err){
+                if((data && data.length == 0) || err){
                     cb(202, false);
                     return;
                 }
