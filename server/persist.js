@@ -44,7 +44,8 @@ var assignment = new Schema({
         type: Date,
         required: true
     },
-	questions: [Question]
+	questions: [Question],
+    owner: ObjectId
 });
 
 var Assignment = mongoose.model('Assignment', assignment);

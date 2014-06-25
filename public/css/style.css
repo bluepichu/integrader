@@ -566,7 +566,7 @@ input[type="submit"] {
 }
 
 /* EDIT */
-
+/*
 ol.questions li.new-question {
     color: #999999;
 }
@@ -577,8 +577,8 @@ ol.questions li.new-question:before {
 
 .editing div.content-main form>div,
 .editing div.content-main form>h2 {
-    /*margin: -4px;
-    padding: 4px;*/
+    margin: -4px;
+    padding: 4px;
 }
 
 .editing div.content-main form>div:hover,
@@ -588,7 +588,13 @@ ol.questions li.new-question:before {
 
 .edit {
     border: 1px solid #111111;
-    
+}
+*/
+
+textarea#json-editor {
+    min-width: 100%;
+    max-width: 100%;
+    min-height: 500px;
 }
 
 /*     LIGHTBOX     */

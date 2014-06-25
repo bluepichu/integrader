@@ -124,6 +124,7 @@ var numerical = function(equation,variables,values,answer,tolerance){
 		instructions.push(variables[i]+"="+values[i]);
 	}
 	instructions.push(equation);
+    console.log(instructions);
 	var trueValue = math.eval(instructions)[len];
 	var testValue = math.eval(answer);
     console.log("TRUE", trueValue, "TEST", testValue);

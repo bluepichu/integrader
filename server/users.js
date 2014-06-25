@@ -111,24 +111,32 @@ var getCourses = function(uids,cb) {
 }
 
 //gets all assignments associated with a course id
-var getAssignments = function(courses,cb){
-    ids = [];
-    console.log("COURSES >>> ", courses);
-    for(i = 0; i < courses.length; i++){
-        for(j = 0; j < courses[i].assignments.length; j++){
-            ids.push(courses[i].assignments[j]);
+var getAssignments = function(username, authToken, courses, cb){
+    db.users.find({"username": username, "private.authToken": authToken}, function(err, dob){
+        if((dob && dob.length == 0) || err){
+            cb(202, "");
+            return;
         }
-    }
-    db.assignments.find({"_id": {$in:ids}}, function(err, dob){
-        console.log(dob);
-        for(i = 0; i < dob.length; i++){
-            for(j = 0; j < dob[i].questions.length; j++){
-                for(k = 0; k < dob[i].questions[j].parts.length; k++){
-                    delete dob[i].questions[j].parts[k].answer;
-                }
+        ids = [];
+        console.log("COURSES >>> ", courses);
+        for(i = 0; i < courses.length; i++){
+            for(j = 0; j < courses[i].assignments.length; j++){
+                ids.push(courses[i].assignments[j]);
             }
         }
-        cb(dob);
+        db.assignments.find({"_id": {$in:ids}}, function(err, data){
+            console.log(dob);
+            if(dob[0].type == "STUDENT"){
+                for(i = 0; i < data.length; i++){
+                    for(j = 0; j < data[i].questions.length; j++){
+                        for(k = 0; k < data[i].questions[j].parts.length; k++){
+                            delete data[i].questions[j].parts[k].answer;
+                        }
+                    }
+                }
+            }
+            cb(data);
+        });
     });
 }
 
@@ -256,6 +264,7 @@ var submit = function(username, authToken, data, cb){
                         assignmentData = assignmentData[0];
                         console.log(assignmentData);
                         console.log(assignmentData.questions);
+                        console.log(assignmentData.questions[data.question-1]);
                         console.log("~~~~~~~~~~~~~~~~", dob);
                         data.response = grader.grade(data, assignmentData.questions[data.question-1].parts[data.part-1], dob[0]._id);
                         submissionData = {
@@ -292,7 +301,7 @@ var submit = function(username, authToken, data, cb){
 var addCourse = function(username, authToken, courseId, cb, forceAdd){
     forceAdd = forceAdd || false;
     db.users.find({"username": username, "private.authToken": authToken}, function(err, userData){
-        if(userData.length == 0 || err){
+        if(user(dob && dob.length == 0) || err){
             console.log("FAILED AUTH.");
             cb(202, false);
             return;
@@ -307,7 +316,7 @@ var addCourse = function(username, authToken, courseId, cb, forceAdd){
                 return;
             }
             db.courses.find({"_id": courseId}, function(err, data){
-                if(data.length == 0 || err){
+                if((dob && dob.length == 0) || err){
                     cb(202, false);
                     return;
                 }
@@ -355,17 +364,59 @@ var addAnnouncement = function(username, authToken, data, cb){
         return;
     }
     db.users.find({"username": username, "private.authToken": authToken, type: "INSTRUCTOR"}, function(err, dob){
-        if(data.length == 0 || err){
+        if((dob && dob.length == 0) || err){
             cb(202, false);
         }
         console.log("PUSHING ANNOUNCEMENT:", {"_id": courseId, instructor: user._id}, {$push: {announcements: {$each: [data.announcement], $position: 0}}});
         db.courses.update({"_id": courseId, instructor: user._id}, {$push: {announcements: {$each: [data.announcement], $position: 0}}}, function(err, data){
-            if(data.length == 0 || err){
+            if((dob && dob.length == 0) || err){
                 cb(202, false);
             } else {
                 cb(null, true);
             }
         });
+    });
+}
+
+var editAssignment = function(username, authToken, data, cb){
+    db.users.find({"username": username, "private.authToken": authToken, type: "INSTRUCTOR"}, function(err, dob){
+        if((dob && dob.length == 0) || err){
+            cb(202, false);
+        } else {
+            assignmentData = data.content;
+            console.log("ASSIGNMENT IS BEING UPDATED.\n", {"_id": ObjectId(data.assignmentId), "owner": ObjectId(dob[0]._id)}, assignmentData);
+            db.assignments.update({"_id": ObjectId(data.assignmentId), "owner": ObjectId(dob[0]._id)}, assignmentData, function(err, data){
+                if((data && data.length == 0) || err){
+                    console.log("FAILURE", data, err);
+                    cb(202, false);
+                } else {
+                    console.log("SUCCESS", data, err);
+                    cb(null, true);
+                }
+            });
+        }
+    });
+}
+
+var newAssignment = function(username, authToken, courseId, cb){
+    db.users.find({"username": username, "private.authToken": authToken, type: "INSTRUCTOR"}, function(err, dob){
+        if((dob && dob.length == 0) || err){
+            cb(202, false);
+        } else {
+            console.log("locating course");
+            db.courses.find({"_id": ObjectId(courseId), "instructor": dob[0]._id}, function(err, data){
+                if((data && data.length == 0) || err){
+                    cb(202, false);
+                } else {
+                    console.log("inserting and updating");
+                    db.assignments.save({name: "", due: "1900-01-01", questions: [], owner: dob[0]._id}, function(err, saved){
+                        console.log(saved);
+                        db.courses.update({"_id": data[0]._id}, {$push: {assignments: saved._id}});
+                        cb(null, saved._id);
+                    });
+                }
+            });
+        }
     });
 }
 
@@ -383,5 +434,7 @@ module.exports = {
     "getSubmissions": getSubmissions,
     "submit": submit,
     "addCourse": addCourse,
-    "addAnnouncement": addAnnouncement
+    "addAnnouncement": addAnnouncement,
+    "editAssignment": editAssignment,
+    "newAssignment": newAssignment
 }
