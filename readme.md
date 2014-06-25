@@ -27,4 +27,5 @@ To run Integrader, follow these steps:
 
 ## Release Notes
 
+**Version 1.0**: Stable for both student and teacher login.  Assignment creation must be done by typing in raw JSON assignment objects.
 **Version 0.1**: Stable for student login only.  Course and assignment creation must be done by hand directly into the database.
