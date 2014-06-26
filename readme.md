@@ -27,6 +27,8 @@ To run Integrader, follow these steps:
 
 ## Release Notes
 
+**Version 1.3**: Added "colorful" theme.  Fixed embed issues.  Created `/embed` to make it easier for students to join courses.
+
 **Version 1.2**: Mobile devices now supported.
 
 **Version 1.1**: Embeds now supported via `<embed>` and `<iframe>` tags.
