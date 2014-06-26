@@ -27,7 +27,9 @@ To run Integrader, follow these steps:
 
 ## Release Notes
 
-**Version 1.1**: Mobile devices now supported.
+**Version 1.2**: Mobile devices now supported.
+
+**Version 1.1**: Embeds now supported via `<embed>` and `<iframe>` tags.
 
 **Version 1.0**: Stable for both student and teacher login.  Assignment creation must be done by typing in raw JSON assignment objects.
 
