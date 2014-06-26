@@ -196,14 +196,8 @@ span.subtitle {
     margin-right: 4px;
     vertical-align: -5px;
 }
-/*
-.progress.micro {
-    width: 16px;
-    height: 16px;
-    background-size: 16px 16px;
-    margin-right: 2px;
-}
-*/
+
+
 .progress.progress-large {
     width: 24px;
     height: 24px;

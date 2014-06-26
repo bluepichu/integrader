@@ -1,0 +1,279 @@
+/*
+
+SPOT COLOR REFERENCE
+
+WHITE
+#FFFFFF
+
+BLUE
+#0066DD
+
+RED
+#FF4444
+
+GREEN
+#44AA44
+
+GRAY
+#CCCCCC
+#999999
+#666666;
+
+OPACITY LEVELS
+.4
+.5
+.8
+
+*/
+
+body:after {
+	display: none;
+	content: url("/images/logo-white.png");
+}
+
+body {
+    background: #0066DD;
+}
+
+h2.sidebar-header {
+    color: #FFFFFF;
+}
+
+.highlight {
+    color: #FF4444 !important;
+    font-weight: 700;
+}
+
+span.title {
+    color: #FFFFFF;
+}
+
+.clickable span.title {
+    color: #0066DD;
+    max-width: 115px;
+    text-overflow: ellipsis;
+    padding-right: 5px;
+}
+
+.clickable span.subtitle {
+    color: #0066DD;
+    max-width: 85px;
+    text-overflow: ellipsis;
+}
+
+span.subtitle {
+    color: #FFFFFF;
+}
+
+ul.upcoming span.completed {
+    text-decoration: none;
+}
+
+.clickable {
+    background: rgba(255, 255, 255, .5);
+    border-radius: 16px;
+    padding: 4px;
+}
+
+.clickable:hover {
+    background: rgba(255, 255, 255, .8);
+}
+
+ul.upcoming>li {
+    border-bottom: 0px;
+}
+
+div.answer-area {
+    border-radius: 8px;
+    color: #FFFFFF;
+    background: #999999;
+}
+
+div.course-listing {
+    border-radius: 8px;
+    background: #CCCCCC;
+}
+
+div.assignment-listing:not(.no-hover):hover {
+    background: rgba(0, 102, 221, .8);
+}
+
+div.answer-area>h3 {
+    color: #FFFFFF;
+}
+
+.progress-00 {
+    background: transparent url("/images/progress-colorful-00.png");
+}
+
+.progress-01 {
+    background: transparent url("/images/progress-colorful-01.png");
+}
+
+.progress-02 {
+    background: transparent url("/images/progress-colorful-02.png");
+}
+
+.progress-03 {
+    background: transparent url("/images/progress-colorful-03.png");
+}
+
+.progress-04 {
+    background: transparent url("/images/progress-colorful-04.png");
+}
+
+.progress-05 {
+    background: transparent url("/images/progress-colorful-05.png");
+}
+
+.progress-06 {
+    background: transparent url("/images/progress-colorful-06.png");
+}
+
+.progress-07 {
+    background: transparent url("/images/progress-colorful-07.png");
+}
+
+.progress-08 {
+    background: transparent url("/images/progress-colorful-08.png");
+}
+
+.progress-09 {
+    background: transparent url("/images/progress-colorful-09.png");
+}
+
+.progress-10 {
+    background: transparent url("/images/progress-colorful-10.png");
+}
+
+.progress-11 {
+    background: transparent url("/images/progress-colorful-11.png");
+}
+
+.progress-12 {
+    background: transparent url("/images/progress-colorful-12.png");
+}
+
+.progress {
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    background-size: 20px 20px;
+    vertical-align: top;
+    margin-right: 4px;
+    vertical-align: -5px;
+    border-radius: 10px;
+    background-color: rgba(255, 255, 255, .5);
+}
+
+
+.progress.progress-large {
+    width: 24px;
+    height: 24px;
+    background-size: 24px 24px;
+    border-radius: 12px;
+}
+
+ul.upcoming>li {
+    background: rgba(255, 255, 255, .4);
+    padding: 8px;
+    border-radius: 8px;
+    margin: 8px 0px;
+}
+
+ul.upcoming>li>ul {
+    padding: 4px 0px;
+}
+
+.logo {
+    width: 288px;
+    float: left;
+    background: transparent url("/images/logo-white.png");
+    height: 40px;
+    margin: 6px auto;
+}
+
+.logo:hover {
+    background: transparent url("/images/logo-white.png");
+}
+
+ol.questions {
+    padding: 0px;
+}
+
+ol.questions li {
+    margin: 4px 0px;
+    width: 100%;
+    text-overflow: ellipsis;
+}
+
+ol.questions li:before {
+    display: none;
+}
+
+.status {
+    background: rgba(255, 255, 255, .8);
+    border-radius: 0px 8px 0px 8px;
+    width: auto;
+    padding: 0px 4px;
+}
+
+.status-dot.correct {
+    color: #44AA44;
+}
+
+.status-dot.incorrect {
+    color: #FF4444;
+}
+
+div.colorful-correct {
+    background: #44AA44;
+}
+
+div.colorful-incorrect {
+    background: #FF4444;
+}
+
+.lightbox {
+    border-radius: 8px;
+}
+
+div.assignment-listing {
+    background: #999999;
+    border-radius: 8px;
+}
+
+div.assignment-listing:not(.no-hover){
+    height: 60px;
+    padding-right: 0px;
+}
+
+div.assignment-listing.no-hover * {
+    color: #FFFFFF;
+}
+
+div.assignment-listing:not(.no-hover):hover {
+    background: #666666;
+}
+
+div.assignment-listing:not(.no-hover):hover h4.score {
+    color: #666666;
+}
+
+h4.score {
+    margin-top: -16px;
+    padding: 20px 16px 16px;
+    height: 60px;
+    background: rgba(255, 255, 255, .5);
+    width: 40%;
+    color: #999999;
+}
+
+h4.teacher,
+span.upcoming-next {
+    color: #999999;
+}
+
+h3.assignment-title {
+    color: #FFFFFF;
+}

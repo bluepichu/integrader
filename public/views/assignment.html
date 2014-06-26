@@ -26,7 +26,7 @@
                     <select name="theme-select" class="theme-select">
                         <option value="" {{#ifCond user.settings.theme "==" ""}}selected{{/ifCond}}>Light (Default)</option>
                         <option value="dark" {{#ifCond user.settings.theme "==" "dark"}}selected{{/ifCond}}>Dark</option>
-                        <option value="circular" {{#ifCond user.settings.theme "==" "circular"}}selected{{/ifCond}}>Circular</option>
+                        <option value="colorful" {{#ifCond user.settings.theme "==" "colorful"}}selected{{/ifCond}}>Colorful</option>
                     </select>
                     <p>Note: Mobile supports only the "light" theme.</p>
                     <br /><br />
@@ -533,6 +533,7 @@
                             if(!assignment.questions[submissions[i].question-1].parts[submissions[i].part-1].correct){
                                 assignment.questions[submissions[i].question-1].parts[submissions[i].part-1].correct = true;
                                 $("#q" + pad(submissions[i].question, 3) + ">div:nth-child(" + (submissions[i].part+1) + ") .status .status-dot:nth-last-child(" + assignment.questions[submissions[i].question-1].parts[submissions[i].part-1].attempts + ")").addClass("correct").attr("title", submissions[i].content);
+                                $("#q" + pad(submissions[i].question, 3) + ">div:nth-child(" + (submissions[i].part+1) + ")").addClass("colorful-correct");
                                 assignment.questions[submissions[i].question-1].earnedPoints += assignment.questions[submissions[i].question-1].parts[submissions[i].part-1].points;
                                 icon = $(".question-select #prog" + pad(submissions[i].question, 3))[0];
                                 icon.className = icon.className.replace(/\bprogress-..\b/g, "");
@@ -547,7 +548,9 @@
                             $("#q" + pad(submissions[i].question, 3) + ">div:nth-child(" + (submissions[i].part+1) + ") .status .status-dot:nth-last-child(" + assignment.questions[submissions[i].question-1].parts[submissions[i].part-1].attempts + ")").addClass("incorrect").attr("title", submissions[i].content);
                         }
                         assignment.questions[submissions[i].question-1].parts[submissions[i].part-1].attempts--;
-                        $(".status", $("#q" + pad(submissions[i].question, 3) + ">div")[submissions[i].part-1]).text(assignment.questions[submissions[i].question-1].parts[submissions[i].part-1].tries);
+                        if(assignment.questions[submissions[i].question-1].parts[submissions[i].part-1].attempts <= 0){
+                                    $("#q" + pad(submissions[i].question, 3) + ">div:nth-child(" + (submissions[i].part+1) + ")").addClass("colorful-incorrect");
+                                }
                         if(assignment.questions[submissions[i].question-1].parts[submissions[i].part-1].attempts <= 0 || assignment.questions[submissions[i].question-1].parts[submissions[i].part-1].correct){
                             $("input, select", $("#q" + pad(submissions[i].question, 3) + ">div")[submissions[i].part-1]).attr("disabled", true);
                         }
@@ -561,7 +564,7 @@
                 $(".button-submit").click(function(e){
                     $("form.question-container").each(function(questionNum, cont){
                         $(cont).children("div").each(function(partNum, ans){
-                            if(!$(ans).hasClass("answer-area") || (partNum < assignment.questions[questionNum].parts.length && (assignment.questions[questionNum].parts[partNum].tries <= 0 || assignment.questions[questionNum].parts[partNum].correct))){
+                            if(!$(ans).hasClass("answer-area") || (partNum < assignment.questions[questionNum].parts.length && (assignment.questions[questionNum].parts[partNum].attempts <= 0 || assignment.questions[questionNum].parts[partNum].correct))){
                                 return;
                             }
 
@@ -626,6 +629,7 @@
                                     if(!assignment.questions[data.question-1].parts[data.part-1].correct){
                                         assignment.questions[data.question-1].parts[data.part-1].correct = true;
                                         $("#q" + pad(data.question, 3) + ">div:nth-child(" + (data.part+1) + ") .status .status-dot:nth-last-child(" + assignment.questions[data.question-1].parts[data.part-1].attempts + ")").addClass("correct").attr("title", data.content);
+                                        $("#q" + pad(data.question, 3) + ">div:nth-child(" + (data.part+1) + ")").addClass("colorful-correct");
                                         assignment.questions[data.question-1].earnedPoints += assignment.questions[data.question-1].parts[data.part-1].points;
                                         icon = $(".question-select #prog" + pad(data.question, 3))[0];
                                         icon.className = icon.className.replace(/\bprogress-..\b/g, "");
@@ -640,6 +644,9 @@
                                     $("#q" + pad(data.question, 3) + ">div:nth-child(" + (data.part+1) + ") .status .status-dot:nth-last-child(" + assignment.questions[data.question-1].parts[data.part-1].attempts + ")").addClass("incorrect").attr("title", data.content);
                                 }
                                 assignment.questions[data.question-1].parts[data.part-1].attempts--;
+                                if(assignment.questions[data.question-1].parts[data.part-1].attempts <= 0){
+                                    $("#q" + pad(data.question, 3) + ">div:nth-child(" + (data.part+1) + ")").addClass("colorful-incorrect");
+                                }
                                 if(assignment.questions[data.question-1].parts[data.part-1].attempts <= 0 || assignment.questions[data.question-1].parts[data.part-1].correct){
                                     $("input, select", $("#q" + pad(data.question, 3) + ">div")[data.part-1]).attr("disabled", true);
                                 }
