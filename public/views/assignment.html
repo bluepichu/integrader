@@ -1,6 +1,7 @@
 <html>
     <head>
         <link rel=stylesheet href="/css/style.css" />
+        <link rel="stylesheet" href="/css/mini.css" media="only screen and (max-width: 600px)" />
         <script src="/js/jquery.min.js"></script>
         <script src="/js/handlebars.js"></script>
         <script src="/js/inputParser.js"></script>
@@ -20,11 +21,13 @@
                 <div class="lightbox settings">
                     <h2>Settings</h2>
                     <p>Click outside the lightbox to cancel changes.  Submit to save and view changes.</p><br />
-                    <label>Theme</label>
+                    <label>Theme*</label>
                     <select name="theme-select" class="theme-select">
                         <option value="" {{#ifCond user.settings.theme "==" ""}}selected{{/ifCond}}>Light (Default)</option>
                         <option value="dark" {{#ifCond user.settings.theme "==" "dark"}}selected{{/ifCond}}>Dark</option>
+                        <option value="circular" {{#ifCond user.settings.theme "==" "circular"}}selected{{/ifCond}}>Circular</option>
                     </select>
+                    <p>Note: Mobile supports only the "light" theme.</p>
                     <br /><br />
                     <input type="checkbox" name="dbl-enter" id="dbl-enter" {{#if user.settings.doubleEnterSubmit}}checked{{/if}}/><label for="dbl-enter">Enable Double-Enter Submission</label>
                     <input type="submit" />
@@ -262,7 +265,7 @@
                 if(user){
                     if(user.settings == null){
                         user.settings = {theme: "", doubleEnterSubmit: false};
-                    } else if(user.settings.theme != ""){
+                    } else if(user.settings.theme != "" && $("body").css("background-color") == "rgb(242, 242, 242)"){
                         $("head").append("<link id='theme' rel='stylesheet' href='/css/" + user.settings.theme + ".css' />");
                     }
                 }
@@ -457,7 +460,7 @@
                     user.settings.theme = $(".lightbox .theme-select").val();
                     user.settings.doubleEnterSubmit = $(".lightbox #dbl-enter").is(":checked");
 
-                    if(user.settings.theme != ""){
+                    if(user.settings.theme != "" && $("body").css("background-color") == "rgb(242, 242, 242)"){
                         $("head").append("<link id='theme' rel='stylesheet' href='/css/" + user.settings.theme + ".css' />");
                     }
 
@@ -603,7 +606,7 @@
                             if(!data.content){
                                 return;
                             }
-                            
+
                             for(i = 0; i < submissions.length; i++){
                                 if(submissions[i].question == data.question && submissions[i].part == data.part && submissions[i].content == data.content){
                                     return;
