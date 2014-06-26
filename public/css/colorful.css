@@ -233,6 +233,8 @@ ol.questions li:before {
 .status-dot {
     color: #999999;
     transition-duration: 100ms;
+    font-size: 18px;
+    margin: -4px 0px -2px;
 }
 
 .status-dot.correct {
