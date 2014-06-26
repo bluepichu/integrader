@@ -2,7 +2,7 @@ var mjs = require("mongojs");
 if (process.env.PORT && process.env.MONGOHQ_URL) {
 	console.log("using remote")
 	console.log(process.env.MONGOHQ_URL);
-	var db = mjs.connect(process.env.MONGOHQ_URL,["users","courses","assignments","submissions"]);
+	var db = mjs.connect("mongodb://heroku:tsanats@kahana.mongohq.com:10062/app26747347",["users","courses","assignments","submissions"]);
 } else {
 	console.log("using local");
 	//var db = mjs.connect("mongodb://localhost:27017/integ",["users","courses","assignments","submissions"]);
