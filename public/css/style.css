@@ -535,7 +535,8 @@ textarea {
     display: inline-block;
     cursor: default;
     padding: 4px;
-    font-size: 16px;
+    font-size: 18px;
+    margin: -4px 0px -2px;
 }
 
 .status-dot.correct {
