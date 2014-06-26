@@ -6,8 +6,6 @@ var http = require("http")
 var fs = require("fs")
 var querystring = require('querystring');
 
-var persist = require("./persist");
-
 //grader is our grader module
 var grader = require("./grader");
 
