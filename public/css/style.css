@@ -62,6 +62,11 @@ h6 {
     font-weight: 500;
 }
 
+h1 {
+    margin: 60px 10px;
+    text-align: center;
+}
+
 p,
 li {
     color: #333333;
@@ -133,6 +138,11 @@ span.title {
 
 span.subtitle {
     color: #999999;
+}
+
+button.large {
+    font-size: 32px;
+    margin: 60px 20px;
 }
 
 .progress-00 {

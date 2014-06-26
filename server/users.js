@@ -5,7 +5,7 @@ if (process.env.PORT && process.env.MONGOHQ_URL) {
 	var db = mjs.connect("mongodb://heroku:tsanats@kahana.mongohq.com:10062/app26747347",["users","courses","assignments","submissions"]);
 } else {
 	console.log("using local");
-	//var db = mjs.connect("mongodb://localhost:27017/integ",["users","courses","assignments","submissions"]);
+	var db = mjs.connect("mongodb://localhost:27017/integ",["users","courses","assignments","submissions"]);
 }
 var ObjectId = mjs.ObjectId;
 var x = require("./XOR/XOR");
@@ -429,6 +429,22 @@ var newAssignment = function(username, authToken, courseId, cb){
     });
 }
 
+var getCourseName = function(id, cb){
+    try{
+        id = ObjectId(id);
+    } catch(err){
+        cb(202, false);
+        return;
+    }
+    db.courses.find({_id: id}, function(err, dob){
+        if((dob && dob.length == 0) || err){
+            cb(202, false);
+        } else {
+            cb(null, dob[0].name);
+        }
+    });
+}
+
 module.exports = {
     "addTestData": addTestData,
     "createUser": createUser,
@@ -445,5 +461,6 @@ module.exports = {
     "addCourse": addCourse,
     "addAnnouncement": addAnnouncement,
     "editAssignment": editAssignment,
-    "newAssignment": newAssignment
+    "newAssignment": newAssignment,
+    "getCourseName": getCourseName
 }

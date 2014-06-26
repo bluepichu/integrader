@@ -44,7 +44,8 @@ var rest = [
     "assignmentlist",
     "getucainfo",
     "assignmentinfo",
-    "submissions"
+    "submissions",
+    "coursename"
 ]
 
 //URLs that the client accesses for data.
@@ -54,7 +55,8 @@ var dataPages = [
     "assignmentlist",
     "getucainfo",
     "assignmentinfo",
-    "submissions"
+    "submissions",
+    "coursename"
 ]
 
 //This function creates the server and handles data from req[uests] and pipes them into the res[ponse].
@@ -113,6 +115,15 @@ http.createServer(function(req,res) {
                                 res.end();
                             }
                         })
+                    } else if(url == "coursename"){
+                        users.getCourseName(getVars["id"], function(err, data){
+                            if(data){
+                                res.write(JSON.stringify({name: data}));
+                                res.end();
+                            } else {
+                                res.end();
+                            }
+                        });
                     } else if(url == "userinfo"){
                         users.getUserData(cookies.username, cookies.auth, function(err,data) {
                             if (data) {

@@ -1,144 +1,33 @@
 <html>
     <head>
         <link rel=stylesheet href="/css/style.css" />
-        <link rel="stylesheet" href="/css/mini.css" media="only screen and ((max-width: 600px), (max-device-width: 600px))" />
-        <meta name="viewport" content="width=device-width">
+        <link rel="stylesheet" href="/css/mini.css" />
         <script src="/js/jquery.min.js"></script>
         <script src="/js/handlebars.js"></script>
         <script src="/js/inputParser.js"></script>
         <script src="/js/seedrandom.min.js"></script>
         
-        <script type="text/x-mathjax-config">
-            MathJax.Hub.Config({
-                messageStyle: "none"
-            });
-        </script>
         <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
         
         <title>Assignment</title>
         
         <script id="template" type="text/x-handlebars-template">
-            <div class="main-area">
-                {{resetPosition}}
-                <div class="content-main">
+            <header>
+                <a target="_blank" href="/"><div class="button logo"></div></a>
+                <div class="button-area">
                     {{#if user}}
-                    {{#each assignment.questions}}
-                    {{incrementPosition}}
-                    <form class="question-container" id="q{{position}}">
-                        <h2>{{name}}</h2>
-                        
-                        {{pushPosition}}
-                        
-                        {{#each parts}}
-                        
-                        {{incrementPosition}}
-                        
-                        {{#ifCond type "==" "CONTENT"}}
-                        <div class="content">
-                            <p>{{{formatReds content}}}</p>
-                        </div>
-                        {{/ifCond}}
-                        {{#ifCond type "==" "VIDEO"}}
-                        <div class="video">
-                            <iframe width="560" height="315" src="//www.youtube.com/embed/{{url}}" frameborder="0" allowfullscreen></iframe>
-                        </div>
-                        {{/ifCond}}
-                        {{#ifCond type "==" "IMAGE"}}
-                        <div class="image">
-                            <img src="{{url}}" {{#if width}}width="{{width}}"{{/if}}/>
-                        </div>
-                        {{/ifCond}}
-                        
-                        {{#ifCond type "==" "RADIO"}}
-                        {{pushPosition}}
-                        <div class="answer-area radio">
-                            <div class="status">3</div>
-                            {{#each choices}}
-                            {{incrementPosition}}
-                            <input type="radio" name="{{swapPosition}}p{{position}}{{swapPosition}}" value="{{position}}" id="rad{{position}}" /><label for="rad{{position}}">{{this}}</label><br />
-                            {{/each}}
-                            {{popPosition}}
-                        </div>
-                        {{/ifCond}}
-                        
-                        {{#ifCond type "==" "CHECKBOX"}}
-                        {{pushPosition}}
-                        <div class="answer-area checkbox">
-                            <div class="status">3</div>
-                            {{#each choices}}
-                            {{incrementPosition}}
-                            <input type="checkbox" name="{{swapPosition}}p{{position}}{{swapPosition}}" value="{{position}}" id="cb{{position}}" /><label for="cb{{position}}">{{this}}</label><br />
-                            {{/each}}
-                        </div>
-                        {{popPosition}}
-                        {{/ifCond}}
-                        
-                        {{#ifCond type "==" "NUMERICAL"}}
-                        <div class="answer-area numerical">
-                            <div class="status">3</div>
-                            <input type="text" class="numerical" name="p{{position}}" id="p{{position}}" /><span class="units">{{{units}}}</span>
-                            <div class="errors" id="error{{position}}"></div>
-                        </div>
-                        {{/ifCond}}
-                        
-                        {{#ifCond type "==" "SYMBOLIC"}}
-                        <div class="answer-area symbolic">
-                            <div class="status">3</div>
-                            <div class="variable-list">
-                                {{{listVariables variables}}}
-                            </div>
-                            <input type="text" class="symbolic" id="p{{position}}" name="p{{position}}" />  
-                            <div class="symbolic-render-area" id="render{{position}}"></div>
-                            <div class="errors" id="error{{position}}"></div>
-                        </div>
-                        {{/ifCond}}
-                        
-                        {{#ifCond type "==" "DROPDOWN"}}
-                        <div class="answer-area dropdown">
-                            <div class="status">3</div>
-                            <select id="p{{position}}" name="p{{position}}">
-                                <option value="" disabled selected>Select an answer...</option>
-                                {{pushPosition}}
-                                {{#each choices}}
-                                {{incrementPosition}}
-                                <option value="{{position}}">{{this}}</option>
-                                {{/each}}
-                                {{popPosition}}
-                            </select>
-                        </div>
-                        {{/ifCond}}
-                        
-                        {{/each}}
-                        <div class="answer-area">
-                            <h3>Notes</h3>
-                            {{incrementPosition}}
-                            <textarea id="notes"></textarea>
-                        </div>
-                        
-                        {{popPosition}}
-                    </form>
-                    {{/each}}
+                    <span class="greeting">Hello, <span class="user">{{user.data.name.first}}</span> &middot; <a target="_blank" id="logout" href="/logout">Logout</a></span>
                     {{else}}
-                    <p><a href="/login">Login</a> to complete assignments.</p>
+                    <span class="greeting">Not logged in &middot; <a target="_blank" href="/login">Login</a> &middot; <a target="_blank" href="/register">Register</a></span>
                     {{/if}}
                 </div>
-            </div>
-            <div class="hidden">
-                \(\require{color}\)
-                \(\definecolor{err}{RGB}{221, 75, 57}\)
+            </header>
+            <div class="main-area">
+                {{{joinCourse user course}}}
             </div>
         </script>
         
         <script type="text/javascript">
-            var loadQueue = [];
-            var delay = null;
-            
-            var pad = function(n, width, z) {
-                z = z || '0';
-                n = n + '';
-                return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
-            }
-            
             var getQueryVariable = function(variable){
                 var query = window.location.search.substring(1);
                 var vars = query.split("&");
@@ -149,18 +38,10 @@
                 return(false);
             }
             
-            
             var loadCount = 0;
-            var toLoad = ["/assignmentinfo?id=" + getQueryVariable("id")];
-            var loadVars = ["assignment"]
-            
-            var merge = function(a, b, prefix){
-                a[prefix] = {}
-                for(key in b){
-                    a[prefix][key] = b[key];
-                }
-            }
-            
+            var toLoad = ["/userinfo", "/coursename?id=" + getQueryVariable("id")];
+            var loadVars = ["user", "coursename"];
+
             $(document).ready(function(){
                 for(i = 0; i < toLoad.length; i++){
                     var req = new XMLHttpRequest();
@@ -170,78 +51,30 @@
                     req.send();
                 }
             });
-            
+
             var loadedCB = function(){
                 window[loadVars[this.index]] = JSON.parse(this.responseText);
                 loadCount++;
+
+                if(loadCount == toLoad.length){
+                    ready();
+                }
+            }
+            
+            var ready = function(){
+                data = {
+                    course: {
+                        id: getQueryVariable("id"),
+                        name: coursename.name
+                    }
+                };
                 
-                window.submissions = JSON.parse(this.responseText);
-                
-                data = {};
-                
-                if($.isEmptyObject(assignment)){
-                    data.assignment = false;
-                } else {
-                    merge(data, assignment, "assignment");
+                if(!$.isEmptyObject(user)){
+                    data.user = user;
                 }
                 
-                var positionCounter = 0;
-                var positionStack = []
-                
-                Handlebars.registerHelper("position", function(){
-                    return pad(positionCounter, 3);
-                });
-                
-                Handlebars.registerHelper("incrementPosition", function(){
-                    positionCounter++;
-                    return "";
-                });
-                
-                Handlebars.registerHelper("resetPosition", function(){
-                    positionCounter = 0;
-                    return "";
-                });
-                
-                Handlebars.registerHelper("pushPosition", function(){
-                    positionStack.push(positionCounter);
-                    positionCounter = 0;
-                    return "";
-                });
-                
-                Handlebars.registerHelper("popPosition", function(){
-                    positionCounter = positionStack.pop();
-                    return "";
-                });
-                
-                Handlebars.registerHelper("swapPosition", function(){
-                    temp = positionStack.pop();
-                    positionStack.push(positionCounter);
-                    positionCounter = temp;
-                    return "";
-                });
-                
-                Handlebars.registerHelper("eq", function(a, b){
-                    console.log("called on", a, b);
-                    return a == b;
-                });
-                
-                Handlebars.registerHelper("log", function(){
-                    console.log("!!!");
-                    return "";
-                });
-                
-                Handlebars.registerHelper("formatReds", function(text){
-                    return text.replace(/\{\{[^\s]*\}\}/g, function(str){
-                        str = str.substring(2, str.length-2);
-                        str = str.split(":")[1].split("~");
-                        low = parseFloat(str[0]);
-                        high = parseFloat(str[1]);
-                        digits = parseFloat(str[2]);
-                        seedSalt = str[3];
-                        Math.seedrandom("thisisanenbeddedassignment");
-                        num = (high-low) * Math.random() + low;
-                        return "<span class='highlight'>" + num.toPrecision(digits) + "</span>";
-                    });
+                Handlebars.registerHelper("prettyPrint", function(obj){
+                    return JSON.stringify(obj, undefined, 2);
                 });
                 
                 Handlebars.registerHelper('ifCond', function (v1, operator, v2, options){
@@ -269,22 +102,39 @@
                     }
                 });
                 
-                Handlebars.registerHelper("listVariables", function(variables){
-                    if(variables.length == 0){
-                        return "<div class='hidden' id='variable-storage'></div>";
+                Handlebars.registerHelper('ifCond', function (v1, operator, v2, options){
+                    switch (operator){
+                        case '==':
+                            return (v1 == v2) ? options.fn(this) : options.inverse(this);
+                        case '!=':
+                            return (v1 != v2) ? options.fn(this) : options.inverse(this);
+                        case '===':
+                            return (v1 === v2) ? options.fn(this) : options.inverse(this);
+                        case '<':
+                            return (v1 < v2) ? options.fn(this) : options.inverse(this);
+                        case '<=':
+                            return (v1 <= v2) ? options.fn(this) : options.inverse(this);
+                        case '>':
+                            return (v1 > v2) ? options.fn(this) : options.inverse(this);
+                        case '>=':
+                            return (v1 >= v2) ? options.fn(this) : options.inverse(this);
+                        case '&&':
+                            return (v1 && v2) ? options.fn(this) : options.inverse(this);
+                        case '||':
+                            return (v1 || v2) ? options.fn(this) : options.inverse(this);
+                        default:
+                            return options.inverse(this);
                     }
-                    ret = "Use the following variables as necessary: ";
-                    hidden = "<div class='hidden' id='variable-storage'>";
-                    vars = {};
-                    for(i = 0; i < variables.length; i++){
-                        vars[variables[i]] = replacements[variables[i]] || variables[i];
-                        ret += "\\(" + vars[variables[i]] + "\\)";
-                        hidden += "<span class='variable'>" + variables[i] + "</span>";
-                        if(i < variables.length-1){
-                            ret += ", ";
-                        }
+                });
+                
+                Handlebars.registerHelper('joinCourse', function(user, course){
+                    if(!user || !user.courses){
+                        return "<h1>You are not logged in.  <a target='_blank' href='http://integrader.com/login'>Login</a> or <a target='_blank' href='http://integrader.com/register'>register</a> to join \"" + course.name + "\".</h1>";
+                    } else if(user.courses.indexOf(course.id) >= 0){
+                        return "<h1>You are already a member of \"" + course.name + "\".</h1>";
+                    } else {
+                        return "<button class='large'>Click here to join \"" + course.name + "\".</button>"
                     }
-                    return ret + hidden + "</div>";
                 });
                 
                 var out = $("body");
@@ -295,216 +145,68 @@
                 
                 out.html(html);
                 
-                $(".question-select").click(function(e){
-                    changeQuestion($(this).attr("id"));
+                if(user){
+                    if(user.settings == null){
+                        user.settings = {theme: "", doubleEnterSubmit: false};
+                    } else if(user.settings.theme != "" && $("body").css("background-color") == "rgb(242, 242, 242)"){
+                        $("head").append("<link id='theme' rel='stylesheet' href='/css/" + user.settings.theme + ".css' />");
+                    }
+                }
+                
+                $(".lightbox-bg, .lightbox").hide();
+                
+                $(".button-settings").click(function(e){
+                    $(".lightbox-bg").fadeIn(300);
+                    
+                    setTimeout(function(){
+                        $(".lightbox").fadeIn(300);
+                    }, 200);
                 });
                 
-                MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
-                
-                $("input[type='text'].symbolic").bind("change keydown keyup", function(e){
-                    console.log("yes");
-                    renderId = "render" + $(this).attr("id").substring(1);
-                    errorId = "error" + $(this).attr("id").substring(1);
+                $(".lightbox input[type='submit']").click(function(e){
+                    $("#theme").remove();
                     
-                    if(this.variables === undefined){
-                        console.log("updating variables list");
-                        var varList = [];
-                        variables = $(this).parent().children(".variable-list").children("#variable-storage").children(".variable").each(function(n, el){
-                            varList.push($(el).text());
-                        });
-                        
-                        this.variables = varList;
+                    console.log("!!!");
+                    
+                    user.settings.theme = $(".lightbox .theme-select").val();
+                    user.settings.doubleEnterSubmit = $(".lightbox #dbl-enter").is(":checked");
+                    
+                    if(user.settings.theme != "" && $("body").css("background-color") == "rgb(242, 242, 242)"){
+                        $("head").append("<link id='theme' rel='stylesheet' href='/css/" + user.settings.theme + ".css' />");
                     }
                     
-                    console.log("VARLIST", this.variables);
+                    var req = new XMLHttpRequest();
+                    req.open("post", "/updatesettings", true);
+                    req.send(JSON.stringify(user.settings));
                     
-                    rendered = inputToLatex($(this).val(), this.variables);
-                    $("#" + renderId).html("\\[" + rendered.latexString + "\\]");
-                    MathJax.Hub.Queue(["Typeset", MathJax.Hub, renderId]);
+                    $(".lightbox").fadeOut(300);
                     
-                    if(rendered.errors.length == 0){
-                        str = "";
-                    } else if(rendered.errors.length == 1){
-                        str = "<span class='bold title highlight'>1 Error:</span><br />" + rendered.errors[0];
-                    } else if(rendered.errors.length <= 3){
-                        str = "<span class='bold title highlight'>" + rendered.errors.length + " Errors:</span>";
-                        for(i = 0; i < rendered.errors.length; i++){
-                            str += "<br />" + rendered.errors[i];
-                        }
-                    } else {
-                        str = "<span class='bold title highlight'>" + rendered.errors.length + " Errors:</span> <span class='subtitle'>(Showing first 3)</span>";
-                        for(i = 0; i < 3; i++){
-                            str += "<br />" + rendered.errors[i];
-                        }
-                    }
-                    
-                    $(this).parent().children(".errors").html(str);
-                    
-                    MathJax.Hub.Queue(["Typeset", MathJax.Hub, errorId]);
+                    setTimeout(function(){
+                        $(".lightbox-bg").fadeOut(300);
+                    }, 100);
                 });
                 
-                $(".numerical").bind("change keydown keyup", function(e){
-                    if(isNaN($(this).val())){
-                        $(this).parent().children(".errors").html("<span class='bold title highlight'>Error: </span>Entered value is not a number.");
-                    } else {
-                        $(this).parent().children(".errors").html("");
-                    }
+                $(".lightbox-bg").click(function(e){
+                    $(".lightbox").fadeOut(300);
+                    
+                    setTimeout(function(){
+                        $(".lightbox-bg").fadeOut(300);
+                    }, 100);
+                });
+                
+                $(".lightbox").click(function(e){
+                    e.stopPropagation();
                 });
                 
                 $("input").attr("autocomplete", "off");
                 
-                assignment.totalPoints = 0;
-                assignment.earnedPoints = 0;
-                for(i = 0; i < assignment.questions.length; i++){
-                    assignment.questions[i].totalPoints = 0;
-                    assignment.questions[i].earnedPoints = 0;
-                    for(j = 0; j < assignment.questions[i].parts.length; j++){
-                        assignment.questions[i].totalPoints += assignment.questions[i].parts[j].points || 0;
-                        assignment.questions[i].parts[j].tries = 3;
-                    }
-                    assignment.totalPoints += assignment.questions[i].totalPoints;
-                }
-                
-                for(i = 0; i < submissions.length; i++){
-                    console.log(i);
-                    if(submissions[i].type == "SUBMISSION"){
-                        cont = $("#q" + pad(submissions[i].question, 3));
-                        ans = $(cont.children("div")[submissions[i].part-1]);
-                        if($(ans).hasClass("numerical")){
-                            $("input[type='text'][name='p" + pad(submissions[i].part, 3) + "']", ans).val(submissions[i].content);
-                        } else if($(ans).hasClass("symbolic")){
-                            $("input[type='text'][name='p" + pad(submissions[i].part, 3) + "']", ans).val(submissions[i].content);
-                        } else if($(ans).hasClass("dropdown")){
-                            $("select[name='p" + pad(submissions[i].part, 3) + "'] option[value='" + submissions[i].content + "']", ans).prop("selected", true);
-                        } else if($(ans).hasClass("radio")){
-                            $("input[type='radio'][name='p" + pad(submissions[i].part, 3) + "'][value='" + pad(submissions[i].content, 3) + "']", ans).prop("checked", true);
-                        } else if($(ans).hasClass("checkbox")){
-                            data.content = "";
-                            $("input[type='checkbox'][name='p" + pad(submissions[i].part, 3) + "']", ans).each(function(n, el){
-                                if(submissions[i].content.charAt(n) == '1'){
-                                    $(el).prop("checked", true);
-                                } else {
-                                    $(el).prop("checked", false);
-                                }
-                            });
-                        }
-                        
-                        if(submissions[i].response){
-                            if(!assignment.questions[submissions[i].question-1].parts[submissions[i].part-1].correct){
-                                assignment.questions[submissions[i].question-1].parts[submissions[i].part-1].correct = true;
-                                $(".status", $("#q" + pad(submissions[i].question, 3) + ">div")[submissions[i].part-1]).removeClass("incorrect").addClass("correct");
-                                assignment.questions[submissions[i].question-1].earnedPoints += assignment.questions[submissions[i].question-1].parts[submissions[i].part-1].points;
-                                icon = $(".question-select #prog" + pad(submissions[i].question, 3))[0];
-                                icon.className = icon.className.replace(/\bprogress-..\b/g, "");
-                                icon.className += " progress-" + pad(Math.floor(assignment.questions[submissions[i].question-1].earnedPoints*12/assignment.questions[submissions[i].question-1].totalPoints), 2);
-                                
-                                assignment.earnedPoints += assignment.questions[submissions[i].question-1].parts[submissions[i].part-1].points;
-                                icon = $("#assignmentprog")[0];
-                                icon.className = icon.className.replace(/\bprogress-..\b/g, "");
-                                icon.className += " progress-" + pad(Math.floor(assignment.earnedPoints*12/assignment.totalPoints), 2);
-                            }
-                        } else {
-                            $(".status", $("#q" + pad(submissions[i].question, 3) + ">div")[submissions[i].part-1]).removeClass("correct").addClass("incorrect");
-                        }
-                        assignment.questions[submissions[i].question-1].parts[submissions[i].part-1].tries--;
-                        $(".status", $("#q" + pad(submissions[i].question, 3) + ">div")[submissions[i].part-1]).text(assignment.questions[submissions[i].question-1].parts[submissions[i].part-1].tries);
-                        if(assignment.questions[submissions[i].question-1].parts[submissions[i].part-1].tries <= 0 || assignment.questions[submissions[i].question-1].parts[submissions[i].part-1].correct){
-                            $("input, select", $("#q" + pad(submissions[i].question, 3) + ">div")[submissions[i].part-1]).attr("disabled", true);
-                        }
-                    } else if(submissions[i].type == "NOTE"){
-                        $("#q" + pad(submissions[i].question, 3) + " #notes").val(submissions[i].content);
-                    }
-                }
-                
-                $("input[type='text']").change();
-                
                 $(".button-submit").click(function(e){
-                    $("form.question-container").each(function(questionNum, cont){
-                        $(cont).children("div").each(function(partNum, ans){
-                            if(!$(ans).hasClass("answer-area") || (partNum < assignment.questions[questionNum].parts.length && (assignment.questions[questionNum].parts[partNum].tries <= 0 || assignment.questions[questionNum].parts[partNum].correct))){
-                                return;
-                            }
-                            
-                            data = {
-                                assignment: getQueryVariable("id"),
-                                question: questionNum+1,
-                                part: partNum+1,
-                                type: "SUBMISSION",
-                            }
-                            
-                            if(partNum == assignment.questions[questionNum].parts.length){ //notes
-                                data.content = $("textarea", ans).val();
-                                data.type = "NOTE";
-                            } else if($(ans).hasClass("numerical")){
-                                data.content = $("input[type='text'][name='p" + pad(partNum+1, 3) + "']", ans).val();
-                            } else if($(ans).hasClass("symbolic")){
-                                inp = $("input[type='text'][name='p" + pad(partNum+1, 3) + "']", ans);
-                                inp.change();
-                                data.content = inp.val();
-                                parsed = symbolicParse(data.content, inp[0].variables);
-                                if(parsed.errors.length > 0){
-                                    return;
-                                }
-                                data.parsedContent = parsed.arr;
-                            } else if($(ans).hasClass("dropdown")){
-                                data.content = $("select[name='p" + pad(partNum+1, 3) + "']", ans).val();
-                            } else if($(ans).hasClass("radio")){
-                                data.content = $("input[type='radio'][name='p" + pad(partNum+1, 3) + "']:checked", ans).val();
-                            } else if($(ans).hasClass("checkbox")){
-                                data.content = "";
-                                $("input[type='checkbox'][name='p" + pad(partNum+1, 3) + "']", ans).each(function(n, el){
-                                    if($(el).is(":checked")){
-                                        data.content += "1";
-                                    } else {
-                                        data.content += "0";
-                                    }
-                                });
-                                if(parseInt(data.content) == 0){
-                                    delete data.content;
-                                }
-                            }
-                            
-                            if(!data.content){
-                                return;
-                            }
-                            
-                            console.log("SENT DATA:", data);
-                            
-                            var req = new XMLHttpRequest();
-                            req.onload = function(){
-                                data = JSON.parse(this.responseText);
-                                if(data.type == "NOTE"){
-                                    return;
-                                }
-                                if(data.response){
-                                    if(!assignment.questions[data.question-1].parts[data.part-1].correct){
-                                        assignment.questions[data.question-1].parts[data.part-1].correct = true;
-                                        $(".status", $("#q" + pad(data.question, 3) + ">div")[data.part-1]).removeClass("incorrect").addClass("correct");
-                                        assignment.questions[data.question-1].earnedPoints += assignment.questions[data.question-1].parts[data.part-1].points;
-                                        icon = $(".question-select #prog" + pad(data.question, 3))[0];
-                                        icon.className = icon.className.replace(/\bprogress-..\b/g, "");
-                                        icon.className += " progress-" + pad(Math.floor(assignment.questions[data.question-1].earnedPoints*12/assignment.questions[data.question-1].totalPoints), 2);
-                                        
-                                        assignment.earnedPoints += assignment.questions[data.question-1].parts[data.part-1].points;
-                                        icon = $("#assignmentprog")[0];
-                                        icon.className = icon.className.replace(/\bprogress-..\b/g, "");
-                                        icon.className += " progress-" + pad(Math.floor(assignment.earnedPoints*12/assignment.totalPoints), 2);
-                                    }
-                                } else {
-                                    $(".status", $("#q" + pad(data.question, 3) + ">div")[data.part-1]).removeClass("correct").addClass("incorrect");
-                                }
-                                assignment.questions[data.question-1].parts[data.part-1].tries--;
-                                $(".status", $("#q" + pad(data.question, 3) + ">div")[data.part-1]).text(assignment.questions[data.question-1].parts[data.part-1].tries);
-                                if(assignment.questions[data.question-1].parts[data.part-1].tries <= 0 || assignment.questions[data.question-1].parts[data.part-1].correct){
-                                    $("input, select", $("#q" + pad(data.question, 3) + ">div")[data.part-1]).attr("disabled", true);
-                                }
-                            }
-                            req.open("post", "/answers", true);
-                            req.send(JSON.stringify(data));
-                            
-                            console.log("req sent");
-                        });
-                    });
+                    var req = new XMLHttpRequest();
+                    req.open("post", "/editassignment", true);
+                    req.send(JSON.stringify({
+                        content: JSON.parse($("#json-editor").val()),
+                        assignmentId: getQueryVariable("id")
+                    }));
                 });
                 
                 $("#logout").click(function(e){
@@ -516,23 +218,15 @@
                     e.preventDefault();
                 });
                 
-                var enterTimeout = null;
-            
-                $(document).keydown(function(e){
-                    if(!user.settings.doubleEnterSubmit){
-                        return;
+                $("button").click(function(){
+                    var req = new XMLHttpRequest();
+                    req.onload = function(){
+                        location.reload();
                     }
-                    if(e.keyCode == 13){
-                        e.preventDefault();
-                        if(enterTimeout){
-                            enterTimeOut = null;
-                            $(".button-submit").click();
-                        } else {
-                            enterTimeout = setTimeout(function(){
-                                enterTimeout = null;
-                            }, 500);
-                        }
-                    }
+                    req.open("post", "/addcourse", true);
+                    req.send(JSON.stringify({
+                        courseId: getQueryVariable("id")
+                    }));
                 });
             }
         </script>
