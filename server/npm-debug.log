@@ -1,0 +1,327 @@
+0 info it worked if it ends with ok
+1 verbose cli [ 'c:\\Program Files\\nodejs\\node.exe',
+1 verbose cli   'c:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js',
+1 verbose cli   'install',
+1 verbose cli   'bcrypt' ]
+2 info using npm@1.4.14
+3 info using node@v0.10.29
+4 verbose cache add [ 'bcrypt', null ]
+5 verbose cache add name=undefined spec="bcrypt" args=["bcrypt",null]
+6 verbose parsed url { protocol: null,
+6 verbose parsed url   slashes: null,
+6 verbose parsed url   auth: null,
+6 verbose parsed url   host: null,
+6 verbose parsed url   port: null,
+6 verbose parsed url   hostname: null,
+6 verbose parsed url   hash: null,
+6 verbose parsed url   search: null,
+6 verbose parsed url   query: null,
+6 verbose parsed url   pathname: 'bcrypt',
+6 verbose parsed url   path: 'bcrypt',
+6 verbose parsed url   href: 'bcrypt' }
+7 silly lockFile 51684124-bcrypt bcrypt
+8 verbose lock bcrypt C:\Users\Matthew\AppData\Roaming\npm-cache\51684124-bcrypt.lock
+9 silly lockFile 51684124-bcrypt bcrypt
+10 silly lockFile 51684124-bcrypt bcrypt
+11 verbose addNamed [ 'bcrypt', '' ]
+12 verbose addNamed [ null, '*' ]
+13 silly lockFile 1351601c-bcrypt bcrypt@
+14 verbose lock bcrypt@ C:\Users\Matthew\AppData\Roaming\npm-cache\1351601c-bcrypt.lock
+15 silly addNameRange { name: 'bcrypt', range: '*', hasData: false }
+16 verbose url raw bcrypt
+17 verbose url resolving [ 'https://registry.npmjs.org/', './bcrypt' ]
+18 verbose url resolved https://registry.npmjs.org/bcrypt
+19 info trying registry request attempt 1 at 16:36:19
+20 verbose etag "H6XFJLT7TPWZD0BGNTSY98PV"
+21 http GET https://registry.npmjs.org/bcrypt
+22 http 200 https://registry.npmjs.org/bcrypt
+23 silly registry.get cb [ 200,
+23 silly registry.get   { date: 'Wed, 25 Jun 2014 20:36:44 GMT',
+23 silly registry.get     server: 'CouchDB/1.5.0 (Erlang OTP/R16B03)',
+23 silly registry.get     etag: '"F11U7MBEGFA3HXCITLFUNT4WJ"',
+23 silly registry.get     'content-type': 'application/json',
+23 silly registry.get     'cache-control': 'max-age=30',
+23 silly registry.get     'content-length': '56326',
+23 silly registry.get     'accept-ranges': 'bytes',
+23 silly registry.get     via: '1.1 varnish',
+23 silly registry.get     age: '396',
+23 silly registry.get     'x-served-by': 'cache-at51-ATL',
+23 silly registry.get     'x-cache': 'HIT',
+23 silly registry.get     'x-cache-hits': '1',
+23 silly registry.get     'x-timer': 'S1403728604.044035,VS0,VE0',
+23 silly registry.get     vary: 'Accept',
+23 silly registry.get     'keep-alive': 'timeout=10, max=50',
+23 silly registry.get     connection: 'Keep-Alive' } ]
+24 silly addNameRange number 2 { name: 'bcrypt', range: '*', hasData: true }
+25 silly addNameRange versions [ 'bcrypt',
+25 silly addNameRange   [ '0.1.2',
+25 silly addNameRange     '0.2.0',
+25 silly addNameRange     '0.2.1',
+25 silly addNameRange     '0.1.3',
+25 silly addNameRange     '0.2.2',
+25 silly addNameRange     '0.2.3',
+25 silly addNameRange     '0.2.4',
+25 silly addNameRange     '0.3.0',
+25 silly addNameRange     '0.3.1',
+25 silly addNameRange     '0.3.2',
+25 silly addNameRange     '0.4.0',
+25 silly addNameRange     '0.4.1',
+25 silly addNameRange     '0.5.0',
+25 silly addNameRange     '0.6.0',
+25 silly addNameRange     '0.7.0',
+25 silly addNameRange     '0.7.1',
+25 silly addNameRange     '0.7.2',
+25 silly addNameRange     '0.7.3',
+25 silly addNameRange     '0.7.4',
+25 silly addNameRange     '0.7.5',
+25 silly addNameRange     '0.7.6',
+25 silly addNameRange     '0.7.7',
+25 silly addNameRange     '0.7.8' ] ]
+26 verbose addNamed [ 'bcrypt', '0.7.8' ]
+27 verbose addNamed [ '0.7.8', '0.7.8' ]
+28 silly lockFile 764f2767-bcrypt-0-7-8 bcrypt@0.7.8
+29 verbose lock bcrypt@0.7.8 C:\Users\Matthew\AppData\Roaming\npm-cache\764f2767-bcrypt-0-7-8.lock
+30 silly lockFile 764f2767-bcrypt-0-7-8 bcrypt@0.7.8
+31 silly lockFile 764f2767-bcrypt-0-7-8 bcrypt@0.7.8
+32 silly lockFile 1351601c-bcrypt bcrypt@
+33 silly lockFile 1351601c-bcrypt bcrypt@
+34 silly resolved [ { name: 'bcrypt',
+34 silly resolved     description: 'A bcrypt library for NodeJS.',
+34 silly resolved     keywords:
+34 silly resolved      [ 'bcrypt',
+34 silly resolved        'password',
+34 silly resolved        'auth',
+34 silly resolved        'authentication',
+34 silly resolved        'encryption',
+34 silly resolved        'crypt',
+34 silly resolved        'crypto' ],
+34 silly resolved     main: './bcrypt',
+34 silly resolved     version: '0.7.8',
+34 silly resolved     author: { name: 'Nick Campbell', url: 'https://github.com/ncb000gt' },
+34 silly resolved     engines: { node: '>= 0.6.0' },
+34 silly resolved     repository:
+34 silly resolved      { type: 'git',
+34 silly resolved        url: 'https://github.com/ncb000gt/node.bcrypt.js.git' },
+34 silly resolved     licenses: [ [Object] ],
+34 silly resolved     bugs: { url: 'https://github.com/ncb000gt/node.bcrypt.js/issues' },
+34 silly resolved     scripts:
+34 silly resolved      { test: 'node-gyp configure build && nodeunit test',
+34 silly resolved        install: 'node-gyp rebuild' },
+34 silly resolved     dependencies: { bindings: '1.0.0' },
+34 silly resolved     devDependencies: { nodeunit: '>=0.6.4' },
+34 silly resolved     contributors:
+34 silly resolved      [ [Object],
+34 silly resolved        [Object],
+34 silly resolved        [Object],
+34 silly resolved        [Object],
+34 silly resolved        [Object],
+34 silly resolved        [Object],
+34 silly resolved        [Object],
+34 silly resolved        [Object],
+34 silly resolved        [Object],
+34 silly resolved        [Object],
+34 silly resolved        [Object],
+34 silly resolved        [Object],
+34 silly resolved        [Object],
+34 silly resolved        [Object] ],
+34 silly resolved     gypfile: true,
+34 silly resolved     homepage: 'https://github.com/ncb000gt/node.bcrypt.js',
+34 silly resolved     _id: 'bcrypt@0.7.8',
+34 silly resolved     dist:
+34 silly resolved      { shasum: '42c99aac202918e947b5bd086110184f62745e3e',
+34 silly resolved        tarball: 'http://registry.npmjs.org/bcrypt/-/bcrypt-0.7.8.tgz' },
+34 silly resolved     _from: 'bcrypt@',
+34 silly resolved     _npmVersion: '1.4.6',
+34 silly resolved     _npmUser: { name: 'shtylman', email: 'shtylman@gmail.com' },
+34 silly resolved     maintainers: [ [Object], [Object], [Object], [Object] ],
+34 silly resolved     directories: {},
+34 silly resolved     _shasum: '42c99aac202918e947b5bd086110184f62745e3e',
+34 silly resolved     _resolved: 'https://registry.npmjs.org/bcrypt/-/bcrypt-0.7.8.tgz',
+34 silly resolved     readme: 'ERROR: No README data found!' } ]
+35 info install bcrypt@0.7.8 into c:\Users\Matthew\Dropbox\Programming\github\integrader\server
+36 info installOne bcrypt@0.7.8
+37 info c:\Users\Matthew\Dropbox\Programming\github\integrader\server\node_modules\bcrypt unbuild
+38 verbose tar unpack C:\Users\Matthew\AppData\Roaming\npm-cache\bcrypt\0.7.8\package.tgz
+39 silly lockFile 3cf3fa53-rader-server-node-modules-bcrypt tar://c:\Users\Matthew\Dropbox\Programming\github\integrader\server\node_modules\bcrypt
+40 verbose lock tar://c:\Users\Matthew\Dropbox\Programming\github\integrader\server\node_modules\bcrypt C:\Users\Matthew\AppData\Roaming\npm-cache\3cf3fa53-rader-server-node-modules-bcrypt.lock
+41 silly lockFile bb897bac-m-cache-bcrypt-0-7-8-package-tgz tar://C:\Users\Matthew\AppData\Roaming\npm-cache\bcrypt\0.7.8\package.tgz
+42 verbose lock tar://C:\Users\Matthew\AppData\Roaming\npm-cache\bcrypt\0.7.8\package.tgz C:\Users\Matthew\AppData\Roaming\npm-cache\bb897bac-m-cache-bcrypt-0-7-8-package-tgz.lock
+43 silly gunzTarPerm modes [ '755', '644' ]
+44 silly gunzTarPerm extractEntry package.json
+45 silly gunzTarPerm extractEntry .npmignore
+46 silly gunzTarPerm extractEntry README.md
+47 silly gunzTarPerm extractEntry LICENSE
+48 silly gunzTarPerm extractEntry bcrypt.js
+49 silly gunzTarPerm extractEntry Makefile
+50 silly gunzTarPerm extractEntry .travis.yml
+51 silly gunzTarPerm extractEntry binding.gyp
+52 silly gunzTarPerm extractEntry examples/async_compare.js
+53 silly gunzTarPerm extractEntry examples/forever_gen_salt.js
+54 silly gunzTarPerm extractEntry CHANGELOG
+55 silly gunzTarPerm extractEntry src/bcrypt.cc
+56 silly gunzTarPerm extractEntry src/bcrypt_node.cc
+57 silly gunzTarPerm extractEntry src/blowfish.cc
+58 silly gunzTarPerm extractEntry src/node_blf.h
+59 silly gunzTarPerm extractEntry test/async.js
+60 silly gunzTarPerm extractEntry test/repetitions.js
+61 silly gunzTarPerm extractEntry test/sync.js
+62 silly lockFile 3cf3fa53-rader-server-node-modules-bcrypt tar://c:\Users\Matthew\Dropbox\Programming\github\integrader\server\node_modules\bcrypt
+63 silly lockFile 3cf3fa53-rader-server-node-modules-bcrypt tar://c:\Users\Matthew\Dropbox\Programming\github\integrader\server\node_modules\bcrypt
+64 silly lockFile bb897bac-m-cache-bcrypt-0-7-8-package-tgz tar://C:\Users\Matthew\AppData\Roaming\npm-cache\bcrypt\0.7.8\package.tgz
+65 silly lockFile bb897bac-m-cache-bcrypt-0-7-8-package-tgz tar://C:\Users\Matthew\AppData\Roaming\npm-cache\bcrypt\0.7.8\package.tgz
+66 info preinstall bcrypt@0.7.8
+67 verbose readDependencies using package.json deps
+68 verbose readDependencies using package.json deps
+69 verbose cache add [ 'bindings@1.0.0', null ]
+70 verbose cache add name=undefined spec="bindings@1.0.0" args=["bindings@1.0.0",null]
+71 verbose parsed url { protocol: null,
+71 verbose parsed url   slashes: null,
+71 verbose parsed url   auth: null,
+71 verbose parsed url   host: null,
+71 verbose parsed url   port: null,
+71 verbose parsed url   hostname: null,
+71 verbose parsed url   hash: null,
+71 verbose parsed url   search: null,
+71 verbose parsed url   query: null,
+71 verbose parsed url   pathname: 'bindings@1.0.0',
+71 verbose parsed url   path: 'bindings@1.0.0',
+71 verbose parsed url   href: 'bindings@1.0.0' }
+72 verbose cache add name="bindings" spec="1.0.0" args=["bindings","1.0.0"]
+73 verbose parsed url { protocol: null,
+73 verbose parsed url   slashes: null,
+73 verbose parsed url   auth: null,
+73 verbose parsed url   host: null,
+73 verbose parsed url   port: null,
+73 verbose parsed url   hostname: null,
+73 verbose parsed url   hash: null,
+73 verbose parsed url   search: null,
+73 verbose parsed url   query: null,
+73 verbose parsed url   pathname: '1.0.0',
+73 verbose parsed url   path: '1.0.0',
+73 verbose parsed url   href: '1.0.0' }
+74 verbose addNamed [ 'bindings', '1.0.0' ]
+75 verbose addNamed [ '1.0.0', '1.0.0' ]
+76 silly lockFile f01e5454-bindings-1-0-0 bindings@1.0.0
+77 verbose lock bindings@1.0.0 C:\Users\Matthew\AppData\Roaming\npm-cache\f01e5454-bindings-1-0-0.lock
+78 verbose url raw bindings
+79 verbose url resolving [ 'https://registry.npmjs.org/', './bindings' ]
+80 verbose url resolved https://registry.npmjs.org/bindings
+81 info trying registry request attempt 1 at 16:36:20
+82 verbose etag "EF0U3ERBDZ107WR2K8OB2X3WQ"
+83 http GET https://registry.npmjs.org/bindings
+84 http 304 https://registry.npmjs.org/bindings
+85 silly registry.get cb [ 304,
+85 silly registry.get   { date: 'Wed, 25 Jun 2014 20:36:45 GMT',
+85 silly registry.get     server: 'Apache',
+85 silly registry.get     via: '1.1 varnish',
+85 silly registry.get     'last-modified': 'Wed, 25 Jun 2014 20:26:57 GMT',
+85 silly registry.get     'cache-control': 'max-age=30',
+85 silly registry.get     etag: '"EF0U3ERBDZ107WR2K8OB2X3WQ"',
+85 silly registry.get     'x-served-by': 'cache-at52-ATL',
+85 silly registry.get     'x-cache': 'HIT',
+85 silly registry.get     'x-cache-hits': '3',
+85 silly registry.get     'x-timer': 'S1403728605.094226,VS0,VE0',
+85 silly registry.get     vary: 'Accept',
+85 silly registry.get     'content-length': '0',
+85 silly registry.get     'keep-alive': 'timeout=10, max=50',
+85 silly registry.get     connection: 'Keep-Alive' } ]
+86 verbose etag bindings from cache
+87 silly lockFile f01e5454-bindings-1-0-0 bindings@1.0.0
+88 silly lockFile f01e5454-bindings-1-0-0 bindings@1.0.0
+89 silly resolved [ { name: 'bindings',
+89 silly resolved     description: 'Helper module for loading your native module\'s .node file',
+89 silly resolved     keywords: [ 'native', 'addon', 'bindings', 'gyp', 'waf', 'c', 'c++' ],
+89 silly resolved     version: '1.0.0',
+89 silly resolved     author:
+89 silly resolved      { name: 'Nathan Rajlich',
+89 silly resolved        email: 'nathan@tootallnate.net',
+89 silly resolved        url: 'http://tootallnate.net' },
+89 silly resolved     repository:
+89 silly resolved      { type: 'git',
+89 silly resolved        url: 'git://github.com/TooTallNate/node-bindings.git' },
+89 silly resolved     main: './bindings.js',
+89 silly resolved     _id: 'bindings@1.0.0',
+89 silly resolved     dist:
+89 silly resolved      { shasum: 'c3ccde60e9de6807c6f1aa4ef4843af29191c828',
+89 silly resolved        tarball: 'http://registry.npmjs.org/bindings/-/bindings-1.0.0.tgz' },
+89 silly resolved     maintainers: [ [Object], [Object] ],
+89 silly resolved     directories: {},
+89 silly resolved     _shasum: 'c3ccde60e9de6807c6f1aa4ef4843af29191c828',
+89 silly resolved     _from: 'bindings@1.0.0',
+89 silly resolved     _resolved: 'https://registry.npmjs.org/bindings/-/bindings-1.0.0.tgz',
+89 silly resolved     bugs: { url: 'https://github.com/TooTallNate/node-bindings/issues' },
+89 silly resolved     readme: 'ERROR: No README data found!',
+89 silly resolved     homepage: 'https://github.com/TooTallNate/node-bindings' } ]
+90 info install bindings@1.0.0 into c:\Users\Matthew\Dropbox\Programming\github\integrader\server\node_modules\bcrypt
+91 info installOne bindings@1.0.0
+92 info c:\Users\Matthew\Dropbox\Programming\github\integrader\server\node_modules\bcrypt\node_modules\bindings unbuild
+93 verbose tar unpack C:\Users\Matthew\AppData\Roaming\npm-cache\bindings\1.0.0\package.tgz
+94 silly lockFile f78532bc-les-bcrypt-node-modules-bindings tar://c:\Users\Matthew\Dropbox\Programming\github\integrader\server\node_modules\bcrypt\node_modules\bindings
+95 verbose lock tar://c:\Users\Matthew\Dropbox\Programming\github\integrader\server\node_modules\bcrypt\node_modules\bindings C:\Users\Matthew\AppData\Roaming\npm-cache\f78532bc-les-bcrypt-node-modules-bindings.lock
+96 silly lockFile 19aba127-cache-bindings-1-0-0-package-tgz tar://C:\Users\Matthew\AppData\Roaming\npm-cache\bindings\1.0.0\package.tgz
+97 verbose lock tar://C:\Users\Matthew\AppData\Roaming\npm-cache\bindings\1.0.0\package.tgz C:\Users\Matthew\AppData\Roaming\npm-cache\19aba127-cache-bindings-1-0-0-package-tgz.lock
+98 silly gunzTarPerm modes [ '755', '644' ]
+99 silly gunzTarPerm extractEntry package.json
+100 silly gunzTarPerm extractEntry README.md
+101 silly gunzTarPerm extractEntry bindings.js
+102 silly lockFile f78532bc-les-bcrypt-node-modules-bindings tar://c:\Users\Matthew\Dropbox\Programming\github\integrader\server\node_modules\bcrypt\node_modules\bindings
+103 silly lockFile f78532bc-les-bcrypt-node-modules-bindings tar://c:\Users\Matthew\Dropbox\Programming\github\integrader\server\node_modules\bcrypt\node_modules\bindings
+104 silly lockFile 19aba127-cache-bindings-1-0-0-package-tgz tar://C:\Users\Matthew\AppData\Roaming\npm-cache\bindings\1.0.0\package.tgz
+105 silly lockFile 19aba127-cache-bindings-1-0-0-package-tgz tar://C:\Users\Matthew\AppData\Roaming\npm-cache\bindings\1.0.0\package.tgz
+106 info preinstall bindings@1.0.0
+107 verbose readDependencies using package.json deps
+108 verbose readDependencies using package.json deps
+109 silly resolved []
+110 verbose about to build c:\Users\Matthew\Dropbox\Programming\github\integrader\server\node_modules\bcrypt\node_modules\bindings
+111 info build c:\Users\Matthew\Dropbox\Programming\github\integrader\server\node_modules\bcrypt\node_modules\bindings
+112 verbose linkStuff [ false,
+112 verbose linkStuff   false,
+112 verbose linkStuff   false,
+112 verbose linkStuff   'c:\\Users\\Matthew\\Dropbox\\Programming\\github\\integrader\\server\\node_modules\\bcrypt\\node_modules' ]
+113 info linkStuff bindings@1.0.0
+114 verbose linkBins bindings@1.0.0
+115 verbose linkMans bindings@1.0.0
+116 verbose rebuildBundles bindings@1.0.0
+117 info install bindings@1.0.0
+118 info postinstall bindings@1.0.0
+119 verbose about to build c:\Users\Matthew\Dropbox\Programming\github\integrader\server\node_modules\bcrypt
+120 info build c:\Users\Matthew\Dropbox\Programming\github\integrader\server\node_modules\bcrypt
+121 verbose linkStuff [ false,
+121 verbose linkStuff   false,
+121 verbose linkStuff   false,
+121 verbose linkStuff   'c:\\Users\\Matthew\\Dropbox\\Programming\\github\\integrader\\server\\node_modules' ]
+122 info linkStuff bcrypt@0.7.8
+123 verbose linkBins bcrypt@0.7.8
+124 verbose linkMans bcrypt@0.7.8
+125 verbose rebuildBundles bcrypt@0.7.8
+126 verbose rebuildBundles [ 'bindings' ]
+127 info install bcrypt@0.7.8
+128 verbose unsafe-perm in lifecycle true
+129 info bcrypt@0.7.8 Failed to exec install script
+130 info c:\Users\Matthew\Dropbox\Programming\github\integrader\server\node_modules\bcrypt unbuild
+131 info preuninstall bcrypt@0.7.8
+132 info uninstall bcrypt@0.7.8
+133 verbose true,c:\Users\Matthew\Dropbox\Programming\github\integrader\server\node_modules,c:\Users\Matthew\Dropbox\Programming\github\integrader\server\node_modules unbuild bcrypt@0.7.8
+134 info postuninstall bcrypt@0.7.8
+135 error error rolling back Error: EPERM, unlink 'c:\Users\Matthew\Dropbox\Programming\github\integrader\server\node_modules\bcrypt\Makefile'
+135 error error rolling back  bcrypt@0.7.8 { [Error: EPERM, unlink 'c:\Users\Matthew\Dropbox\Programming\github\integrader\server\node_modules\bcrypt\Makefile']
+135 error error rolling back   errno: 50,
+135 error error rolling back   code: 'EPERM',
+135 error error rolling back   path: 'c:\\Users\\Matthew\\Dropbox\\Programming\\github\\integrader\\server\\node_modules\\bcrypt\\Makefile' }
+136 error bcrypt@0.7.8 install: `node-gyp rebuild`
+136 error Exit status 1
+137 error Failed at the bcrypt@0.7.8 install script.
+137 error This is most likely a problem with the bcrypt package,
+137 error not with npm itself.
+137 error Tell the author that this fails on your system:
+137 error     node-gyp rebuild
+137 error You can get their info via:
+137 error     npm owner ls bcrypt
+137 error There is likely additional logging output above.
+138 error System Windows_NT 6.1.7601
+139 error command "c:\\Program Files\\nodejs\\node.exe" "c:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js" "install" "bcrypt"
+140 error cwd c:\Users\Matthew\Dropbox\Programming\github\integrader\server
+141 error node -v v0.10.29
+142 error npm -v 1.4.14
+143 error code ELIFECYCLE
+144 verbose exit [ 1, true ]

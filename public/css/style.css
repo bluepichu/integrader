@@ -17,7 +17,7 @@ RED
 #DD4B39
 
 GREEN
-#44DD44
+#44BB44
 
 */
 
@@ -528,23 +528,26 @@ textarea {
 }
 
 .status {
-    background: #CCCCCC;
     color: #333333;
-    padding-top: 2px;
-    width: 24px;
-    height: 24px;
+    width: 300px;
     position: absolute;
     right: 0px;
     top: 0px;
-    text-align: center;
+    text-align: right;
+    padding-right: 4px;
 }
 
-.status.correct {
-    background: #44DD44; /* TEMP */
+.status-dot {
+    display: inline-block;
+    padding: 4px;
 }
 
-.status.incorrect {
-    background: #DD4B39; /* TEMP */
+.status-dot.correct {
+    color: #44BB44; /* TEMP */
+}
+
+.status-dot.incorrect {
+    color: #DD4B39; /* TEMP */
 }
 
 /* REGISTER */

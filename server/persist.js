@@ -21,7 +21,8 @@ var part = new Schema({
     ranges: [Object],
     steps: Number,
     answer: String,
-	points: { type: Number, default: 0 }
+	points: { type: Number, default: 0 },
+    attempts: Number
 });
 
 var Part = mongoose.model('Part', part);
