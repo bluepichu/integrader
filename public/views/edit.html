@@ -41,7 +41,11 @@
             <div class="main-area">
                 <div class="sidebar"></div>
                 <div class="content-main">
-                    <textarea id="json-editor">{{prettyPrint this}}</textarea>
+                    {{#if user}}
+                    <textarea id="json-editor">{{prettyPrint assignment}}</textarea>
+                    {{else}}
+                    <p><a href="/login">Login</a> to edit assignments.</p>
+                    {{/if}}
                 </div>
             </div>
         </script>
@@ -57,16 +61,36 @@
                 return(false);
             }
             
+            var loadCount = 0;
+            var toLoad = ["/userinfo", "/assignmentinfo?id=" + getQueryVariable("id")];
+            var loadVars = ["user", "assignment"];
+
             $(document).ready(function(){
-                var req = new XMLHttpRequest();
-                req.onload = ready;
-                req.open("get", "/assignmentinfo?id=" + getQueryVariable("id"), true);
-                req.send();
+                for(i = 0; i < toLoad.length; i++){
+                    var req = new XMLHttpRequest();
+                    req.index = i;
+                    req.onload = loadedCB;
+                    req.open("get", toLoad[i], true);
+                    req.send();
+                }
             });
+
+            var loadedCB = function(){
+                window[loadVars[this.index]] = JSON.parse(this.responseText);
+                loadCount++;
+
+                if(loadCount == toLoad.length){
+                    ready();
+                }
+            }
             
             var ready = function(){
-                assignment = JSON.parse(this.responseText);
                 delete assignment._id;
+                
+                data = {
+                    assignment: assignment,
+                    user: user
+                };
                 
                 Handlebars.registerHelper("prettyPrint", function(obj){
                     return JSON.stringify(obj, undefined, 2);
@@ -101,7 +125,7 @@
                 var src = $("#template").html();
                 
                 var template = Handlebars.compile(src);
-                var html = template(assignment);
+                var html = template(data);
                 
                 out.html(html);
                 
