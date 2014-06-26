@@ -46,11 +46,10 @@ operators = ["+", "-", "*", "/", " ", "^", "_"];
 functions = ["sin", "cos", "tan", "cot", "sec", "csc", "ln", "log"];
 
 var parse = function(arr){ //Does the thing
-   if(arr.length==1){
-       return arr[0];
-   }
    if(typeof(arr[0])=='object') {
        arr[0]="("+parse(arr[0])+")";
+   } else if(arr.length==1){
+       return arr[0];
    } else if(functions.indexOf(arr[0])!=-1) {
        str = arr.shift();
        if(arr[0]=="_"){
@@ -113,6 +112,7 @@ var symbolicRec = function(eq1, eq2, variables, range, steps, array, index){
 
 var symbolic = function(eq1,eq2,variables,range,steps){
     eq1 = parse(eq1);
+    console.log("PARSED --->", eq1);
     return symbolicRec(eq1, eq2, variables, range, steps, [], 0);
 }
 
