@@ -86,6 +86,23 @@ h2.sidebar-header {
     background-color: #F2F2F2;
 }
 
-.answer-area input:not([type=submit]) {
+.answer-area input:not([type=submit]):not([type=radio]):not([type=checkbox]) {
+    width: 70%;
+}
+
+.answer-area.symbolic input {
     width: 100%;
+}
+
+h3.assignment-title {
+    display: block;
+}
+
+h4.score {
+    display: block;
+    float: none;
+}
+
+div.answer-area {
+    padding: 24px;
 }
