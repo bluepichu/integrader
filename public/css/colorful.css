@@ -22,6 +22,7 @@ GRAY
 OPACITY LEVELS
 .4
 .5
+.7
 .8
 
 */
@@ -73,6 +74,7 @@ ul.upcoming span.completed {
     background: rgba(255, 255, 255, .5);
     border-radius: 16px;
     padding: 4px;
+    transition-duration: 100ms;
 }
 
 .clickable:hover {
@@ -87,6 +89,7 @@ div.answer-area {
     border-radius: 8px;
     color: #FFFFFF;
     background: #999999;
+    transition-duration: 100ms;
 }
 
 div.course-listing {
@@ -207,6 +210,15 @@ ol.questions li {
     text-overflow: ellipsis;
 }
 
+ol.questions li:hover {
+    margin-left: 6px;
+}
+
+ol.questions li.active {
+    background: #FFFFFF;
+    margin-left: 20px;
+}
+
 ol.questions li:before {
     display: none;
 }
@@ -216,6 +228,11 @@ ol.questions li:before {
     border-radius: 0px 8px 0px 8px;
     width: auto;
     padding: 0px 4px;
+}
+
+.status-dot {
+    color: #999999;
+    transition-duration: 100ms;
 }
 
 .status-dot.correct {
