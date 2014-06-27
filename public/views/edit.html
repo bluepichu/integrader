@@ -81,7 +81,7 @@
 
         <script id="question-template" type="text/x-handlebars-template">
             <form class="question-container" id="q{{position}}">
-                <h2><input type="text" id="question-name" value="{{name}}" /></h2>
+                <label>Question Title</label><input type="text" id="question-name" value="{{name}}" />
 
                 {{pushPosition}}
 
@@ -118,54 +118,87 @@
 
                 {{#ifCond type "==" "VIDEO"}}
                 <br />
+                <label>URL</label>
                 <input type="text" id="url" value="{{url}}" />
                 {{/ifCond}}
 
                 {{#ifCond type "==" "IMAGE"}}
                 <br />
+                <label>URL</label>
                 <input type="text" id="url" value="{{url}}" />
                 {{/ifCond}}
 
                 {{#ifCond type "==" "RADIO"}}
-                <input type="number" id="points" value="{{points}}" />
-                <input type="number" id="attempts" value="{{attempts}}" />
+                <div class="float-right">
+                    <label>Points</label>
+                    <input type="number" id="points" value="{{attempts}}" />
+                    <label>Attempts</label>
+                    <input type="number" id="attempts" value="{{points}}" />
+                </div>
                 <br />
-                <input type="text" id="choices" value="{{join choices}}" />
-                <input type="text" id="answer" value="{{answer}}" />
+                <div class="clear">
+                    <label>Choices</label><input type="text" id="choices" value="{{join choices}}" /><br />
+                    <label>Answer Number</label><input type="text" id="answer" value="{{answer}}" />
+                </div>
                 {{/ifCond}}
 
                 {{#ifCond type "==" "CHECKBOX"}}
-                <input type="number" id="points" value="{{points}}" />
-                <input type="number" id="attempts" value="{{attempts}}" />
+                <div class="float-right">
+                    <label>Points</label>
+                    <input type="number" id="points" value="{{attempts}}" />
+                    <label>Attempts</label>
+                    <input type="number" id="attempts" value="{{points}}" />
+                </div>
                 <br />
-                <input type="text" id="choices" value="{{join choices}}" />
-                <input type="text" id="answer" value="{{answer}}" />
+                <br />
+                <div class="clear">
+                    <label>Choices</label><input type="text" id="choices" value="{{join choices}}" /><br />
+                    <label>Answers</label><input type="text" id="answer" value="{{answer}}" />
+                </div>
                 {{/ifCond}}
 
                 {{#ifCond type "==" "NUMERICAL"}}
-                <input type="number" id="points" value="{{points}}" />
-                <input type="number" id="attempts" value="{{attempts}}" />
+                <div class="float-right">
+                    <label>Points</label>
+                    <input type="number" id="points" value="{{attempts}}" />
+                    <label>Attempts</label>
+                    <input type="number" id="attempts" value="{{points}}" />
+                </div>
                 <br />
-                <input type="text" id="answer" value="{{answer}}" />
-                <input type="text" id="units" value="{{units}}" />
+                <div class="clear">
+                    <label>Answer</label><input type="text" id="answer" value="{{answer}}" /><br />
+                    <label>Units</label><input type="text" id="units" value="{{units}}" />
+                </div>
                 {{/ifCond}}
 
                 {{#ifCond type "==" "SYMBOLIC"}}
-                <input type="number" id="points" value="{{points}}" />
-                <input type="number" id="attempts" value="{{attempts}}" />
+                <div class="float-right">
+                    <label>Points</label>
+                    <input type="number" id="points" value="{{attempts}}" />
+                    <label>Attempts</label>
+                    <input type="number" id="attempts" value="{{points}}" />
+                </div>
                 <br />
-                <input type="text" id="answer" value="{{answer}}" />
-                <input type="text" id="variables" value="{{join variables}}" />
-                <input type="text" id="ranges" value="{{join ranges}}" />
-                <input type="number" id="steps" value="{{steps}}" />
+                <div class="clear">
+                    <label>Answer</label><input type="text" id="answer" value="{{answer}}" /><br />
+                    <label>Variables</label><input type="text" id="variables" value="{{join variables}}" /><br />
+                    <label>Ranges</label><input type="text" id="ranges" value="{{join ranges}}" /><br />
+                    <label>Steps</label><input type="number" id="steps" value="{{steps}}" />
+                </div>
                 {{/ifCond}}
 
                 {{#ifCond type "==" "DROPDOWN"}}
-                <input type="number" id="points" value="{{points}}" />
-                <input type="number" id="attempts" value="{{attempts}}" />
+                <div class="float-right">
+                    <label>Points</label>
+                    <input type="number" id="points" value="{{attempts}}" />
+                    <label>Attempts</label>
+                    <input type="number" id="attempts" value="{{points}}" />
+                </div>
                 <br />
-                <input type="text" id="choices" value="{{join choices}}" />
-                <input type="text" id="answer" value="{{answer}}" />
+                <div class="clear">
+                    <label>Choices</label><input type="text" id="choices" value="{{join choices}}" /><br />
+                    <label>Answer Number</label><input type="text" id="answer" value="{{answer}}" />
+                </div>
                 {{/ifCond}}
 
                 <button type="button" class="delete">Delete</button>
@@ -500,7 +533,7 @@
                     $("#type", newPart).change(onTypeChange);
                     $(".delete", newPart).click(del);
                 }
-                
+
                 $(".new-part").click(onNewPart);
 
                 var onTypeChange = function(e){
@@ -591,13 +624,13 @@
                                     part.steps = $("#steps").val();
                                     break;
                             }
-                            
+
                             question.parts.push(part);
                         });
 
                         newAssignment.questions.push(question);
                     });
-                    
+
                     var req = new XMLHttpRequest();
                     req.onload = function(){ console.log(this.responseText); };
                     req.open("post", "/editassignment", true);
@@ -610,11 +643,11 @@
                         assignmentId: getQueryVariable("id")
                     }));
                 });
-                
+
                 var del = function(e){
                     $(this).parent().remove();
                 }
-                
+
                 $(".delete").click(del);
             }
         </script>

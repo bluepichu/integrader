@@ -591,6 +591,26 @@ textarea#json-editor {
     min-height: 500px;
 }
 
+input[type=number] {
+    width: 50px;
+}
+
+.float-right {
+    float: right;
+}
+
+.clear {
+    clear: both;
+}
+
+label {
+    padding: 0px 4px;
+}
+
+#choices {
+    width: 500px;
+}
+
 /*     LIGHTBOX     */
 
 .lightbox-bg {
