@@ -275,7 +275,12 @@ var submit = function(username, authToken, data, cb){
                         console.log(assignmentData.questions);
                         console.log(assignmentData.questions[data.question-1]);
                         console.log("~~~~~~~~~~~~~~~~", dob);
-                        data.response = grader.grade(data, assignmentData.questions[data.question-1].parts[data.part-1], dob[0]._id);
+			try {
+                        	data.response = grader.grade(data, assignmentData.questions[data.question-1].parts[data.part-1], dob[0]._id);
+			} catch (e) {
+				data.response = false;
+				console.log("error grading ",e);
+			}
                         submissionData = {
                             "userId": dob[0]._id,
                             "assignmentId": assignmentData._id,
