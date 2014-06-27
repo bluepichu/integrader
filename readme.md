@@ -29,6 +29,9 @@ To run Integrader, follow these steps:
 
 **Version 1.4**: Created teacher edit UI.  Fixed issues in `/assignment`.
 
+- Version 1.4.0: Minimalistic `/edit` UI.  No labels.
+- Version 1.4.1: Labeled UI and critical bugfix in `/assignment` for parsing symbolic inputs.
+
 **Version 1.3**: Added "colorful" theme.  Fixed embed issues.  Created `/embed` to make it easier for students to join courses.
 
 **Version 1.2**: Mobile devices now supported.
