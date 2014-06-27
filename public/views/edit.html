@@ -493,13 +493,15 @@
                     e.preventDefault();
                 });
 
-                $(".new-part").click(function(e){
+                var onNewPart = function(e){
                     console.log("making new part");
                     newPart = $(partFormatter({ type: "CONTENT", content: ""}));
                     $(this).before(newPart);
                     $("#type", newPart).change(onTypeChange);
                     $(".delete", newPart).click(del);
-                });
+                }
+                
+                $(".new-part").click(onNewPart);
 
                 var onTypeChange = function(e){
                     newPart = $(partFormatter({type: $(this).val(), content: "", variables: [], ranges: [], choices: [], url: ""}));
@@ -523,10 +525,7 @@
                     $(".content-main").append(questionFormatter({name: "", parts: []}));
                     currentQuestion = "";
                     questionSelect.call(this);
-                    $(".new-part", "#q" + $(this).attr("id")).click(function(e){
-                        console.log("making new part");
-                        $(this).before(partFormatter({ type: "CONTENT", content: ""}));
-                    });
+                    $(".new-part", "#q" + $(this).attr("id")).click(onNewPart);
                 };
 
                 $(".new-question").click(addQuestion);
