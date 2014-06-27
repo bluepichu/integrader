@@ -19,8 +19,6 @@ To run Integrader, follow these steps:
 3. Run `npm install`
 4. Run `mongod` to start the MongoDB database.
 5. Run `node server/serv.js` to begin integrader.  This will open integrader `localhost:1337`.
-**OR**
-4-5. Run `foreman start` to open integrader on localhost:5000. Note, this will connect to the master db instead of the local one
 
 ## Release Notes
 
