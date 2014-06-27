@@ -17,7 +17,6 @@ To run Integrader, follow these steps:
 1. Clone the repository.
 2. Navigate to `/server`.
 3. Run `npm install`
--------
 4. Run `mongod` to start the MongoDB database.
 5. Run `node server/serv.js` to begin integrader.  This will open integrader `localhost:1337`.
 **OR**
