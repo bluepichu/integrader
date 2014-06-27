@@ -7,17 +7,22 @@
         <script src="/js/handlebars.js"></script>
         <script src="/js/inputParser.js"></script>
         <script src="/js/seedrandom.min.js"></script>
-        
+
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({
+                messageStyle: "none"
+            });
+        </script>
         <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-        
+
         <title>Assignment</title>
-        
+
         <script id="template" type="text/x-handlebars-template">
             <div class="lightbox-bg">
                 <div class="lightbox settings">
                     <h2>Settings</h2>
                     <p>Click outside the lightbox to cancel changes.  Submit to save and view changes.</p><br />
-                    <label>Theme</label>
+                    <label>Theme*</label>
                     <select name="theme-select" class="theme-select">
                         <option value="" {{#ifCond user.settings.theme "==" ""}}selected{{/ifCond}}>Light (Default)</option>
                         <option value="dark" {{#ifCond user.settings.theme "==" "dark"}}selected{{/ifCond}}>Dark</option>
@@ -43,18 +48,177 @@
                 </div>
             </header>
             <div class="main-area">
-                <div class="sidebar"></div>
+                <div class="sidebar">
+                    {{#if user}}
+                    <h2 class="sidebar-header"><div class="progress progress-large" id="assignmentprog"></div><input type="text" id="assignment-name" value="{{assignment.name}}" /><input type="date" id="due" value="{{assignment.due}}" /></h2>
+                    <ol class="questions">
+                        {{#each assignment.questions}}
+                        {{incrementPosition}}
+                        <li class="clickable question-select" id="{{position}}"><div class="progress" id="prog{{position}}"></div>Question {{position}}</li>
+                        {{/each}}
+                        {{incrementPosition}}
+                        <li class="clickable question-select new-question" id="{{position}}"><div class="progress"></div>New Question</li>
+                    </ol>
+                    {{/if}}
+                </div>
+                {{resetPosition}}
                 <div class="content-main">
                     {{#if user}}
-                    <textarea id="json-editor">{{prettyPrint assignment}}</textarea>
+                    {{#each assignment.questions}}
+                    {{incrementPosition}}
+                    {{{formatQuestion this}}}
+                    {{/each}}
                     {{else}}
-                    <p><a href="/login">Login</a> to edit assignments.</p>
+                    <p><a href="/login">Login</a> to complete assignments.</p>
                     {{/if}}
                 </div>
             </div>
+            <div class="hidden">
+                \(\require{color}\)
+                \(\definecolor{err}{RGB}{221, 75, 57}\)
+            </div>
         </script>
-        
-        <script type="text/javascript">
+
+        <script id="question-template" type="text/x-handlebars-template">
+            <form class="question-container" id="q{{position}}">
+                <h2><input type="text" id="question-name" value="{{name}}" /></h2>
+
+                {{pushPosition}}
+
+                {{#each parts}}
+                {{{formatPart this}}}
+                {{/each}}
+                <div class="answer-area new-part clickable">New Part</div>
+                {{popPosition}}
+            </form>
+        </script>
+
+        <script id="part-template" type="text/x-handlebars-template">
+            <div class="answer-area">
+                <select id="type">
+                    <optgroup label="Content Types">
+                        <option value="CONTENT" {{#ifCond type "==" "CONTENT"}}selected{{/ifCond}}>Text</option>
+                        <option value="IMAGE" {{#ifCond type "==" "IMAGE"}}selected{{/ifCond}}>Image</option>
+                        <option value="VIDEO" {{#ifCond type "==" "VIDEO"}}selected{{/ifCond}}>Video</option>
+                    </optgroup>
+                    <optgroup label="Question Types">
+                        <option value="RADIO" {{#ifCond type "==" "RADIO"}}selected{{/ifCond}}>Radio Buttons</option>
+                        <option value="CHECKBOX" {{#ifCond type "==" "CHECKBOX"}}selected{{/ifCond}}>Checkboxes</option>
+                        <option value="DROPDOWN" {{#ifCond type "==" "DROPDOWN"}}selected{{/ifCond}}>Dropdown</option>
+                        <option value="NUMERICAL" {{#ifCond type "==" "NUMERICAL"}}selected{{/ifCond}}>Numerical</option>
+                        <option value="SYMBOLIC" {{#ifCond type "==" "SYMBOLIC"}}selected{{/ifCond}}>Sybmolic</option>
+                    </optgroup>
+                </select>
+                {{incrementPosition}}
+
+                {{#ifCond type "==" "CONTENT"}}
+                <br />
+                <textarea id="content">{{content}}</textarea>
+                {{/ifCond}}
+
+                {{#ifCond type "==" "VIDEO"}}
+                <br />
+                <input type="text" id="url" value="{{url}}" />
+                {{/ifCond}}
+
+                {{#ifCond type "==" "IMAGE"}}
+                <br />
+                <input type="text" id="url" value="{{url}}" />
+                {{/ifCond}}
+
+                {{#ifCond type "==" "RADIO"}}
+                <input type="number" id="points" value="{{points}}" />
+                <input type="number" id="attempts" value="{{attempts}}" />
+                <br />
+                <input type="text" id="choices" value="{{join choices}}" />
+                <input type="text" id="answer" value="{{answer}}" />
+                {{/ifCond}}
+
+                {{#ifCond type "==" "CHECKBOX"}}
+                <input type="number" id="points" value="{{points}}" />
+                <input type="number" id="attempts" value="{{attempts}}" />
+                <br />
+                <input type="text" id="choices" value="{{join choices}}" />
+                <input type="text" id="answer" value="{{answer}}" />
+                {{/ifCond}}
+
+                {{#ifCond type "==" "NUMERICAL"}}
+                <input type="number" id="points" value="{{points}}" />
+                <input type="number" id="attempts" value="{{attempts}}" />
+                <br />
+                <input type="text" id="answer" value="{{answer}}" />
+                <input type="text" id="units" value="{{units}}" />
+                {{/ifCond}}
+
+                {{#ifCond type "==" "SYMBOLIC"}}
+                <input type="number" id="points" value="{{points}}" />
+                <input type="number" id="attempts" value="{{attempts}}" />
+                <br />
+                <input type="text" id="answer" value="{{answer}}" />
+                <input type="text" id="variables" value="{{join variables}}" />
+                <input type="text" id="ranges" value="{{join ranges}}" />
+                <input type="number" id="steps" value="{{steps}}" />
+                {{/ifCond}}
+
+                {{#ifCond type "==" "DROPDOWN"}}
+                <input type="number" id="points" value="{{points}}" />
+                <input type="number" id="attempts" value="{{attempts}}" />
+                <br />
+                <input type="text" id="choices" value="{{join choices}}" />
+                <input type="text" id="answer" value="{{answer}}" />
+                {{/ifCond}}
+
+                <button type="button" class="delete">Delete</button>
+            </div>
+        </script>
+
+        <script type="text/javascript">            
+            var currentQuestion = "001";
+
+            var loadQueue = [];
+            var delay = null;
+
+            var changeQuestion = function(question){
+                if(currentQuestion == question){
+                    return;
+                }
+
+                loadQueue.push([$(".clickable#" + pad(currentQuestion, 3)), "removeClass", "active"]);
+                loadQueue.push([$(".clickable#" + pad(question, 3)), "addClass", "active"]);
+                loadQueue.push([$(".question-container#q" + currentQuestion), "fadeOut"]);
+                loadQueue.push([$(".question-container#q" + question), "fadeIn"]);
+
+                processEventQueue();
+
+                currentQuestion = question;
+            }
+
+            var processEventQueue = function(){
+                if(loadQueue.length == 0){
+                    return;
+                }
+                func = loadQueue.shift();
+                if(func.length > 2){
+                    func[0][func[1]](func[2]);
+                    processEventQueue();
+                } else if(delay == null){
+                    func[0][func[1]](300);
+                    func[0].blur();
+                    delay = setTimeout(function(){
+                        delay = null;
+                        processEventQueue();
+                    }, 300);
+                }
+            }
+
+            var pad = function(n, width, z) {
+                z = z || '0';
+                n = n + '';
+                return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
+            }
+
+            var user;
+
             var getQueryVariable = function(variable){
                 var query = window.location.search.substring(1);
                 var vars = query.split("&");
@@ -64,10 +228,18 @@
                 }
                 return(false);
             }
-            
+
+
             var loadCount = 0;
             var toLoad = ["/userinfo", "/assignmentinfo?id=" + getQueryVariable("id")];
             var loadVars = ["user", "assignment"];
+
+            var merge = function(a, b, prefix){
+                a[prefix] = {}
+                for(key in b){
+                    a[prefix][key] = b[key];
+                }
+            }
 
             $(document).ready(function(){
                 for(i = 0; i < toLoad.length; i++){
@@ -84,22 +256,101 @@
                 loadCount++;
 
                 if(loadCount == toLoad.length){
-                    ready();
+                    var req = new XMLHttpRequest();
+                    req.onload = ready;
+                    req.open("get", "/submissions?id=" + getQueryVariable("id"), true);
+                    req.send();
                 }
             }
-            
+
             var ready = function(){
-                delete assignment._id;
-                
-                data = {
-                    assignment: assignment,
-                    user: user
-                };
-                
-                Handlebars.registerHelper("prettyPrint", function(obj){
-                    return JSON.stringify(obj, undefined, 2);
+                window.submissions = JSON.parse(this.responseText);
+
+                data = {};
+
+                if($.isEmptyObject(user)){
+                    data.user = false;
+                } else {
+                    merge(data, user, "user");
+                }
+
+                if(user){
+                    if(user.settings == null){
+                        user.settings = {theme: "", doubleEnterSubmit: false};
+                    } else if(user.settings.theme != "" && $("body").css("background-color") == "rgb(242, 242, 242)"){
+                        $("head").append("<link id='theme' rel='stylesheet' href='/css/" + user.settings.theme + ".css' />");
+                    }
+                }
+
+                if($.isEmptyObject(assignment)){
+                    data.assignment = false;
+                } else {
+                    merge(data, assignment, "assignment");
+                }
+
+                var positionCounter = 0;
+                var positionStack = []
+
+                Handlebars.registerHelper("position", function(){
+                    return pad(positionCounter, 3);
                 });
-                
+
+                Handlebars.registerHelper("incrementPosition", function(){
+                    positionCounter++;
+                    return "";
+                });
+
+                Handlebars.registerHelper("resetPosition", function(){
+                    positionCounter = 0;
+                    return "";
+                });
+
+                Handlebars.registerHelper("pushPosition", function(){
+                    positionStack.push(positionCounter);
+                    positionCounter = 0;
+                    return "";
+                });
+
+                Handlebars.registerHelper("popPosition", function(){
+                    positionCounter = positionStack.pop();
+                    return "";
+                });
+
+                Handlebars.registerHelper("swapPosition", function(){
+                    temp = positionStack.pop();
+                    positionStack.push(positionCounter);
+                    positionCounter = temp;
+                    return "";
+                });
+
+                Handlebars.registerHelper("eq", function(a, b){
+                    console.log("called on", a, b);
+                    return a == b;
+                });
+
+                Handlebars.registerHelper("log", function(){
+                    console.log("!!!");
+                    return "";
+                });
+
+                Handlebars.registerHelper("join", function(data){
+                    return data.join(", ");
+                });
+
+                Handlebars.registerHelper("formatReds", function(text){
+                    return text.replace(/\{\{[^\s]*\}\}/g, function(str){
+                        str = str.substring(2, str.length-2);
+                        str = str.split(":")[1].split("~");
+                        low = parseFloat(str[0]);
+                        high = parseFloat(str[1]);
+                        digits = parseFloat(str[2]);
+                        seedSalt = str[3];
+                        Math.seedrandom(user._id + seedSalt);
+                        num = (high-low) * Math.random() + low;
+                        return "<span class='highlight'>" + num.toPrecision(digits) + "</span>";
+                    });
+                });
+
                 Handlebars.registerHelper('ifCond', function (v1, operator, v2, options){
                     switch (operator){
                         case '==':
@@ -124,79 +375,115 @@
                             return options.inverse(this);
                     }
                 });
-                
+
+                Handlebars.registerHelper("listVariables", function(variables){
+                    if(variables.length == 0){
+                        return "<div class='hidden' id='variable-storage'></div>";
+                    }
+                    ret = "Use the following variables as necessary: ";
+                    hidden = "<div class='hidden' id='variable-storage'>";
+                    vars = {};
+                    for(i = 0; i < variables.length; i++){
+                        vars[variables[i]] = replacements[variables[i]] || variables[i];
+                        ret += "\\(" + vars[variables[i]] + "\\)";
+                        hidden += "<span class='variable'>" + variables[i] + "</span>";
+                        if(i < variables.length-1){
+                            ret += ", ";
+                        }
+                    }
+                    return ret + hidden + "</div>";
+                });
+
+                var questionFormatter = Handlebars.compile($("#question-template").html());
+
+                Handlebars.registerHelper("formatQuestion", function(question){
+                    return questionFormatter(question);
+                });
+
+                var partFormatter = Handlebars.compile($("#part-template").html());
+
+                Handlebars.registerHelper("formatPart", function(part){
+                    return partFormatter(part);
+                });
+
                 var out = $("body");
                 var src = $("#template").html();
-                
+
                 var template = Handlebars.compile(src);
                 var html = template(data);
-                
+
                 out.html(html);
-                
-                if(user){
-                    if(user.settings == null){
-                        user.settings = {theme: "", doubleEnterSubmit: false};
-                    } else if(user.settings.theme != "" && $("body").css("background-color") == "rgb(242, 242, 242)"){
-                        $("head").append("<link id='theme' rel='stylesheet' href='/css/" + user.settings.theme + ".css' />");
-                    }
+
+                $(".clickable#001").addClass("active");
+
+                var questionSelect = function(e){
+                    changeQuestion($(this).attr("id"));
                 }
-                
+
+                $(".question-select").click(questionSelect);
+
                 $(".lightbox-bg, .lightbox").hide();
-                
+
                 $(".button-settings").click(function(e){
                     $(".lightbox-bg").fadeIn(300);
-                    
+
                     setTimeout(function(){
                         $(".lightbox").fadeIn(300);
                     }, 200);
                 });
-                
+
                 $(".lightbox input[type='submit']").click(function(e){
                     $("#theme").remove();
-                    
+
                     console.log("!!!");
-                    
+
                     user.settings.theme = $(".lightbox .theme-select").val();
                     user.settings.doubleEnterSubmit = $(".lightbox #dbl-enter").is(":checked");
-                    
+
                     if(user.settings.theme != "" && $("body").css("background-color") == "rgb(242, 242, 242)"){
                         $("head").append("<link id='theme' rel='stylesheet' href='/css/" + user.settings.theme + ".css' />");
                     }
-                    
+
                     var req = new XMLHttpRequest();
                     req.open("post", "/updatesettings", true);
                     req.send(JSON.stringify(user.settings));
-                    
+
                     $(".lightbox").fadeOut(300);
-                    
+
                     setTimeout(function(){
                         $(".lightbox-bg").fadeOut(300);
                     }, 100);
                 });
-                
+
+                //exit without submitting
                 $(".lightbox-bg").click(function(e){
                     $(".lightbox").fadeOut(300);
-                    
+
                     setTimeout(function(){
                         $(".lightbox-bg").fadeOut(300);
                     }, 100);
                 });
-                
+
                 $(".lightbox").click(function(e){
                     e.stopPropagation();
                 });
-                
+
                 $("input").attr("autocomplete", "off");
-                
-                $(".button-submit").click(function(e){
-                    var req = new XMLHttpRequest();
-                    req.open("post", "/editassignment", true);
-                    req.send(JSON.stringify({
-                        content: JSON.parse($("#json-editor").val()),
-                        assignmentId: getQueryVariable("id")
-                    }));
-                });
-                
+
+                $("input[type='text']").change();
+
+                var recRemove = function(arr, remove){
+                    if(remove){
+                        arr.shift();
+                        arr.pop();
+                    }
+                    for(i = 0; i < arr.length; i++){
+                        if(arr[i] instanceof Array){ 
+                            recRemove(arr[i], true);
+                        }
+                    }
+                }
+
                 $("#logout").click(function(e){
                     var req = new XMLHttpRequest();
                     req.onload = function(){ console.log("logging out..."); location.reload(); };
@@ -205,9 +492,134 @@
 
                     e.preventDefault();
                 });
+
+                $(".new-part").click(function(e){
+                    console.log("making new part");
+                    newPart = $(partFormatter({ type: "CONTENT", content: ""}));
+                    $(this).before(newPart);
+                    $("#type", newPart).change(onTypeChange);
+                    $(".delete", newPart).click(del);
+                });
+
+                var onTypeChange = function(e){
+                    newPart = $(partFormatter({type: $(this).val(), content: "", variables: [], ranges: [], choices: [], url: ""}));
+                    $(this).parent().replaceWith(newPart);
+                    $("#type", newPart).change(onTypeChange);
+                    $(".delete", newPart).click(del);
+                }
+
+                $("#type").change(onTypeChange);
+
+                var addQuestion = function(e){
+                    console.log("making new question");
+                    pos = pad(parseInt($(this).attr("id"))+1, 3);
+                    $(this).after('<li class="clickable question-select new-question" id="' + pos + '"><div class="progress" id="prog' + pos + '"></div>New Question</li>');
+                    $(".new-question").click(questionSelect);
+                    $(".new-question").click(addQuestion);
+                    $(this).removeClass("new-question");
+                    $(this).html("<div class='progress'></div>Question " + $(this).attr("id"));
+                    $(this).off("click").click(questionSelect);
+                    positionCounter++;
+                    $(".content-main").append(questionFormatter({name: "", parts: []}));
+                    currentQuestion = "";
+                    questionSelect.call(this);
+                    $(".new-part", "#q" + $(this).attr("id")).click(function(e){
+                        console.log("making new part");
+                        $(this).before(partFormatter({ type: "CONTENT", content: ""}));
+                    });
+                };
+
+                $(".new-question").click(addQuestion);
+
+                $(document).keydown(function(e){
+                    if(e.keyCode == 13){
+                        e.preventDefault();
+                    }
+                });
+
+                $(".button-submit").click(function(e){
+                    newAssignment = {};
+
+                    newAssignment.name = $("#assignment-name").val();
+                    newAssignment.due = $("#due").val();
+                    newAssignment.owner = user._id;
+
+                    newAssignment.questions = [];
+
+                    $("form.question-container").each(function(num, el){
+                        question = {};
+                        question.parts = [];
+                        question.name = $("#question-name", el).val();
+
+                        $("div.answer-area:not(.new-part)", el).each(function(index, partEl){
+                            part = {};
+                            part.type = $("#type", partEl).val();
+                            if(part.type != "CONTENT" && part.type != "IMAGE" && part.type != "VIDEO"){
+                                part.points = parseFloat($("#points", partEl).val());
+                                part.attempts = parseInt($("#attempts", partEl).val());
+                                part.answer = $("#answer", partEl).val();
+                            }
+
+
+                            switch(part.type){
+                                case "CONTENT":
+                                    part.content = $("#content", partEl).val();
+                                    break;
+                                case "IMAGE":
+                                    part.url = $("#url", partEl).val();
+                                    break;
+                                case "VIDEO":
+                                    part.url = $("#url", partEl).val();
+                                    break;
+                                case "RADIO":
+                                case "DROPDOWN":
+                                case "CHECKBOX":
+                                    part.choices = $("#choices", partEl).val().split(", ");
+                                    break;
+                                case "NUMERICAL":
+                                    part.units = $("#units", partEl).val();
+                                    part.variables = [];
+                                    break;
+                                case "SYMBOLIC":
+                                    part.variables = $("#variables", partEl).val().split(", ");
+                                    part.ranges = $("#ranges", partEl).val().split(", ");
+                                    for(i = 0; i < part.ranges.length; i++){
+                                        part.ranges[i] = part.ranges[i].split(",");
+                                        for(j = 0; j < part.ranges[i].length; j++){
+                                            part.ranges[i][j] = parseFloat(part.ranges[i][j]);
+                                        }
+                                    }
+                                    part.steps = $("#steps").val();
+                                    break;
+                            }
+                            
+                            question.parts.push(part);
+                        });
+
+                        newAssignment.questions.push(question);
+                    });
+                    
+                    var req = new XMLHttpRequest();
+                    req.onload = function(){ console.log(this.responseText); };
+                    req.open("post", "/editassignment", true);
+                    console.log("sending", JSON.stringify({
+                        content: newAssignment,
+                        assignmentId: getQueryVariable("id")
+                    }));
+                    req.send(JSON.stringify({
+                        content: newAssignment,
+                        assignmentId: getQueryVariable("id")
+                    }));
+                });
+                
+                var del = function(e){
+                    $(this).parent().remove();
+                }
+                
+                $(".delete").click(del);
             }
         </script>
-        
+
         <script src="/js/imagepreload.js"></script>
     </head>
     <body></body>

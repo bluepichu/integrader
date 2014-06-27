@@ -17,7 +17,8 @@ GREEN
 GRAY
 #CCCCCC
 #999999
-#666666;
+#666666
+#333333
 
 OPACITY LEVELS
 .4
@@ -295,4 +296,8 @@ span.upcoming-next {
 
 h3.assignment-title {
     color: #FFFFFF;
+}
+
+.clickable.new-part:hover {
+    background: #666666;
 }

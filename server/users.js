@@ -393,6 +393,7 @@ var editAssignment = function(username, authToken, data, cb){
             cb(202, false);
         } else {
             assignmentData = data.content;
+            assignmentData.owner = ObjectId(assignmentData.owner);
             console.log("ASSIGNMENT IS BEING UPDATED.\n", {"_id": ObjectId(data.assignmentId), "owner": ObjectId(dob[0]._id)}, assignmentData);
             db.assignments.update({"_id": ObjectId(data.assignmentId), "owner": ObjectId(dob[0]._id)}, assignmentData, function(err, data){
                 if((data && data.length == 0) || err){

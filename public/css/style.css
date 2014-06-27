@@ -580,30 +580,10 @@ input[type="submit"] {
 }
 
 /* EDIT */
-/*
-ol.questions li.new-question {
-    color: #999999;
-}
 
-ol.questions li.new-question:before {
-    content: "";
+.clickable.new-part:hover {
+    background: #F2F2F2;
 }
-
-.editing div.content-main form>div,
-.editing div.content-main form>h2 {
-    margin: -4px;
-    padding: 4px;
-}
-
-.editing div.content-main form>div:hover,
-.editing div.content-main form>h2:hover {
-    background: #CCCCCC;
-}
-
-.edit {
-    border: 1px solid #111111;
-}
-*/
 
 textarea#json-editor {
     min-width: 100%;

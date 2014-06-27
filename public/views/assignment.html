@@ -558,7 +558,7 @@
                             $("#q" + pad(submissions[i].question, 3) + ">div:nth-child(" + (submissions[i].part+1) + ") .status .status-dot:nth-last-child(" + assignment.questions[submissions[i].question-1].parts[submissions[i].part-1].attempts + ")").addClass("incorrect").attr("title", submissions[i].content);
                         }
                         assignment.questions[submissions[i].question-1].parts[submissions[i].part-1].attempts--;
-                        if(assignment.questions[submissions[i].question-1].parts[submissions[i].part-1].attempts <= 0){
+                        if(assignment.questions[submissions[i].question-1].parts[submissions[i].part-1].attempts <= 0 && !assignment.questions[submissions[i].question-1].parts[submissions[i].part-1].correct){
                                     $("#q" + pad(submissions[i].question, 3) + ">div:nth-child(" + (submissions[i].part+1) + ")").addClass("colorful-incorrect");
                                 }
                         if(assignment.questions[submissions[i].question-1].parts[submissions[i].part-1].attempts <= 0 || assignment.questions[submissions[i].question-1].parts[submissions[i].part-1].correct){
@@ -667,7 +667,7 @@
                                     $("#q" + pad(data.question, 3) + ">div:nth-child(" + (data.part+1) + ") .status .status-dot:nth-last-child(" + assignment.questions[data.question-1].parts[data.part-1].attempts + ")").addClass("incorrect").attr("title", data.content);
                                 }
                                 assignment.questions[data.question-1].parts[data.part-1].attempts--;
-                                if(assignment.questions[data.question-1].parts[data.part-1].attempts <= 0){
+                                if(assignment.questions[data.question-1].parts[data.part-1].attempts <= 0 && !assignment.questions[data.question-1].parts[data.part-1].correct){
                                     $("#q" + pad(data.question, 3) + ">div:nth-child(" + (data.part+1) + ")").addClass("colorful-incorrect");
                                 }
                                 if(assignment.questions[data.question-1].parts[data.part-1].attempts <= 0 || assignment.questions[data.question-1].parts[data.part-1].correct){

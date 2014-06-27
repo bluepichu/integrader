@@ -69,7 +69,7 @@
                             <ul>
                                 <a href="/{{#ifCond ../../user.type '==' 'STUDENT'}}assignment{{else}}edit{{/ifCond}}?id={{_id}}" class="no-link">
                                     <li class="clickable">
-                                        {{#ifCond ../../user.type "==" "STUDENT"}}<div class="progress micro progress-{{progress}}" id="prog{{_id}}"></div>{{/ifCond}}
+                                        {{#ifCond ../../user.type "==" "STUDENT"}}<div class="progress progress-{{progress}}" id="prog{{_id}}"></div>{{else}}<div class="progress" id="prog{{_id}}"></div>{{/ifCond}}
                                         <span class="title {{#ifCond progress '==' 12}}completed{{/ifCond}}">{{name}}</span>
                                         <span class="subtitle">{{course}}</span>
                                     </li>
